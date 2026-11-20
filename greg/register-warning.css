@@ -1,0 +1,43 @@
+/* P13: the engineering choice is width; the cells demonstrate its consequences. */
+.pressure-console .console-working{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(64px,100px) auto auto;align-content:space-evenly;gap:9px;overflow:auto;padding:10px 16px}
+.pressure-console .puzzle-console-brief>[data-puzzle-problem]{display:none}
+.pressure-console .puzzle-console-brief{padding:9px 3px;min-height:0}
+.pressure-requirement{display:flex;align-items:center;justify-content:center;gap:22px;color:#e7c788}
+.pressure-requirement small,.pressure-hardware-label,.pressure-width-selector legend,.pressure-test-controls>span{font:11px Consolas,monospace;letter-spacing:1px;color:#b1c4d1}
+.pressure-requirement strong{font:700 30px Consolas,monospace;color:#ffe0a1}
+.pressure-requirement strong span{font-size:17px}.pressure-requirement>span{font-size:12px;color:#bdced9}
+.pressure-width-selector{box-sizing:border-box;width:min(690px,95%);margin:0 auto;min-width:0;padding:5px 18px 6px;border:3px ridge #9b957f;border-radius:12px;background:linear-gradient(155deg,#425569,#1a2c3e);box-shadow:0 4px #0c1926;text-align:center}
+.pressure-width-selector legend{padding:0 15px;color:#efd39b;font-weight:700}
+.pressure-width-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;position:relative}
+.pressure-width-controls:before{content:'';position:absolute;left:12%;right:12%;top:50%;height:6px;background:#0d1f2c;border-top:2px solid #8e794f}
+.pressure-width-controls button{position:relative;display:flex;justify-content:center;align-items:center;gap:10px;min-height:61px;cursor:pointer;border:3px ridge #8b9ca9;border-radius:8px;background:linear-gradient(#4f6275,#263b4f);color:#b4c5d1;box-shadow:0 3px #10202d}
+.pressure-width-controls strong{font:700 32px Consolas,monospace}.pressure-width-controls span{font:700 13px 'Trebuchet MS',Arial,sans-serif;letter-spacing:1px}
+.pressure-width-controls i{width:9px;height:9px;background:#0f1f2a;border:1px solid #91a3b1;border-radius:50%}
+.pressure-width-controls [aria-pressed=true]{border-color:#ebcf97;color:#c2f3f0;background:linear-gradient(#426578,#223e51);box-shadow:inset 0 0 12px #8ae6e122,0 3px #10202d}
+.pressure-width-controls [aria-pressed=true] i{background:#99eee9;box-shadow:0 0 10px #78ded988}
+.pressure-width-selector>small{display:block;font:9px Consolas,monospace;letter-spacing:1px;color:#9ab0bf;margin-top:5px}
+.pressure-hardware{display:flex;flex-direction:column;justify-content:center;min-height:0}.pressure-hardware-label{display:flex;justify-content:space-between;padding:0 5px 4px;font-size:9px}
+.pressure-console .memory-bank{gap:6px;padding:6px 8px;border-width:3px;max-height:76px}.pressure-console .memory-cell{padding:4px 2px;gap:0;border-width:2px}.pressure-console .memory-cell b{font-size:23px}.pressure-console .memory-cell small,.pressure-console .memory-cell em{font-size:9px}
+.pressure-console .memory-cell.enabled{border-color:#b59b70;box-shadow:inset 0 0 7px #d1ad5433}.pressure-console .memory-cell.high{background:linear-gradient(#685738,#39372c);color:#ffe0a0}.pressure-console .memory-cell.dormant{opacity:.3}
+.cell-activated{animation:register-activate .55s ease-out 1}@keyframes register-activate{45%{background:#54756a;box-shadow:0 0 13px #a9eee17a}}
+.pressure-capacity{display:grid;grid-template-columns:1fr 45px 1fr;align-items:center;gap:0 15px;width:min(760px,96%);justify-self:center;text-align:center;background:#0e2231;padding:7px 15px;border:1px solid #526b7e;border-radius:8px}
+.pressure-capacity small,.pressure-sample-readings small{display:block;font:9px Consolas,monospace;letter-spacing:1px;color:#a7bfcb}
+.pressure-capacity strong{font:700 38px Consolas,monospace;color:#a7e8e5}.pressure-capacity strong span{font-size:17px}.capacity-comparison{font:30px Consolas,monospace;color:#a6b8c6}
+.pressure-capacity p{grid-column:1/-1;margin:2px 0 0;font:700 11px 'Trebuchet MS',Arial,sans-serif;letter-spacing:.5px;color:#b3e8c9}.pressure-capacity.insufficient p,.pressure-capacity.insufficient [data-register-maximum]{color:#ffad87}.pressure-capacity.oversized p{color:#ebc67f}
+.pressure-sample{display:grid;grid-template-columns:minmax(260px,1fr) minmax(340px,1.4fr);align-items:center;gap:20px}
+.pressure-test-controls{text-align:center}.pressure-console .console-switches{justify-content:center;gap:6px;margin:5px 0 0}.pressure-console .console-switches button{min-height:39px;padding:6px 12px;font-size:13px}
+.pressure-sample-readings{display:grid;grid-template-columns:1fr 22px 1fr;align-items:center;text-align:center;background:#162c3b;border-radius:7px;padding:7px 10px}.pressure-sample-readings strong{font:700 26px Consolas,monospace;color:#bce9e2}.pressure-sample-readings strong span{font-size:12px}.pressure-sample-readings.overflow [data-stored-value]{color:#ffac83}.pressure-sample-readings p{grid-column:1/-1;margin:4px 0 0;font:10px Consolas,monospace;color:#b5c8d5}.pressure-sample-readings .console-lamp{width:9px;height:9px;margin-right:6px}
+.pressure-console .console-instruction{font-size:13px;padding:9px 12px}
+@media(max-height:780px),(max-width:1050px){
+ .pressure-console{padding:10px}.pressure-console .console-title{padding-bottom:7px}.pressure-console .console-title h2{font-size:24px}.pressure-console .puzzle-console-brief{font-size:12px;padding:6px 2px}.pressure-console .console-working{padding:6px 9px;gap:5px;grid-template-rows:auto auto minmax(48px,1fr) auto auto}
+ .pressure-requirement{gap:16px}.pressure-requirement small{font-size:9px}.pressure-requirement strong{font-size:24px}.pressure-requirement>span{font-size:10px}
+ .pressure-width-selector{width:min(570px,95%);padding:3px 12px 4px;border-width:2px}.pressure-width-selector legend{font-size:10px}.pressure-width-controls button{min-height:44px;border-width:2px;gap:8px}.pressure-width-controls strong{font-size:26px}.pressure-width-controls span{font-size:11px}.pressure-width-selector>small{font-size:8px;margin-top:3px}
+ .pressure-console .memory-bank{padding:3px 6px;gap:4px}.pressure-console .memory-cell{padding:2px}.pressure-console .memory-cell b{font-size:18px}.pressure-console .memory-cell small,.pressure-console .memory-cell em{font-size:8px}.pressure-hardware-label{font-size:8px;padding-bottom:2px}
+ .pressure-capacity{padding:4px 10px;width:min(650px,96%)}.pressure-capacity strong{font-size:30px}.pressure-capacity small{font-size:8px}.pressure-capacity p{font-size:10px}.pressure-sample{gap:12px;grid-template-columns:1fr 1.4fr}.pressure-test-controls>span{font-size:9px}.pressure-console .console-switches{gap:4px;margin-top:3px}.pressure-console .console-switches button{min-height:32px;padding:5px 9px;font-size:11px}.pressure-sample-readings{padding:4px 7px}.pressure-sample-readings small{font-size:8px}.pressure-sample-readings strong{font-size:22px}.pressure-sample-readings p{font-size:9px}
+ .pressure-console .console-footer{padding-top:7px;gap:9px}.pressure-console .console-instruction{font-size:11px;padding:7px}.pressure-console .console-footer .brass-button{min-height:40px;font-size:12px;padding:8px 12px}
+}
+@media(max-width:700px){
+ .pressure-requirement>span{display:none}.pressure-sample{grid-template-columns:1fr;gap:6px}.pressure-test-controls{display:flex;align-items:center;justify-content:center;gap:10px}.pressure-console .memory-bank{gap:2px}.pressure-capacity{width:100%;padding:4px}.pressure-capacity small{font-size:7px}.pressure-capacity strong{font-size:26px}
+}
+@media(prefers-reduced-motion:reduce){.pressure-console *{animation:none!important;transition:none!important}}
+.pressure-console.reduced-motion *{animation:none!important;transition:none!important}

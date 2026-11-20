@@ -1,0 +1,33 @@
+/* Objectives occupy existing instruction/status strips; the workspace layout is unchanged. */
+.puzzle-objective{display:block;color:#f7dfad;font:700 clamp(11px,1.08vw,17px)/1.25 'Trebuchet MS',Arial,sans-serif;letter-spacing:.15px}
+.workbench .repair-instructions{flex:1;min-width:0;display:grid;gap:3px}
+.workbench .repair-instructions .repair-feedback{font:12px/1.25 'Trebuchet MS',Arial,sans-serif}
+.workbench .repair-brief .repair-spec{max-width:22%;font:700 clamp(9px,.9vw,14px)/1.25 Consolas,monospace;white-space:normal;flex-shrink:0}
+.workbench .repair-brief:has(.repair-instructions){align-items:center}
+.workbench .repair-brief.p01-guided .repair-spec{max-width:none}
+.data-console .puzzle-console-brief{display:flex;flex-direction:column;justify-content:center;gap:5px;flex-shrink:0;padding:9px 4px 10px;min-height:0}
+.data-console .puzzle-console-brief>span{font:12px/1.35 'Trebuchet MS',Arial,sans-serif;color:#bed0dd}
+.data-console .puzzle-console-brief .puzzle-objective{font-size:14px;color:#f4d5a0}
+.verification-objective{margin:5px 0 0;color:#d2deea;font:12px/1.3 'Trebuchet MS',Arial,sans-serif}
+.verification-failure .behavior-mismatch{color:#ffddb9;font-weight:700;margin-bottom:7px}
+.game .teaching-window .puzzle-objective{color:#334c62}
+.fabrication-grid .fabrication-locked{opacity:.65;filter:grayscale(.85);background:linear-gradient(#d5d7d8,#a4aeb7);color:#24374a;position:relative}
+.game .fabrication-grid .fabrication-locked:hover,.game .fabrication-grid .fabrication-locked:focus-visible{opacity:.95;filter:grayscale(.85);background:linear-gradient(#d5d7d8,#a4aeb7);color:#24374a}
+.fabrication-grid .fabrication-locked small{font-weight:700;color:#263c50}
+.fabrication-grid .fabrication-lock{display:inline-flex;align-items:center;justify-content:center}
+.fabrication-grid .fabrication-lock svg{width:16px;height:17px;stroke-width:2;stroke:currentColor;fill:none}
+.fabrication-lock-popup{width:min(560px,90%)!important}
+@media(max-height:800px),(max-width:1000px){
+ .workbench .repair-instructions .repair-feedback{font-size:10px}
+ .workbench .puzzle-objective{font-size:11px;line-height:1.2}
+ .data-console .puzzle-console-brief{gap:3px;padding:6px 2px}
+ .data-console .puzzle-console-brief .puzzle-objective{font-size:12px}
+ .data-console .puzzle-console-brief>span{font-size:11px}
+ .adc_precision-console .console-working{gap:4px;padding-top:7px;padding-bottom:7px}
+}
+@media(max-width:650px){
+ .workbench .repair-instructions .repair-feedback{font-size:9px}
+ .workbench .repair-brief .repair-spec{max-width:17%;font-size:8px}
+ .data-console .puzzle-console-brief .puzzle-objective{font-size:10px}
+ .data-console .puzzle-console-brief>span{font-size:10px}
+}

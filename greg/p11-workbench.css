@@ -1,0 +1,115 @@
+/* P11 keeps shared workbench buttons below one full-width fixed-data instrument. */
+.data-console.p11-workbench{width:97.6%;height:97.2%;max-height:97.2%;padding:1.1%;display:grid;grid-template-rows:9% minmax(0,1fr) auto clamp(64px,12cqh,130px);gap:1%;border:3px solid #161d27;border-radius:17px;background:linear-gradient(115deg,#4e596a,#292f3b 44%,#394350);box-shadow:inset 0 0 0 2px #939a9d,inset 0 0 0 6px #303948,0 4px #10151e}
+.p11-workbench .console-title{padding:0;border:0;gap:1.1cqw;min-height:0}
+.p11-workbench .console-title h2{display:flex;align-items:center;margin:0;padding:0 2.2cqw;height:95%;border:3px solid #ba9156;border-radius:5px;background:linear-gradient(#353c47,#202733);color:#fff0cc;font:bold clamp(16px,2.65cqw,45px)/1.05 Georgia,serif;text-shadow:0 2px #0b1018}
+.p11-workbench .console-close{width:4.8cqw;height:4.8cqw;min-width:32px;min-height:32px;max-height:100%;padding:0;flex:none;border:3px solid #121a23;box-shadow:inset 0 0 0 3px #907044,inset 0 0 0 5px #ffe5a2,0 3px #111923;font:normal 4.5cqw/.8 Arial,sans-serif}
+.p11-workbench .console-title .system-status{font:12px Consolas,monospace;color:#d8bc82}
+.p11-workspace{display:flex;min-width:0;min-height:0}.p11-workspace>.console-working{flex:1}
+.p11-workbench .console-working{display:flex;flex-direction:column;justify-content:stretch;min-width:0;min-height:0;padding:1.2% 2%;overflow:hidden;border:3px solid #111924;box-shadow:inset 0 0 0 2px #87919c,0 2px #737d86;background:radial-gradient(ellipse at 50% 20%,#53627455,transparent 70%),linear-gradient(90deg,#ffffff07 1px,transparent 1px) 0 0/24% 100%,linear-gradient(#354252,#202d3d)}
+.p11-workbench .decoder-stage-strip{flex:none;padding:0 0 8px;font-size:11px;border:0}
+.p11-workbench .decoder-stage-strip small{font-size:10px}
+.p11-workbench .decoder-body.p11-chain{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:max-content minmax(260px,1fr);gap:0;flex:1;min-height:0;margin:0}
+.p11-workbench .p11-register{display:grid;grid-template-rows:auto auto auto;min-height:0;padding:0;background:none;border:0}
+.p11-workbench .p11-register-heading{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:0 10px 4px;color:#c5d6e1;font:11px Consolas,monospace}
+.p11-workbench .p11-register-heading .binary-byte{margin:0;font:700 clamp(28px,2.7cqw,44px)/1.1 Consolas,monospace;gap:4px;color:#e5f7ff;letter-spacing:2px;text-shadow:0 0 12px #73d6ed44}
+.p11-workbench .p11-register-heading .binary-byte b{font:inherit}
+.p11-workbench .p11-register-heading small{font-size:10px;text-align:right}
+.p11-workbench .p11-register-board{box-sizing:border-box;display:grid;grid-template-columns:repeat(var(--register-columns,8),minmax(0,1fr));width:100%;height:clamp(110px,16cqh,150px);min-height:110px;max-height:none;aspect-ratio:auto;gap:6px;padding:4px 7px 0;border:2px ridge #6b7c8f;border-radius:4px;background:linear-gradient(90deg,#ffffff08 1px,transparent 1px) 0 0/12.5% 100%,linear-gradient(#465365,#283747)}
+.p11-workbench .p11-bit-column{display:grid;grid-template-rows:12px 20px minmax(0,1fr);min-width:0;min-height:0;text-align:center}
+.p11-workbench .p11-bit-position{font:11px/12px Consolas,monospace;color:#a7bdcf}
+.p11-workbench .p11-bit-weight{font:bold 15px/20px Consolas,monospace;color:#8299ad}
+.p11-workbench .p11-bit-weight.contributes{color:#d9f5f7}
+.motor-console.p11-workbench .p11-bit-weight.contributes{color:#ffdfa4}
+.p11-workbench .p11-bit-hardware{display:block;width:100%;height:100%;min-height:0;overflow:visible}
+.p11-workbench .weight-equation{font:clamp(12px,1.3cqw,21px)/1.3 Consolas,monospace;color:#d4e7ed;margin:4px 0 0}
+.p11-workbench .p11-decoder-stage{position:relative;display:grid;grid-template-columns:minmax(200px,29%) minmax(0,1fr);gap:7%;grid-template-rows:minmax(0,1fr);align-items:stretch;box-sizing:border-box;min-height:260px;padding:10px 7% 0;margin:0}
+.p11-machine-connections{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.p11-workbench .interpretation-selector[data-orientation=vertical]{position:relative;display:flex;flex-direction:column;justify-content:center;width:100%;height:auto;align-self:stretch;max-height:360px;padding:6px 10px;margin:0;min-height:250px}
+.p11-workbench .interpretation-selector legend{font-size:clamp(10px,1cqw,16px);letter-spacing:1px;padding:0 6px}
+.p11-workbench .interpretation-control{display:grid;grid-template-columns:1fr;grid-template-rows:auto minmax(140px,1fr) auto;gap:3px;flex:1;min-height:0}
+.p11-workbench .interpretation-label{min-height:27px;font-size:clamp(13px,1.5cqw,23px);gap:8px}
+.p11-workbench .interpretation-rail{width:100%;height:100%;min-height:140px;max-height:210px}
+.p11-workbench .interpretation-state{font-size:10px;letter-spacing:.4px;padding-top:4px;color:#e7cd98}
+.p11-workbench .p11-equipment-output{position:relative;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto auto;align-content:center;gap:12px;width:100%;min-width:0;min-height:250px;height:100%;align-self:center;max-height:360px;margin:0;padding:18px 15px;border:3px ridge #738b9c;background:linear-gradient(140deg,#2e4356,#142638);box-shadow:inset 0 2px 8px #03152266}
+.p11-workbench .p11-equipment-icon{position:absolute;width:52px;height:56px;right:14px;top:14px;opacity:.6;pointer-events:none}
+.p11-workbench .p11-equipment-icon .sensor-art{height:100%;width:100%}
+.p11-workbench .p11-equipment-output .numeric-display{display:grid;grid-template-rows:auto auto;justify-items:center;align-content:center;min-height:0;margin:0;padding:18px 7px 12px;gap:12px;border:0;background:#081a28;box-shadow:inset 0 2px 12px #020b17;border-radius:6px}
+.p11-workbench .p11-equipment-output .numeric-display>.decoder-equipment-title{font:700 clamp(12px,1.3cqw,21px) 'Trebuchet MS',Arial,sans-serif;letter-spacing:1px;color:var(--accent)}
+.p11-workbench .p11-equipment-output .numeric-display>div{gap:10px;white-space:nowrap}
+.p11-workbench .p11-equipment-output .numeric-display strong{font:700 clamp(48px,6.5cqw,110px)/1.05 Consolas,monospace;letter-spacing:1px}
+.p11-workbench .p11-equipment-output .numeric-display span{font:clamp(17px,2cqw,32px) Consolas,monospace}
+.p11-workbench .p11-operating-range{display:block;text-align:center;border:0;padding:0}
+.p11-workbench .p11-operating-range small{font:11px/1.3 Consolas,monospace;color:#afc5d6}
+.p11-workbench .p11-operating-range strong{margin:4px 0 0;font:700 clamp(14px,1.55cqw,25px)/1.3 Consolas,monospace;color:var(--accent)}
+.p11-workbench .p11-reading-status{display:flex;align-items:center;justify-content:center;gap:8px;margin:0;color:#bacbd9;font:700 12px/1.3 Consolas,monospace}
+.p11-reading-status i{width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor}
+.p11-workbench .reading-verified .p11-reading-status{color:#b8dda5}
+.p11-workbench .p11-actions{display:flex;align-items:stretch;justify-content:flex-end;gap:12px;min-height:0;padding:0 2px 3px;border:0}.p11-workbench .p11-actions .workbench-action{width:clamp(140px,17.2cqw,275px);flex:none}
+.p11-workbench .console-footer.p11-guidance{display:grid;grid-template-columns:minmax(0,1fr);gap:5px;padding:8px 1.1%;min-height:0;border:2px solid #111c2a;border-radius:7px;background:linear-gradient(#354153,#232d3c);box-shadow:inset 0 1px #7c8798}
+.p11-workbench .puzzle-console-brief.console-progress{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:12px;padding:0;min-height:0}
+.p11-workbench .puzzle-console-brief .puzzle-objective{font:bold clamp(11px,1.1cqw,18px)/1.3 'Trebuchet MS',Arial,sans-serif;color:#f7e8c7}
+.p11-workbench .console-progress>span{font:11px/1.2 Consolas,monospace;white-space:nowrap;color:var(--accent)}
+.p11-workbench .binary-greg-status{display:flex;align-items:center;gap:10px;min-height:0;padding:0;background:none;border:0;box-shadow:none}
+.p11-workbench .binary-greg-status img{width:23px;height:31px;flex:none}
+.p11-workbench .binary-feedback{font:clamp(12px,1.05cqw,17px)/1.35 'Trebuchet MS',Arial,sans-serif;margin:0;color:#cee0e9}
+@container(max-width:1600px){
+ .data-console.p11-workbench{padding:8px;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:clamp(36px,8cqh,60px) minmax(0,1fr) auto;gap:6px}
+ .p11-workbench .console-title,.p11-workbench .p11-workspace{grid-column:1/-1}
+ .p11-workbench .console-footer.p11-guidance{grid-column:1;grid-row:3;padding:5px 10px;box-sizing:border-box}
+ .p11-workbench .p11-actions{grid-column:2;grid-row:3;gap:8px;min-height:64px;padding-bottom:3px}
+ .p11-workbench .p11-actions .workbench-action{width:clamp(140px,17.2cqw,247px)}
+ .p11-workbench .puzzle-console-brief.console-progress{display:block}
+ .p11-workbench .console-progress>span{display:none}
+ .p11-workbench .console-working{padding:8px 12px}
+ .p11-workbench .decoder-stage-strip{display:none}
+ .p11-workbench .decoder-body.p11-chain{grid-template-rows:max-content minmax(220px,1fr)}
+ .p11-workbench .p11-decoder-stage{min-height:220px;padding-top:8px}
+ .p11-workbench .interpretation-selector[data-orientation=vertical]{min-height:210px;max-height:300px;padding:3px 8px}
+ .p11-workbench .interpretation-control{grid-template-rows:auto minmax(120px,1fr) auto}
+ .p11-workbench .interpretation-rail{height:100%;min-height:120px;max-height:160px}
+ .p11-workbench .interpretation-label{min-height:22px;font-size:16px}
+ .p11-workbench .interpretation-selector legend{font-size:12px}
+ .p11-workbench .p11-equipment-output{min-height:210px;max-height:300px;padding:10px;gap:7px}
+ .p11-workbench .p11-equipment-output .numeric-display{padding:8px 4px;gap:5px}
+ .p11-workbench .p11-equipment-output .numeric-display strong{font-size:64px}
+ .p11-workbench .p11-equipment-output .numeric-display>.decoder-equipment-title{font-size:16px}
+ .p11-workbench .p11-equipment-icon{width:34px;height:38px;right:8px;top:8px}
+}
+@container(max-width:760px){.p11-workbench .p11-register-heading small,.p11-workbench .decoder-stage-strip small,.p11-workbench .console-title .system-status{display:none}.p11-workbench .p11-register-heading{grid-template-columns:1fr auto;font-size:10px}.p11-workbench .decoder-stage-strip{font-size:10px}.p11-workbench .p11-decoder-stage{grid-template-columns:37% minmax(0,1fr);gap:5%;padding-left:2%;padding-right:2%}.p11-workbench .p11-equipment-output{padding:9px 6px}.p11-workbench .p11-equipment-icon{display:none}.p11-workbench .p11-equipment-output .numeric-display strong{font-size:clamp(32px,7cqw,52px)}.p11-workbench .p11-equipment-output .numeric-display span{font-size:14px}.p11-workbench .p11-operating-range small{font-size:9px}.p11-workbench .interpretation-label{font-size:12px;gap:4px}.p11-workbench .interpretation-selector legend{font-size:9px;padding:0 2px}.p11-workbench .interpretation-state{font-size:8px;letter-spacing:0}.p11-workbench .p11-reading-status{font-size:10px}.p11-workbench .console-progress>span{white-space:normal;font-size:9px}.p11-workbench .puzzle-console-brief.console-progress{align-items:start;gap:6px}.p11-workbench .console-title h2{font-size:clamp(14px,2.7cqw,23px)}}
+@media(prefers-reduced-motion:reduce){.p11-workbench .decoder-output-flash,.p11-workbench .interpretation-weight-flash{animation:none}}
+.p11-workbench.reduced-motion .decoder-output-flash,.p11-workbench.reduced-motion .interpretation-weight-flash{animation:none}
+
+@container(max-width:1155px){
+ .p11-workbench .p11-register-heading .binary-byte{font-size:26px}
+ .p11-workbench .decoder-body.p11-chain{grid-template-rows:max-content minmax(186px,1fr)}
+ .p11-workbench .p11-decoder-stage{min-height:186px;padding-top:6px}
+ .p11-workbench .interpretation-selector[data-orientation=vertical]{min-height:180px;padding:2px 8px}
+ .p11-workbench .interpretation-control{grid-template-rows:auto minmax(100px,1fr) auto;gap:2px}
+ .p11-workbench .interpretation-rail{height:100%;min-height:100px;max-height:130px}
+ .p11-workbench .interpretation-label{min-height:20px;font-size:14px}
+ .p11-workbench .interpretation-state{font-size:9px;padding-top:2px}
+ .p11-workbench .interpretation-selector legend{font-size:11px}
+ .p11-workbench .p11-equipment-output{min-height:180px;padding:7px 10px;gap:4px}
+ .p11-workbench .p11-equipment-output .numeric-display{padding:5px;gap:3px}
+ .p11-workbench .p11-equipment-output .numeric-display strong{font-size:48px}
+ .p11-workbench .p11-operating-range strong{font-size:15px;margin-top:2px}
+ .p11-workbench .p11-operating-range small{font-size:10px}
+ .p11-workbench .p11-reading-status{font-size:11px}
+ .p11-workbench .weight-equation{font-size:13px;margin-top:2px}
+ .p11-workbench .console-title h2{font-size:clamp(18px,2.5cqw,32px)}
+}
+
+/* Fit the authored machinery into the remaining board row in smaller 16:9 games. */
+@container(max-width:960px){
+ .p11-workbench .p11-register-board{height:10cqw;min-height:0}
+ .p11-workbench .p11-bit-column{grid-template-rows:10px 16px minmax(0,1fr)}
+ .p11-workbench .p11-bit-position{font-size:9px;line-height:10px}.p11-workbench .p11-bit-weight{font-size:12px;line-height:16px}
+ .p11-workbench .decoder-body.p11-chain{grid-template-rows:max-content minmax(0,1fr)}
+ .p11-workbench .p11-decoder-stage,.p11-workbench .p11-equipment-output,.p11-workbench .interpretation-selector[data-orientation=vertical]{min-height:0}
+ .p11-workbench .interpretation-control{grid-template-rows:auto minmax(0,1fr) auto}
+ .p11-workbench .interpretation-rail{min-height:0;max-height:100%}
+ .p11-workbench .p11-equipment-output{padding:6px 8px;gap:3px}
+ .p11-workbench .p11-equipment-output .numeric-display{padding:3px;gap:2px}
+ .p11-workbench .p11-equipment-output .numeric-display strong{font-size:clamp(32px,6cqw,48px)}
+ .p11-workbench .p11-reading-status{font-size:10px}
+}

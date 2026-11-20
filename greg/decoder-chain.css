@@ -1,0 +1,136 @@
+/* A decoder interprets a fixed register. This selector is separate from the bit switches. */
+.interpretation-selector{box-sizing:border-box;width:min(680px,94%);min-width:0;margin:0 auto;padding:5px 12px 6px;border:3px ridge #9b957f;border-radius:13px;background:linear-gradient(155deg,#42566a,#182b3d 65%);box-shadow:0 4px 0 #0b1826,inset 0 0 0 2px #13283a;text-align:center}
+.interpretation-selector legend{padding:0 12px;color:#e9cd93;font:700 13px/1.2 'Trebuchet MS',Arial,sans-serif;letter-spacing:1.8px}
+.interpretation-control{display:grid;grid-template-columns:minmax(90px,1fr) minmax(150px,2.6fr) minmax(90px,1fr);align-items:center;gap:10px;width:100%;min-height:78px;padding:0;border:0;background:transparent;color:#9aafbf;cursor:pointer;touch-action:manipulation}
+.data-console .interpretation-control:focus-visible{outline:2px solid #a0eaf1;outline-offset:-2px;border-radius:8px}
+.interpretation-control:disabled{opacity:1;cursor:default}
+.interpretation-label{display:flex;align-items:center;justify-content:center;gap:8px;font:800 19px/1.2 'Trebuchet MS',Arial,sans-serif;letter-spacing:1px;min-height:45px}
+.interpretation-label i{display:block;width:9px;height:9px;border:1px solid #738b9c;border-radius:50%;background:#102333;box-shadow:inset 0 1px 3px #020b13}
+.interpretation-selector[data-interpretation=signed] .interpretation-label.signed,.interpretation-selector[data-interpretation=unsigned] .interpretation-label.unsigned{color:#b9f5f7;text-shadow:0 0 12px #72e2ee66}
+.interpretation-selector[data-interpretation=signed] .interpretation-label.signed i,.interpretation-selector[data-interpretation=unsigned] .interpretation-label.unsigned i{background:#8ee7ea;border-color:#d0faff;box-shadow:0 0 8px #71e6ec88}
+.interpretation-rail{display:block;width:100%;height:76px;overflow:visible;pointer-events:none}
+.selector-detent{fill:#31485a;stroke:#6e8b9d;stroke-width:2}
+.interpretation-selector[data-interpretation=signed] .selector-detent.signed,.interpretation-selector[data-interpretation=unsigned] .selector-detent.unsigned{fill:#94f1f2;stroke:#d4ffff}
+.interpretation-state{display:block;color:#9db6c7;font:9px/1.3 Consolas,monospace;letter-spacing:1px}
+.interpretation-selector[data-fixed=true]{border-color:#738b99}
+.decoder-conduit{display:block;width:50px;height:15px;margin:0 auto;overflow:visible;pointer-events:none}
+.signed-register-bus{stroke:#91acbc;stroke-width:5;fill:none}
+.interpretation-weight-flash{animation:interpretation-weight .75s ease-out 1}
+.decoder-output-flash{animation:decoder-output .55s ease-out 1}
+@keyframes interpretation-weight{40%{fill:#bdffff;color:#092332;background:#b1e9e7;box-shadow:0 0 13px #98f0ed88;filter:drop-shadow(0 0 4px #8be5ed)}}
+@keyframes decoder-output{40%{border-color:#a7e8e6;box-shadow:0 0 14px #87e8e94d;filter:brightness(1.12)}}
+/* Signed lesson: register, selector and result occupy the same vertical axis. */
+.signed-binary-console .console-working{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto minmax(100px,1fr) auto 84px auto;justify-content:stretch;gap:6px}
+.signed-binary-console .signed-register-heading{display:flex;align-items:center;justify-content:space-between;color:#b8cedd;padding:0 10px;font:11px Consolas,monospace;letter-spacing:1px}
+.signed-register-heading>div{display:flex;align-items:center;gap:10px}
+.signed-register-heading small{font:9px Consolas,monospace;color:#8fa9bc;letter-spacing:.7px}
+.signed-register-heading [data-binary-pattern]{font:700 18px Consolas,monospace;color:#b0e6ec;letter-spacing:4px}
+.signed-binary-console .signed-register-board{height:100%;min-height:0;max-height:none;align-self:stretch;aspect-ratio:auto}
+.signed-binary-console .signed-decoder-stage{position:relative}
+.signed-decoder-stage>.decoder-conduit:first-child{margin-top:-6px}
+.signed-decoder-stage>.decoder-conduit:last-child{margin-bottom:-6px}
+.signed-binary-console .binary-output-area{display:grid;grid-template-columns:minmax(0,1fr) 190px minmax(0,1fr);align-items:center;justify-content:center;min-height:0;gap:15px}
+.signed-binary-console .binary-calculation{min-width:0;grid-column:1;justify-self:end;gap:0}
+.signed-binary-console .binary-calculation:empty{display:none}
+.signed-binary-console .binary-calculation>div{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px 8px;max-width:260px}
+.signed-binary-console .binary-calculation small{width:100%;text-align:right;font-size:9px}
+.signed-binary-console .binary-calculation [data-active-weights],.signed-binary-console .binary-equation{font-size:16px}
+.signed-binary-console .binary-decimal{grid-column:2;justify-self:center;width:190px;min-width:0;min-height:78px;padding:4px 10px;border-width:3px}
+.signed-binary-console .binary-decimal strong{font-size:53px;line-height:1}
+.signed-binary-console .binary-answer-label{grid-column:2;width:190px;justify-self:center;gap:4px;padding:5px 10px;border:2px ridge #8095a7;border-radius:7px;background:#102333;box-sizing:border-box}
+.signed-binary-console .binary-answer-label input{width:120px;font-size:30px}
+.signed-binary-console .decoder-covered-output{grid-column:1/-1;justify-self:center;text-align:center;min-width:240px;border:2px ridge #657c8f;border-radius:7px;padding:17px;color:#8ca4b5;background:#0d2030;font:10px/1.3 Consolas,monospace;letter-spacing:.8px}
+.signed-binary-console .binary-greg-status{min-height:52px;padding:6px 10px}
+.signed-binary-console .binary-greg-status img{width:32px;height:40px}
+.signed-binary-console .binary-feedback{font-size:13px}
+.signed-binary-console .binary-target .binary-task{font-size:29px}
+.signed-reading-confirmed .garden-input-module.high{animation:decoder-output .65s ease-out 1}
+/* P11: one fixed register, one interpretation control, one equipment output. */
+.decoder-console .puzzle-console-brief>[data-puzzle-problem]{display:none}
+.decoder-console .puzzle-console-brief{padding:8px 3px}
+.decoder-console .decoder-stage-strip{padding:0 3px 6px;border:0;font-size:10px}
+.decoder-stage-strip>small{font:10px Consolas,monospace;color:#9bb4c6;letter-spacing:.4px}
+.decoder-console .decoder-body.p11-chain{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(132px,1fr) auto auto;gap:0;width:100%;margin:0;min-height:0;align-items:stretch}
+.p11-chain .p11-register{display:grid;grid-template-rows:auto auto minmax(65px,1fr) auto;min-height:0;box-shadow:none;border:0;background:none;padding:0}
+.p11-register-heading{display:flex;align-items:center;justify-content:space-between;padding:0 10px;gap:15px;color:#b8cedd;font:11px Consolas,monospace;letter-spacing:1px}
+.p11-register-heading>small{font:9px Consolas,monospace;color:#91a8ba}
+.p11-register-heading .binary-byte{margin:0;gap:8px;color:#a1dae4;font:700 16px Consolas,monospace}
+.p11-chain .p11-register .bit-weights{margin-top:7px}
+.p11-chain .p11-register-board{height:100%;max-height:none;min-height:0;aspect-ratio:auto}
+.p11-chain .weight-equation{font-size:12px;margin:1px 0 0;color:#91b9ca}
+.p11-decoder-stage{margin:2px 0 0}
+.p11-equipment-output{box-sizing:border-box;display:grid;grid-template-columns:90px minmax(160px,1fr) 190px;gap:18px;align-items:center;width:min(790px,90%);margin:0 auto;padding:7px 16px;background:#112536;border:1px solid #506b80;border-radius:9px;box-shadow:inset 0 2px 8px #03152266}
+.p11-equipment-icon{width:80px;height:82px}
+.p11-equipment-icon .sensor-art{width:100%;height:100%;max-height:none}
+.decoder-console .p11-equipment-output .numeric-display{display:flex;flex-direction:column;gap:2px;align-items:center;justify-content:center;padding:3px 10px;margin:0;background:#091c2b;border-width:3px;min-width:0;text-align:center}
+.p11-equipment-output .numeric-display>small{font:9px Consolas,monospace;letter-spacing:1px;color:#a4bccb}
+.p11-equipment-output .numeric-display>div{display:flex;align-items:baseline;gap:13px}
+.decoder-console .p11-equipment-output .numeric-display strong{font-size:58px;letter-spacing:2px;line-height:1.1}
+.p11-equipment-output .numeric-display span{font-size:22px}
+.p11-operating-range{display:flex;flex-direction:column;gap:7px;text-align:center}
+.p11-operating-range small{font:9px/1.4 Consolas,monospace;color:#9cb4c7}
+.p11-operating-range strong{font:700 15px Consolas,monospace;color:#afe4ec}
+.motor-console .p11-operating-range strong{color:#ebcc98}
+.decoder-console .console-working{padding:10px 16px}
+.decoder-console .binary-feedback{font-size:12px}
+@media(max-height:780px),(max-width:1050px){
+ .interpretation-selector{width:min(560px,96%);padding:3px 10px 4px;border-width:2px}
+ .interpretation-selector legend{font-size:11px;letter-spacing:1px}
+ .interpretation-control{min-height:58px;grid-template-columns:minmax(72px,1fr) minmax(120px,2.4fr) minmax(72px,1fr);gap:7px}
+ .interpretation-label{font-size:14px;gap:5px;letter-spacing:.5px}
+ .interpretation-label i{width:7px;height:7px}
+ .interpretation-rail{height:56px}
+ .interpretation-state{font-size:8px}
+ .decoder-conduit{height:11px}
+ .signed-binary-console .console-working{gap:3px;grid-template-rows:auto auto auto minmax(84px,1fr) auto 62px auto}
+ .signed-binary-console .binary-task{font-size:13px}
+ .signed-binary-console .binary-target .binary-task{font-size:24px}
+ .signed-binary-console .binary-target p{font-size:9px}
+ .signed-binary-console .signed-register-heading{font-size:9px;padding:0 5px}
+ .signed-register-heading [data-binary-pattern]{font-size:15px}
+ .signed-register-heading small{font-size:8px}
+ .signed-binary-console .binary-output-area{grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr);gap:8px}
+ .signed-binary-console .binary-decimal{width:150px;min-height:60px;padding:3px 6px}
+ .signed-binary-console .binary-decimal strong{font-size:40px}
+ .signed-binary-console .binary-calculation [data-active-weights],.signed-binary-console .binary-equation{font-size:13px}
+ .signed-binary-console .binary-answer-label{width:150px;padding:3px 7px;font-size:9px}
+ .signed-binary-console .binary-answer-label input{font-size:24px;width:95px;padding:2px}
+ .signed-binary-console .decoder-covered-output{min-width:210px;padding:12px;font-size:9px}
+ .signed-binary-console .binary-greg-status{min-height:43px;padding:5px 8px}
+ .signed-binary-console .binary-greg-status img{width:25px;height:32px}
+ .signed-binary-console .binary-feedback{font-size:11px}
+ .decoder-console .console-working{padding:7px 11px}
+ .decoder-console .decoder-body.p11-chain{grid-template-rows:minmax(111px,1fr) auto auto}
+ .p11-register-heading{font-size:10px;gap:8px;padding:0 5px}
+ .p11-register-heading .binary-byte{font-size:13px;gap:5px}
+ .p11-register-heading>small{font-size:8px}
+ .p11-chain .p11-register .bit-weights{margin-top:4px}
+ .p11-chain .weight-equation{font-size:10px}
+ .p11-equipment-output{grid-template-columns:58px minmax(130px,1fr) 150px;gap:10px;width:min(650px,95%);padding:5px 10px}
+ .p11-equipment-icon{width:54px;height:63px}
+ .decoder-console .p11-equipment-output .numeric-display strong{font-size:42px}
+ .p11-equipment-output .numeric-display span{font-size:17px}
+ .p11-operating-range strong{font-size:12px}
+ .p11-operating-range small{font-size:8px}
+ .decoder-console .binary-feedback{font-size:11px}
+}
+@media(max-width:620px){
+ .interpretation-label{font-size:11px;letter-spacing:0}
+ .interpretation-control{grid-template-columns:minmax(58px,1fr) minmax(95px,2fr) minmax(62px,1fr);gap:4px}
+ .interpretation-selector{width:98%;padding:3px 5px}
+ .interpretation-selector legend{font-size:9px}
+ .interpretation-rail{height:48px}
+ .p11-register-heading>small{display:none}
+ .p11-register-heading .binary-byte{font-size:11px;gap:3px}
+ .p11-equipment-output{grid-template-columns:38px minmax(90px,1fr) 95px;gap:7px;padding:5px;width:98%}
+ .p11-equipment-icon{width:38px;height:48px}
+ .p11-operating-range strong{font-size:10px}
+ .p11-operating-range small{font-size:7px}
+ .decoder-console .p11-equipment-output .numeric-display strong{font-size:34px}
+ .signed-register-heading>strong{font-size:8px;letter-spacing:0}
+ .signed-register-heading small{display:none}
+ .signed-binary-console .binary-output-area{grid-template-columns:minmax(0,1fr) 110px 12px}
+ .signed-binary-console .binary-decimal,.signed-binary-console .binary-answer-label{width:110px}
+}
+@media(prefers-reduced-motion:reduce){.interpretation-weight-flash,.decoder-output-flash,.signed-reading-confirmed .garden-input-module.high{animation:none!important}}
+.reduced-motion .interpretation-weight-flash,.reduced-motion .decoder-output-flash{animation:none!important}

@@ -1,0 +1,54 @@
+/* Circuit maintenance cabinet: four sections, one unobstructed working surface. */
+
+.repair.workbench{inset:1.4% 1.2%;display:grid;grid-template-rows:9% minmax(0,1fr) 8% 14%;grid-template-columns:minmax(0,1fr);gap:.7%;padding:.9% 1.1% 1.1%;border:3px solid #161d27;border-radius:17px;background:linear-gradient(115deg,#4e596a,#292f3b 44%,#394350);box-shadow:inset 0 0 0 2px #939a9d,inset 0 0 0 6px #303948,0 4px #10151e;overflow:hidden}
+.workbench .repair-top{display:flex;align-items:stretch;gap:1.1cqw;padding:0 0 0 5cqw;border:0;min-height:0}
+.workbench .repair-top h2{display:flex;align-items:center;min-width:0;max-width:calc(100% - 7cqw);height:100%;margin:0;padding:0 2.8cqw 0 2.2cqw;border:3px solid #ba9156;outline:2px solid #131b26;border-radius:5px;background:linear-gradient(#353c47,#202733);clip-path:polygon(2% 0,100% 0,97% 100%,0 100%);font:bold clamp(14px,2.65cqw,45px)/1.05 Georgia,serif;color:#fff0cc;text-shadow:0 2px #0b1018;white-space:nowrap}
+.workbench .repair-close{left:-.45cqw;top:-.25cqw;width:4.8cqw;height:4.8cqw;min-width:30px;min-height:30px;max-height:115%;border:3px solid #121a23;background:linear-gradient(135deg,#f6d795,#c1914d);box-shadow:inset 0 0 0 3px #907044,inset 0 0 0 5px #ffe5a2,0 3px #111923;color:#111720;font:normal 4.5cqw/.8 Arial,sans-serif}
+.workbench .header-hazard{align-self:center;width:6cqw;height:47%;border:2px solid #111923;transform:skew(-20deg);background:repeating-linear-gradient(125deg,#d8a637 0 12px,#d8a637 12px,#29313e 13px 23px);opacity:.75}
+.workbench-main{display:grid;grid-template-columns:minmax(0,4.4fr) minmax(0,1fr);gap:1%;min-height:0}
+.workbench .board-wrap{display:block;position:relative;min-height:0;margin:0;border:3px solid #111924;border-radius:9px;background:#333d4c;box-shadow:inset 0 0 0 2px #87919c,0 2px #737d86;overflow:hidden}
+.workbench .board{display:block;width:100%;height:100%;overflow:hidden;outline-offset:-4px}
+.workbench .clock-caption{font:bold 10px 'Trebuchet MS',Arial,sans-serif;fill:#e6c67f;letter-spacing:.5px}
+.workbench .board-trash{position:absolute;right:1.2%;bottom:2%;display:grid;place-items:center;width:6.7%;height:11.4%;min-width:32px;min-height:32px;max-width:70px;max-height:64px;padding:.7cqw;border:3px solid #111923;border-radius:8px;background:linear-gradient(#5d6b80,#303b4e);box-shadow:inset 0 0 0 2px #a58c61,0 2px #101722;color:#e7ddc5;z-index:3;touch-action:manipulation}
+.workbench .board-trash svg{width:100%;height:100%;max-width:34px;max-height:36px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.workbench .board-trash:hover,.workbench .board-trash.has-selection{border-color:#d7b56e;color:#fff0c9}
+.workbench .board-trash.drag-over{background:#a54c3b;border-color:#ffe2a3;box-shadow:inset 0 0 0 2px #ffc98b,0 0 16px #f0b76588;transform:scale(1.06)}
+.workbench-actions{display:grid;grid-template-rows:repeat(4,minmax(0,1fr));gap:5%;padding:2.5% 1% 7%;min-width:0;min-height:0;border-left:2px solid #161e29}
+.workbench-action{position:relative;display:flex;align-items:center;justify-content:center;gap:.7cqw;width:100%;min-width:0;min-height:0;margin:0;padding:.5cqw .7cqw;border:3px solid #131b26;border-radius:9px;background:linear-gradient(#394a60,#202c3e);box-shadow:inset 0 0 0 2px #9dabb8,inset 0 5px 8px #dae4ef22,0 3px #101620;color:#ffedc8;font:bold clamp(9px,1.15cqw,20px)/1.1 'Trebuchet MS',Arial,sans-serif;touch-action:manipulation}
+.workbench-action:before,.workbench-action:after{content:'';position:absolute;width:.5cqw;height:.5cqw;min-width:4px;min-height:4px;border:1px solid #181b1e;border-radius:50%;background:#c69b58;box-shadow:0 1px #080f18;pointer-events:none;top:.45cqw}
+.workbench-action:before{left:.45cqw}.workbench-action:after{right:.45cqw}
+.workbench-action svg{width:clamp(18px,2.2cqw,38px);height:clamp(18px,2.2cqw,38px);flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.workbench-action span{pointer-events:none}
+.workbench-action.engage-action{background:linear-gradient(#9cd96a,#559b3a);box-shadow:inset 0 0 0 2px #c4ed98,inset 0 6px 8px #edffc644,0 3px #101620;color:#102211}
+.workbench-action.hint-action{background:linear-gradient(#f4d49a,#c49756);box-shadow:inset 0 0 0 2px #ffe9b9,inset 0 5px 8px #fff2c244,0 3px #101620;color:#2c261d}
+.workbench-action:hover{filter:brightness(1.17)}.workbench-action:focus-visible,.workbench .board-trash:focus-visible{outline:3px solid #ffe2a1;outline-offset:2px}.workbench-action:active{transform:translateY(2px)}
+.workbench .repair-brief{display:flex;align-items:center;gap:1.2%;min-height:0;padding:.45% 1.1%;border:2px solid #111c2a;border-radius:7px;background:linear-gradient(#354153,#232d3c);box-shadow:inset 0 1px #7c8798;overflow:hidden}
+.workbench .repair-feedback{flex:1;min-width:0;min-height:0;margin:0;color:#f7e8c7;font:clamp(9px,1.03cqw,18px)/1.24 'Trebuchet MS',Arial,sans-serif}
+.workbench .repair-feedback.error{color:#ffd2a4}
+.workbench .repair-spec{flex:0 1 36%;max-width:40%;padding-left:1.1%;border-left:1px solid #758092;font:bold clamp(9px,1.08cqw,18px)/1.2 Consolas,monospace;white-space:normal;color:#ffd05f}
+.repair.workbench .repair-tray{display:block;min-height:0;padding:.4% .9% .6%;border:2px solid #18212d;border-radius:8px;background:linear-gradient(#3c485a,#222d3c);box-shadow:inset 0 0 0 1px #87909d}
+.repair.workbench .repair-tray .parts-tray{display:grid;grid-template-columns:repeat(var(--part-count),minmax(0,1fr));grid-template-rows:24% minmax(0,1fr);column-gap:.65%;row-gap:3%;height:100%;min-width:0;margin:0;padding:0;border:0;background:none}
+.repair.workbench .parts-tray>span{grid-column:1/-1;align-self:center;margin:0;font:bold clamp(9px,1.1cqw,18px)/1 'Trebuchet MS',Arial,sans-serif;color:#fff0cd}
+.repair.workbench .parts-tray .part{display:flex;align-items:center;justify-content:center;gap:.65cqw;width:100%;min-width:0;height:100%;min-height:0;max-width:19cqw;padding:.25cqw .5cqw;margin:0;border:2px solid #151c27;border-radius:8px;background:linear-gradient(#f4d69a,#c99b59);box-shadow:inset 0 0 0 2px #ffe8b0,0 2px #101722;font:bold clamp(9px,1.1cqw,18px)/1.05 'Trebuchet MS',Arial,sans-serif;color:#202320}
+.repair.workbench .parts-tray .part svg{width:3.1cqw;height:2.5cqw;min-width:18px;min-height:17px;max-height:90%;flex:none}
+.repair.workbench .parts-tray .part:hover{background:#ffe2a0}.workbench>#monitor-host{display:contents}
+.workbench .test-monitor{inset:6% 5%;border-color:#bd985f;background:#263345;z-index:8}
+@media(max-width:760px){.repair.workbench{inset:1%;padding:1%;border-width:2px;border-radius:10px;grid-template-rows:9% minmax(0,1fr) 10% 15%}.workbench .repair-top h2{border-width:2px;font-size:2.55cqw;padding-left:2.3cqw}.workbench .repair-close{border-width:2px}.workbench .board-wrap{border-width:2px}.workbench-main{grid-template-columns:minmax(0,4.2fr) minmax(0,1fr)}.workbench-actions{gap:4%;padding-bottom:4%}.workbench-action{border-width:2px;border-radius:6px;gap:.4cqw;padding:.5cqw .2cqw;font-size:clamp(8px,1.15cqw,11px)}.workbench-action svg{min-width:14px;width:2.7cqw;height:2.7cqw}.workbench .repair-feedback,.workbench .repair-spec{font-size:clamp(8px,1.15cqw,11px)}.repair.workbench .parts-tray .part{gap:.25cqw;border-radius:5px;font-size:clamp(7px,1.2cqw,11px)}.repair.workbench .parts-tray .part svg{min-width:14px;min-height:14px;width:2.7cqw;height:2.4cqw}.workbench .board-trash{padding:.5cqw;border-width:2px}}
+@media(max-aspect-ratio:1/1){.workbench-actions .workbench-action{flex-direction:column;gap:7px;font-size:clamp(9px,2cqw,14px)}.workbench-action svg{width:6cqw;height:6cqw}.workbench .repair-top h2{font-size:3cqw}.workbench .repair-spec{display:none}.repair.workbench .repair-tray .parts-tray{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:18% repeat(2,minmax(0,1fr));gap:5% 1%}.repair.workbench .parts-tray .part{max-width:none;font-size:2.4cqw}.repair.workbench .parts-tray .part svg{width:4cqw;height:4cqw}.workbench .repair-feedback{font-size:2.6cqw}}
+.workbench .board.panning,.workbench .board.panning .node{cursor:grabbing}
+.workbench .part{touch-action:none}.workbench .part.placing-part{cursor:grabbing;opacity:.65}.workbench .board-wrap.accepts-part{border-color:#dfba74;box-shadow:inset 0 0 0 2px #e7bd70,0 0 12px #e6b25444}
+.part-ghost{position:fixed;z-index:25;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;gap:8px;pointer-events:none;width:clamp(90px,11cqw,170px);height:clamp(40px,5cqw,72px);border:3px solid #171e29;border-radius:8px;background:linear-gradient(#f7dba1,#cfa261);box-shadow:inset 0 0 0 2px #ffeab5,0 6px 16px #090e1888;color:#20241f;font:bold clamp(11px,1.2cqw,20px) 'Trebuchet MS',Arial,sans-serif}.part-ghost svg{width:32px;height:28px;pointer-events:none}
+
+/* Physical stock stays in the existing tray/satchel; the board keeps its full working area. */
+.part-stock{display:block;margin-top:.3em;font:normal clamp(9px,.9cqw,14px)/1.15 'Trebuchet MS',sans-serif;white-space:normal}
+.part[aria-disabled="true"]{filter:saturate(.45);opacity:.65}
+.physical-inventory{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0}
+.stock-card{display:grid;grid-template-columns:40px 1fr;gap:5px 10px;padding:10px;border:1px solid #ba965f;border-radius:6px;background:#263345;color:#f3e5c8}
+.stock-card svg{grid-row:1/4;width:40px;height:34px;fill:none;stroke:#e9c27e;stroke-width:2}
+.stock-card b{color:#f3bd5c}.stock-card small{grid-column:2;font-size:12px;color:#d5c6ab}
+.hotspot:has(.pickup-caption){border:1px solid #d5b47788;border-radius:4px;box-shadow:0 0 8px #e8b65c33}
+.pickup-caption{position:absolute;left:0;bottom:0;max-width:100%;padding:2px 4px;background:#1d2937eb;border:1px solid #9d805a;color:#f3d08e;font:bold clamp(7px,.72vw,12px)/1.1 Arial,sans-serif;pointer-events:none}
+.hotspot[data-state="empty"] .pickup-caption{color:#b3b6bc}.hotspot[data-state="locked"] .pickup-caption{color:#b8a68a}
+.pilot-save-status{position:fixed;z-index:50;left:10%;right:10%;top:12%;padding:14px;border:2px solid #d5b477;border-radius:8px;background:#253243;color:#ffedc9;box-shadow:0 8px 30px #0008;font:16px/1.4 'Trebuchet MS',sans-serif}.pilot-save-status[hidden]{display:none}.pilot-save-status button{margin-left:12px;padding:6px 10px}
+@media(max-width:540px){.physical-inventory{grid-template-columns:1fr}.stock-card small{font-size:11px}.pilot-save-status{left:3%;right:3%;font-size:13px}}
+

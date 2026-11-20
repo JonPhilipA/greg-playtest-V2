@@ -1,0 +1,20 @@
+.circuit-hint-overlay,.circuit-hint-overlay *{pointer-events:none!important}
+.hint-box{fill:#eec36a0b;stroke:#e9bb62;stroke-width:1.5;stroke-dasharray:8 4;animation:hint-glow 3.8s ease-in-out infinite}
+.hint-corners{stroke:#f3cf86;stroke-width:2;fill:none}
+.hint-existing .hint-box{fill:none;stroke-opacity:.55;animation:none}
+.circuit-hint-overlay .gate-symbol{stroke:#ecc772;opacity:.55;fill:#eec36a15}
+.hint-gate-label{fill:#f0ce83;opacity:.75;font:700 13px 'Trebuchet MS',Arial,sans-serif}
+.hint-ghost-wire{fill:none;stroke:#e9be68;stroke-width:2.2;stroke-opacity:.65;stroke-dasharray:7 6;animation:hint-flow 3s linear infinite}
+.hint-terminal{fill:none;stroke:#f3ce82;stroke-width:1.1;stroke-opacity:.65}
+.hint-matched-wire .cable-outline{filter:drop-shadow(0 0 1px #e4bb6d)}
+.circuit-hint-guidance{display:flex;align-items:center;gap:8px;color:#edcd89;font:12px/1.25 'Trebuchet MS',Arial,sans-serif;min-width:0}
+.circuit-hint-guidance[hidden]{display:none}
+.circuit-hint-guidance p{margin:0!important;flex:1;min-width:0;color:inherit!important;font:inherit!important}
+.circuit-hint-guidance button{flex:0 0 auto;border:1px solid #a88d5c;border-radius:4px;background:#27394c;color:#f0d39d;padding:3px 8px;min-height:26px;font:700 10px 'Trebuchet MS',Arial,sans-serif}
+.repair-instructions.has-circuit-hints #repair-feedback:not(.error){display:none}
+.repair-brief.p01-guided .repair-instructions.has-circuit-hints #repair-feedback{display:block}
+@keyframes hint-glow{0%,100%{stroke-opacity:.55}50%{stroke-opacity:.95}}
+@keyframes hint-flow{to{stroke-dashoffset:-39}}
+@media(max-width:1000px),(max-height:720px){.circuit-hint-guidance{font-size:10px;gap:5px}.circuit-hint-guidance button{padding:2px 5px;font-size:9px;min-height:23px}}
+@media(prefers-reduced-motion:reduce){.hint-box,.hint-ghost-wire{animation:none}}
+html[data-reduced-motion=true] .hint-box,html[data-reduced-motion=true] .hint-ghost-wire{animation:none}

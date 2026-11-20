@@ -1,0 +1,61 @@
+/* Shared circuit-editor results. The board and its evaluated signals retain their full size. */
+.game .verification-window{position:relative}
+.game .verification-window.is-results,.game .verification-window.is-results.truth-table-open{grid-template-rows:auto minmax(0,1fr)}
+.game .verification-window .verification-circuit{grid-column:1;min-height:0}
+.game .verification-window .verification-summary:not([hidden]){position:absolute;inset:0;z-index:3;display:grid;place-items:center;padding:22px;background:#07131fb5;border:0;border-radius:6px;box-shadow:none;overflow:hidden;max-height:none;box-sizing:border-box}
+.game .verification-window .verification-result-copy.completion-card{position:relative;width:min(610px,100%);max-height:100%;box-sizing:border-box;display:grid;justify-items:center;gap:9px;padding:24px 30px 25px;border:2px solid #bc995e;border-radius:13px;background:linear-gradient(145deg,#304354,#182b3b 65%,#142534);color:#f4e7cb;box-shadow:0 16px 45px #020c15aa,inset 0 0 0 4px #111f2d,inset 0 0 0 5px #7d745a;text-align:center;overflow:hidden}
+.game .completion-card:before,.game .completion-card:after{content:'';position:absolute;top:14px;width:8px;height:8px;border:1px solid #1b2027;border-radius:50%;background:#d1aa69;box-shadow:inset 0 1px 1px #fff0ba}
+.game .completion-card:before{left:14px}.game .completion-card:after{right:14px;top:auto;bottom:14px}
+.game .verification-window .completion-close{position:absolute;right:12px;top:12px;display:grid;place-items:center;width:34px;height:34px;padding:0;border:1px solid #a48d63;border-radius:6px;background:#142637;color:#f7dfac;font:26px/1 Arial,sans-serif;cursor:pointer}
+.game .completion-card .verification-status-label{padding:0 22px;font:10px/1.4 Consolas,monospace;letter-spacing:.15em;color:#c7b58c}
+.game .completion-card .verification-status-label i{display:none}
+.game .verification-window .completion-card h3{margin:0;color:#fff1ce;font:bold 29px/1.15 Georgia,serif;letter-spacing:.025em;text-shadow:0 2px #101c28}
+.game .completion-emblem{width:124px;height:102px;filter:drop-shadow(0 0 12px #70d4c233);animation:completion-arrive .32s ease-out both}
+.game .completion-indicator{animation:completion-light .25s ease-out both}.game .indicator-0{animation-delay:.1s}.game .indicator-1{animation-delay:.2s}.game .indicator-2{animation-delay:.3s}
+.game .completion-card .completion-puzzle{margin:0;max-width:100%;color:#f2d69d;font:bold 19px/1.2 'Trebuchet MS',sans-serif;text-transform:uppercase;overflow-wrap:anywhere}
+.game .verification-window .completion-card .verification-score{font:700 16px/1.2 Consolas,monospace;color:#b9e5d7}
+.game .completion-rewards{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin-top:3px}
+.game .completion-rewards>div{display:grid;gap:3px;padding:9px 8px;border:1px solid #6e7c80;border-radius:6px;background:#1022308c}
+.game .completion-rewards:not(:has(.reward-bonus)) .reward-base{grid-column:1/-1}
+.game .completion-rewards span{font:10px/1.3 Consolas,monospace;letter-spacing:.07em;color:#c9d2cc}
+.game .completion-rewards strong{font:bold 25px/1.1 'Trebuchet MS',sans-serif;color:#ffe2a2;white-space:nowrap}
+.game .completion-rewards strong small{font-size:12px;letter-spacing:.04em}
+.game .completion-rewards .reward-bonus{border-color:#709b8d}.game .reward-bonus span,.game .reward-bonus strong{color:#bbf1d8}
+.game .completion-rewards .reward-total{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;border:0;background:none;padding:5px 3px 0}.game .reward-total strong{font-size:24px}
+.game .verification-window .completion-card .diagnostic-outcome{justify-self:stretch;margin:0;padding:4px 0;background:none;border:0;color:#bcd0d6;font:13px/1.3 'Trebuchet MS',sans-serif}
+.game .verification-window .completion-card .diagnostic-controls{width:100%;display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:2px 0 0}
+.game .verification-window .completion-card .diagnostic-controls button{flex:1 1 190px;min-height:46px;padding:10px 14px;font:bold 13px/1.2 'Trebuchet MS',sans-serif;white-space:normal}
+.game .verification-window .verification-engage{background:linear-gradient(#ffe2a4,#c39756);color:#1b2934;border-color:#ddbd7f;box-shadow:inset 0 0 0 1px #fff0be,0 3px #0b1721}
+.game .completion-card .diagnostic-note{margin:0;color:#c3cfd6;font-size:11px}
+.game .completion-failure .failure-indicator{display:grid;place-items:center;width:58px;height:54px;color:#f0bd6b;font:44px/1 Arial,sans-serif}
+.game .verification-window .completion-failure h3{color:#ffd398}
+.game .verification-window .completion-failure .verification-score{color:#d9d6c5}
+.game .completion-failure .verification-failed-count{margin:0;color:#efbe85;font:bold 13px/1.2 Consolas,monospace}
+.game .verification-window .completion-card .verification-failure{width:100%;box-sizing:border-box;display:grid;grid-template-columns:1fr;gap:5px;padding:13px 16px;border:1px solid #967246;background:#352e2b;text-align:left;color:#ffe0ae;font:13px/1.3 Consolas,monospace}
+.game .completion-card .verification-failure>strong{font-size:10px;letter-spacing:.1em;color:#e8b97b}
+.game .completion-card .verification-failed-input{margin:0;font-weight:bold;overflow-wrap:anywhere}
+.game .verification-window .completion-card .verification-failure dl{display:grid;grid-template-columns:135px minmax(0,1fr);gap:5px 9px;margin:3px 0;font:12px/1.3 Consolas,monospace}
+.game .completion-card .verification-failure dt{font-size:10px;align-self:center;color:#d9b888}.game .completion-card .verification-failure dd{margin:0;overflow-wrap:anywhere}
+.game .completion-card .behavior-mismatch{margin:0;padding-top:6px;border-top:1px solid #735a40;color:#decbb2;font:12px/1.35 'Trebuchet MS',sans-serif}
+.game .verification-window .verification-truth-view{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:14px;width:min(1080px,100%);height:min(690px,100%);max-height:100%;box-sizing:border-box;padding:22px;border:2px solid #b99a64;border-radius:10px;background:#1c3041;box-shadow:0 12px 40px #030e18aa;color:#f4e4c6;overflow:hidden}
+.game .verification-truth-view>header{padding-right:36px;text-align:left}.game .verification-truth-view h3{margin:3px 0;font:bold 23px/1.2 Georgia,serif;color:#ffe3a5}.game .verification-truth-view header small{color:#c2af88;font:10px/1.2 Consolas,monospace;letter-spacing:.1em}.game .verification-truth-view header p{margin:4px 0;font:13px/1.2 Consolas,monospace;color:#c5dedb}
+.game .verification-truth-view .diagnostic-table-wrap{max-height:none;overflow:auto;min-height:0;border:1px solid #7b8994}
+.game .verification-truth-view table{width:100%;border-collapse:collapse;text-align:center;font:13px/1.4 Consolas,monospace}
+.game .verification-truth-view th{position:sticky;top:0;background:#2e4558;color:#ffdda2;z-index:1}.game .verification-truth-view td,.game .verification-truth-view th{padding:10px 7px;border-bottom:1px solid #5e7481}
+.game .verification-truth-view tr.pass{background:#223e3e;color:#d3e9d9}.game .verification-truth-view tr.fail{background:#664331;color:#ffe1b3;box-shadow:inset 4px 0 #ffc66e}.game .verification-truth-view tr.fail td:last-child{font-weight:bold;color:#ffe4ad}
+.game .verification-truth-view .diagnostic-controls{justify-content:center}.game .verification-truth-view .diagnostic-controls button{min-height:44px;padding:9px 18px;font-size:13px}
+.game .verification-window button:focus-visible{outline:3px solid #ffe5a8;outline-offset:3px}
+@keyframes completion-arrive{from{opacity:0;transform:scale(.86) translateY(5px)}to{opacity:1;transform:none}}
+@keyframes completion-light{from{opacity:.2;filter:none}to{opacity:1;filter:drop-shadow(0 0 3px #a7ffe4)}}
+@media(max-height:740px),(max-width:650px){.game .verification-window .verification-summary:not([hidden]){padding:12px}.game .verification-window .verification-result-copy.completion-card{padding:17px 20px;gap:6px}.game .verification-window .completion-card h3{font-size:24px}.game .completion-emblem{width:88px;height:72px}.game .completion-card .completion-puzzle{font-size:16px}.game .completion-rewards>div{padding:7px}.game .completion-rewards strong{font-size:22px}.game .completion-card .verification-score{font-size:14px}.game .verification-window .completion-card .diagnostic-controls button{min-height:42px;padding:8px 10px;font-size:12px}.game .verification-truth-view td,.game .verification-truth-view th{padding:7px 5px;font-size:12px}.game .verification-window .verification-truth-view{padding:16px;gap:9px}}
+@media(max-height:560px){.game .verification-window .completion-card{gap:4px!important;padding:12px 18px!important}.game .completion-emblem{width:62px;height:50px}.game .verification-window .completion-card h3{font-size:21px}.game .completion-rewards>div{padding:5px}.game .completion-rewards strong{font-size:20px}.game .completion-card .verification-status-label{font-size:9px}.game .completion-failure .failure-indicator{height:35px;font-size:32px}.game .completion-card .diagnostic-outcome{font-size:11px!important}}
+@media(max-width:450px){.game .verification-window .completion-card h3{font-size:22px}.game .completion-card .completion-puzzle{font-size:14px}.game .completion-rewards strong small{font-size:9px}.game .completion-rewards strong{font-size:20px}.game .completion-rewards .reward-total{gap:6px}.game .completion-rewards .reward-total strong{font-size:20px}.game .verification-window .completion-card .diagnostic-controls button{flex-basis:100%}.game .verification-window .completion-card .verification-failure dl{grid-template-columns:108px minmax(0,1fr);font-size:11px}.game .completion-close{right:8px!important;top:8px!important;width:29px!important;height:29px!important}.game .completion-card .verification-status-label{font-size:8px}}
+.game .verification-window.is-reduced .completion-emblem,.game .verification-window.is-reduced .completion-indicator{animation:none!important}
+@media(prefers-reduced-motion:reduce){.game .completion-emblem,.game .completion-indicator{animation:none!important}}
+
+/* Decoder details reuse the circuit completion card, emblem, rewards and actions. */
+.game .verification-window.p11-completion-overlay{position:absolute;inset:0;z-index:9;width:100%;height:100%;margin:0;padding:0;display:block;border:0;background:none;box-shadow:none;overflow:hidden}
+.game .p11-completion-overlay .verification-score{margin:0}.decoder-result-rows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}.decoder-result-row{display:grid;gap:4px;padding:8px;border:1px solid #5e7f85;border-radius:5px;background:#142b38;color:#cbeee4;font:12px/1.3 'Trebuchet MS',Arial,sans-serif}.decoder-result-row span{color:#c3d5df}.decoder-result-row b{white-space:nowrap;color:#f4dfab}
+@container(max-width:1155px){.game .p11-completion-overlay .completion-card{padding:12px 18px;gap:5px}.game .p11-completion-overlay .completion-emblem{width:70px;height:56px}.game .p11-completion-overlay h3{font-size:22px}.game .p11-completion-overlay .completion-puzzle{font-size:15px}.game .p11-completion-overlay .completion-rewards>div{padding:5px}.game .p11-completion-overlay .completion-rewards strong{font-size:20px}.game .p11-completion-overlay .decoder-result-row{padding:5px;font-size:11px}}
+
+@container(max-width:960px){.game .p11-completion-overlay .verification-summary{padding:8px}.game .p11-completion-overlay .completion-card{padding:10px 16px;gap:4px}.game .p11-completion-overlay .completion-emblem{width:58px;height:46px}.game .p11-completion-overlay h3{font-size:20px}.game .p11-completion-overlay .completion-puzzle{font-size:14px}.game .p11-completion-overlay .completion-rewards{gap:4px}.game .p11-completion-overlay .completion-rewards>div{padding:4px}.game .p11-completion-overlay .decoder-result-row{padding:4px;gap:2px}}

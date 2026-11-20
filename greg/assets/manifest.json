@@ -1,0 +1,1053 @@
+{
+  "version": 4,
+  "canvas": {
+    "width": 1920,
+    "height": 1080,
+    "logicalWidth": 480,
+    "logicalHeight": 270,
+    "scale": "smooth SVG at 4x"
+  },
+  "palette": [
+    "#171d26",
+    "#2b313d",
+    "#4b5364",
+    "#818b9a",
+    "#efe0bd",
+    "#d4a564",
+    "#a53b3c",
+    "#d89c27",
+    "#295c94"
+  ],
+  "images": {
+    "engine": {
+      "file": "rooms/engine-room.svg",
+      "size": [
+        1920,
+        1080
+      ],
+      "logicalSize": [
+        480,
+        270
+      ],
+      "purpose": "Illustrated wall plates, floor and structural beams. Machinery is separate."
+    },
+    "corridor": {
+      "file": "rooms/maintenance-corridor.svg",
+      "size": [
+        1920,
+        1080
+      ],
+      "logicalSize": [
+        480,
+        270
+      ],
+      "purpose": "Related corridor architecture; separate security machinery."
+    },
+    "enginePipes": {
+      "file": "rooms/engine-pipes.svg",
+      "size": [
+        1920,
+        840
+      ],
+      "logicalSize": [
+        480,
+        210
+      ],
+      "purpose": "Overhead red/yellow pipes and individually mounted straps."
+    },
+    "corridorPipes": {
+      "file": "rooms/corridor-conduits.svg",
+      "size": [
+        1920,
+        840
+      ],
+      "logicalSize": [
+        480,
+        210
+      ],
+      "purpose": "Blue supply conduit, red power and yellow control loom."
+    },
+    "lantern": {
+      "file": "objects/wall-lantern.svg",
+      "size": [
+        128,
+        212
+      ],
+      "logicalSize": [
+        32,
+        53
+      ],
+      "purpose": "Warm caged lamp with local glow."
+    },
+    "vent": {
+      "file": "objects/ventilation-cabinet.svg",
+      "size": [
+        392,
+        504
+      ],
+      "logicalSize": [
+        98,
+        126
+      ],
+      "purpose": "Brass ventilation cabinet. Rotor and signal lamps remain separate."
+    },
+    "fan": {
+      "file": "sprites/fan-rotor.svg",
+      "size": [
+        248,
+        248
+      ],
+      "logicalSize": [
+        62,
+        62
+      ],
+      "purpose": "Independent three-blade smooth rotating rotor."
+    },
+    "gauge": {
+      "file": "objects/pressure-gauge.svg",
+      "size": [
+        208,
+        208
+      ],
+      "logicalSize": [
+        52,
+        52
+      ],
+      "purpose": "Analogue face; live needle composed separately."
+    },
+    "sensor": {
+      "file": "objects/signal-sensor.svg",
+      "size": [
+        96,
+        156
+      ],
+      "logicalSize": [
+        24,
+        39
+      ],
+      "purpose": "Manual signal sensor housing; live indicator drawn separately."
+    },
+    "panel": {
+      "file": "objects/service-cover.svg",
+      "size": [
+        196,
+        236
+      ],
+      "logicalSize": [
+        49,
+        59
+      ],
+      "purpose": "Closed hinged wrench-marked service box with lamp and cable glands."
+    },
+    "harness": {
+      "file": "objects/control-harness.svg",
+      "size": [
+        448,
+        252
+      ],
+      "logicalSize": [
+        112,
+        63
+      ],
+      "purpose": "Separate bundled control cables below the maintenance cover."
+    },
+    "vessel": {
+      "file": "objects/pressure-vessel.svg",
+      "size": [
+        260,
+        548
+      ],
+      "logicalSize": [
+        65,
+        137
+      ],
+      "purpose": "Pressure tank with amber sight glass and brass retaining bands."
+    },
+    "locker": {
+      "file": "objects/engineer-locker.svg",
+      "size": [
+        192,
+        188
+      ],
+      "logicalSize": [
+        48,
+        47
+      ],
+      "purpose": "Wooden two-drawer maintenance cabinet and pass location."
+    },
+    "engineFrame": {
+      "file": "objects/maintenance-frame.svg",
+      "size": [
+        448,
+        584
+      ],
+      "logicalSize": [
+        112,
+        146
+      ],
+      "purpose": "Fixed outer door frame."
+    },
+    "securityFrame": {
+      "file": "objects/security-frame.svg",
+      "size": [
+        424,
+        580
+      ],
+      "logicalSize": [
+        106,
+        145
+      ],
+      "purpose": "Fixed archive bulkhead frame."
+    },
+    "engineHatch": {
+      "file": "objects/maintenance-hatch.svg",
+      "size": [
+        352,
+        464
+      ],
+      "logicalSize": [
+        88,
+        116
+      ],
+      "purpose": "Independent left and right maintenance door leaves."
+    },
+    "bulkhead": {
+      "file": "objects/security-bulkhead.svg",
+      "size": [
+        320,
+        496
+      ],
+      "logicalSize": [
+        80,
+        124
+      ],
+      "purpose": "Independent archive bulkhead leaves."
+    },
+    "reader": {
+      "file": "objects/authorization-reader.svg",
+      "size": [
+        112,
+        168
+      ],
+      "logicalSize": [
+        28,
+        42
+      ],
+      "purpose": "Pass reader with separate status lamp and installed card."
+    },
+    "archive": {
+      "file": "objects/maintenance-archive.svg",
+      "size": [
+        112,
+        152
+      ],
+      "logicalSize": [
+        28,
+        38
+      ],
+      "purpose": "Physical archive record in secured alcove."
+    },
+    "toolbox": {
+      "file": "objects/toolbox.svg",
+      "size": [
+        164,
+        124
+      ],
+      "logicalSize": [
+        41,
+        31
+      ],
+      "purpose": "Independent red engineer toolbox."
+    },
+    "greg": {
+      "file": "sprites/greg-terminal.svg",
+      "size": [
+        160,
+        208
+      ],
+      "logicalSize": [
+        40,
+        52
+      ],
+      "purpose": "Brass AI body, face overdrawn independently for expressions."
+    },
+    "engineer": {
+      "file": "sprites/engineer-strip.svg",
+      "size": [
+        256,
+        128
+      ],
+      "logicalSize": [
+        64,
+        32
+      ],
+      "purpose": "Smooth illustrated engineer idle and three walking poses.",
+      "frame": [
+        64,
+        128
+      ],
+      "logicalFrame": [
+        16,
+        32
+      ],
+      "frames": 4
+    },
+    "steam": {
+      "file": "sprites/steam-strip.svg",
+      "size": [
+        256,
+        64
+      ],
+      "logicalSize": [
+        64,
+        16
+      ],
+      "purpose": "Separate soft steam puffs.",
+      "frame": [
+        64,
+        64
+      ],
+      "logicalFrame": [
+        16,
+        16
+      ],
+      "frames": 4
+    },
+    "serviceBoard": {
+      "file": "panels/service-board.svg",
+      "size": [
+        4800,
+        2400
+      ],
+      "logicalSize": [
+        1200,
+        600
+      ],
+      "purpose": "Steel cabinet interior with broad plates, warning stripes and cable loom; no playable wiring."
+    },
+    "sourceContact": {
+      "file": "objects/source-contact.svg",
+      "size": [
+        704,
+        432
+      ],
+      "logicalSize": [
+        176,
+        108
+      ],
+      "purpose": "Large illustrated input module, live switch and readout drawn separately."
+    },
+    "outputContact": {
+      "file": "objects/output-contact.svg",
+      "size": [
+        704,
+        432
+      ],
+      "logicalSize": [
+        176,
+        108
+      ],
+      "purpose": "Large illustrated output module; its display and pilot are read-only."
+    },
+    "logicValve": {
+      "file": "objects/logic-valve.svg",
+      "size": [
+        448,
+        336
+      ],
+      "logicalSize": [
+        112,
+        84
+      ],
+      "purpose": "Brass plug-in logic module. Recognizable gate symbol drawn separately."
+    },
+    "life": {
+      "file": "rooms/life-deck.svg",
+      "size": [
+        1920,
+        1080
+      ],
+      "logicalSize": [
+        480,
+        270
+      ],
+      "purpose": "Illustrated The life-support garden architecture and fixed service conduits; machinery and hitboxes are independent."
+    },
+    "relay": {
+      "file": "rooms/relay-deck.svg",
+      "size": [
+        1920,
+        1080
+      ],
+      "logicalSize": [
+        480,
+        270
+      ],
+      "purpose": "Illustrated The NAND workshop architecture and fixed service conduits; machinery and hitboxes are independent."
+    },
+    "sensors": {
+      "file": "rooms/sensors-deck.svg",
+      "size": [
+        1920,
+        1080
+      ],
+      "logicalSize": [
+        480,
+        270
+      ],
+      "purpose": "Illustrated The listening gallery architecture and fixed service conduits; machinery and hitboxes are independent."
+    },
+    "navigation": {
+      "file": "rooms/navigation-deck.svg",
+      "size": [
+        1920,
+        1080
+      ],
+      "logicalSize": [
+        480,
+        270
+      ],
+      "purpose": "Illustrated The chart room architecture and fixed service conduits; machinery and hitboxes are independent."
+    },
+    "reactor": {
+      "file": "rooms/reactor-deck.svg",
+      "size": [
+        1920,
+        1080
+      ],
+      "logicalSize": [
+        480,
+        270
+      ],
+      "purpose": "Illustrated The reactor heart architecture and fixed service conduits; machinery and hitboxes are independent."
+    },
+    "bridge": {
+      "file": "rooms/bridge-deck.svg",
+      "size": [
+        1920,
+        1080
+      ],
+      "logicalSize": [
+        480,
+        270
+      ],
+      "purpose": "Illustrated The command bridge architecture and fixed service conduits; machinery and hitboxes are independent."
+    },
+    "scrubberBank": {
+      "file": "objects/scrubber-bank.svg",
+      "size": [
+        520,
+        432
+      ],
+      "logicalSize": [
+        130,
+        108
+      ],
+      "purpose": "Two filter fan wells, separate animated rotors, replaceable filter bank and brass housing."
+    },
+    "gardenRack": {
+      "file": "objects/garden-rack.svg",
+      "size": [
+        416,
+        156
+      ],
+      "logicalSize": [
+        104,
+        39
+      ],
+      "purpose": "Small protected life-support plants behind independent glass housing."
+    },
+    "powerCoils": {
+      "file": "objects/power-coils.svg",
+      "size": [
+        520,
+        432
+      ],
+      "logicalSize": [
+        130,
+        108
+      ],
+      "purpose": "NAND spare rack and three-controller status display; actual lighting and latch outputs are separate."
+    },
+    "sensorArray": {
+      "file": "objects/sensor-array.svg",
+      "size": [
+        520,
+        432
+      ],
+      "logicalSize": [
+        130,
+        108
+      ],
+      "purpose": "Circular sensor display with separate sweep and three actual sensor lights; command-isolation receiver."
+    },
+    "chartTable": {
+      "file": "objects/chart-table.svg",
+      "size": [
+        520,
+        432
+      ],
+      "logicalSize": [
+        130,
+        108
+      ],
+      "purpose": "Sloped plotting table with independently drawn course and arithmetic displays."
+    },
+    "reactorCore": {
+      "file": "objects/reactor-core.svg",
+      "size": [
+        520,
+        432
+      ],
+      "logicalSize": [
+        130,
+        108
+      ],
+      "purpose": "Restart reactor vessel, memory rack and isolated supply lines; phase lamps read actual counter bits."
+    },
+    "helmConsole": {
+      "file": "objects/helm-console.svg",
+      "size": [
+        520,
+        432
+      ],
+      "logicalSize": [
+        130,
+        108
+      ],
+      "purpose": "Flight console with real arithmetic, authority displays and physical pilot selector."
+    },
+    "viewPort": {
+      "file": "objects/observation-port.svg",
+      "size": [
+        520,
+        216
+      ],
+      "logicalSize": [
+        130,
+        54
+      ],
+      "purpose": "Independent starboard observation window with stars and the distant refuge moon."
+    },
+    "deckLift": {
+      "file": "objects/crew-deck-lift.svg",
+      "size": [
+        256,
+        312
+      ],
+      "logicalSize": [
+        64,
+        78
+      ],
+      "purpose": "Closed crew-deck lift, independent of the corridor background; indicator drawn from archive access state."
+    },
+    "emergencyLamp": {
+      "file": "objects/emergency-lamp.svg",
+      "size": [
+        88,
+        72
+      ],
+      "logicalSize": [
+        22,
+        18
+      ],
+      "purpose": "Independent battery-backed amber emergency fixture, drawn after the power-outage lighting overlay."
+    },
+    "gardenFar": {
+      "file": "rooms/garden-scroll-background.svg",
+      "size": [
+        6400,
+        1080
+      ],
+      "logicalSize": [
+        1600,
+        270
+      ],
+      "purpose": "Cached continuous Garden gardenFar layer"
+    },
+    "gardenWorld": {
+      "file": "rooms/garden-scroll-world.svg",
+      "size": [
+        5760,
+        1080
+      ],
+      "logicalSize": [
+        1440,
+        270
+      ],
+      "purpose": "Cached continuous Garden gardenWorld layer"
+    },
+    "gardenNear": {
+      "file": "rooms/garden-scroll-foreground.svg",
+      "size": [
+        6400,
+        1080
+      ],
+      "logicalSize": [
+        1600,
+        270
+      ],
+      "purpose": "Cached continuous Garden gardenNear layer"
+    },
+    "looseXor": {
+      "file": "objects/loose-xor.svg",
+      "size": [
+        104,
+        80
+      ],
+      "logicalSize": [
+        28,
+        18
+      ],
+      "purpose": "Loose physical XOR on the Gallery floor with the actual editor symbol"
+    },
+    "looseOr": {
+      "file": "objects/loose-or.svg",
+      "size": [
+        104,
+        80
+      ],
+      "logicalSize": [
+        26,
+        20
+      ],
+      "purpose": "Loose physical OR with the actual editor symbol"
+    },
+    "workshopWorld": {
+      "file": "rooms/workshop-scroll-world.svg",
+      "size": [
+        4608,
+        1080
+      ],
+      "logicalSize": [
+        1152,
+        270
+      ],
+      "purpose": "Continuous electrical distribution and fabrication floor; moving parts remain independent."
+    },
+    "workshopNand": {
+      "file": "objects/workshop-nand.svg",
+      "size": [
+        96,
+        64
+      ],
+      "logicalSize": [
+        24,
+        16
+      ],
+      "purpose": "Separate physical emergency NAND module"
+    },
+    "engineScroll": {
+      "file": "rooms/engine-scroll.svg",
+      "size": [
+        2560,
+        1080
+      ],
+      "logicalSize": [
+        640,
+        270
+      ],
+      "purpose": "Production Phase 4.6B.1 engineScroll"
+    },
+    "corridorScroll": {
+      "file": "rooms/corridor-scroll.svg",
+      "size": [
+        3456,
+        1080
+      ],
+      "logicalSize": [
+        864,
+        270
+      ],
+      "purpose": "Production Phase 4.6B.1 corridorScroll"
+    },
+    "moonExterior": {
+      "file": "rooms/moon-exterior.svg",
+      "size": [
+        1920,
+        1080
+      ],
+      "logicalSize": [
+        480,
+        270
+      ],
+      "purpose": "Production Phase 4.6B.1 moonExterior"
+    },
+    "kestrelShip": {
+      "file": "objects/kestrel-flight.svg",
+      "size": [
+        1920,
+        1080
+      ],
+      "logicalSize": [
+        480,
+        270
+      ],
+      "purpose": "Production Phase 4.6B.1 kestrelShip"
+    },
+    "corridorLocker": {
+      "file": "objects/corridor-locker.svg",
+      "size": [
+        220,
+        264
+      ],
+      "logicalSize": [
+        55,
+        66
+      ],
+      "purpose": "Production Phase 4.6B.1 corridorLocker"
+    },
+    "engineeringFrame": {
+      "file": "objects/engineering-frame.svg",
+      "size": [
+        248,
+        548
+      ],
+      "logicalSize": [
+        62,
+        137
+      ],
+      "purpose": "Production Phase 4.6B.1 engineeringFrame"
+    },
+    "engineeringLeaf": {
+      "file": "objects/engineering-leaf.svg",
+      "size": [
+        172,
+        448
+      ],
+      "logicalSize": [
+        43,
+        112
+      ],
+      "purpose": "Production Phase 4.6B.1 engineeringLeaf"
+    },
+    "lockerAnd": {
+      "file": "objects/locker-and.svg",
+      "size": [
+        184,
+        144
+      ],
+      "logicalSize": [
+        46,
+        36
+      ],
+      "purpose": "Production Phase 4.6B.1 lockerAnd"
+    },
+    "titleBackdrop": {
+      "file": "title/kestrel-stranded.svg",
+      "size": [
+        1920,
+        1080
+      ],
+      "logicalSize": [
+        480,
+        270
+      ],
+      "purpose": "Layered navy/brass vector title illustration; composition retained, menu remains live"
+    },
+    "galleryWorld": {
+      "file": "rooms/listening-gallery-world.svg",
+      "size": [
+        5760,
+        1080
+      ],
+      "logicalSize": [
+        1440,
+        270
+      ],
+      "purpose": "Phase 4.6B.2 illustrated development environment; preview only, no campaign routing change."
+    },
+    "computationWorld": {
+      "file": "rooms/computation-lab-world.svg",
+      "size": [
+        4624,
+        1080
+      ],
+      "logicalSize": [
+        1156,
+        270
+      ],
+      "purpose": "Illustrated engineering classroom and electronics workshop. Five physical arithmetic benches with state-derived recovered whiteboard notes."
+    },
+    "gardenFarStressed": {
+      "file": "rooms/garden-stressed-background.svg",
+      "size": [
+        6400,
+        1080
+      ],
+      "logicalSize": [
+        1600,
+        270
+      ],
+      "purpose": "Original Garden artwork with gently drooping, desaturated foliage during the scrubber fault"
+    },
+    "gardenWorldStressed": {
+      "file": "rooms/garden-stressed-world.svg",
+      "size": [
+        5760,
+        1080
+      ],
+      "logicalSize": [
+        1440,
+        270
+      ],
+      "purpose": "Original Garden artwork with gently drooping, desaturated foliage during the scrubber fault"
+    },
+    "gardenNearStressed": {
+      "file": "rooms/garden-stressed-foreground.svg",
+      "size": [
+        6400,
+        1080
+      ],
+      "logicalSize": [
+        1600,
+        270
+      ],
+      "purpose": "Original Garden artwork with gently drooping, desaturated foliage during the scrubber fault"
+    },
+    "galleryObservatoryWorld": {
+      "file": "rooms/gallery-observatory-world.svg",
+      "size": [
+        2880,
+        1080
+      ],
+      "logicalSize": [
+        720,
+        270
+      ],
+      "purpose": "Phase 4.6E.3 production campaign environment; controls remain independently interactive."
+    },
+    "testBayWorld": {
+      "file": "rooms/environmental-test-bay-world.svg",
+      "size": [
+        3840,
+        1080
+      ],
+      "logicalSize": [
+        960,
+        270
+      ],
+      "purpose": "Phase 4.6E.3 production campaign environment; controls remain independently interactive."
+    },
+    "blackBoxWorld": {
+      "file": "rooms/black-box-vault-world.svg",
+      "size": [
+        3456,
+        1080
+      ],
+      "logicalSize": [
+        864,
+        270
+      ],
+      "purpose": "Phase 4.6E.3 production campaign environment; controls remain independently interactive."
+    }
+  },
+  "rooms": {
+    "engine": {
+      "background": "engine",
+      "artwork": "Layered illustrated industrial science fiction; independently animated machinery.",
+      "objects": [
+        "enginePipes",
+        "lantern",
+        "vent",
+        "fan",
+        "gauge",
+        "sensor",
+        "panel",
+        "harness",
+        "vessel",
+        "locker",
+        "engineFrame",
+        "engineHatch",
+        "toolbox",
+        "greg",
+        "engineer",
+        "steam"
+      ],
+      "revisedExploration": {
+        "worldWidth": 640,
+        "viewportWidth": 480,
+        "layer": "engineScroll"
+      }
+    },
+    "corridor": {
+      "background": "corridor",
+      "artwork": "Same illustrated materials and lighting; distinct security passage layout.",
+      "objects": [
+        "corridorPipes",
+        "lantern",
+        "panel",
+        "harness",
+        "gauge",
+        "reader",
+        "archive",
+        "securityFrame",
+        "bulkhead",
+        "greg",
+        "engineer",
+        "deckLift"
+      ],
+      "revisedExploration": {
+        "worldWidth": 864,
+        "viewportWidth": 480,
+        "layer": "corridorScroll"
+      }
+    },
+    "life": {
+      "background": "life",
+      "artwork": "Illustrated The life-support garden with independent functional machinery and fixed hitboxes.",
+      "objects": [
+        "scrubberBank",
+        "viewPort",
+        "gardenRack",
+        "panel",
+        "harness",
+        "archive",
+        "greg",
+        "lantern",
+        "engineFrame",
+        "engineHatch",
+        "fan",
+        "engineer"
+      ],
+      "exploration": {
+        "worldWidth": 1440,
+        "viewportWidth": 480,
+        "layers": [
+          "gardenFar",
+          "gardenWorld",
+          "gardenNear"
+        ],
+        "legacyBackground": "life"
+      }
+    },
+    "relay": {
+      "background": "relay",
+      "artwork": "Illustrated The NAND workshop with independent functional machinery and fixed hitboxes.",
+      "objects": [
+        "powerCoils",
+        "viewPort",
+        "gardenRack",
+        "panel",
+        "harness",
+        "archive",
+        "greg",
+        "lantern",
+        "engineFrame",
+        "engineHatch",
+        "fan",
+        "engineer",
+        "emergencyLamp"
+      ],
+      "exploration": {
+        "worldWidth": 1152,
+        "viewportWidth": 480,
+        "layers": [
+          "workshopWorld"
+        ]
+      }
+    },
+    "sensors": {
+      "background": "sensors",
+      "artwork": "Illustrated The listening gallery with independent functional machinery and fixed hitboxes.",
+      "objects": [
+        "sensorArray",
+        "viewPort",
+        "gardenRack",
+        "panel",
+        "harness",
+        "archive",
+        "greg",
+        "lantern",
+        "engineFrame",
+        "engineHatch",
+        "fan",
+        "engineer"
+      ],
+      "campaignBackground": "galleryObservatoryWorld"
+    },
+    "navigation": {
+      "background": "navigation",
+      "artwork": "Illustrated The chart room with independent functional machinery and fixed hitboxes.",
+      "objects": [
+        "chartTable",
+        "viewPort",
+        "gardenRack",
+        "panel",
+        "harness",
+        "archive",
+        "greg",
+        "lantern",
+        "engineFrame",
+        "engineHatch",
+        "fan",
+        "engineer"
+      ]
+    },
+    "reactor": {
+      "background": "reactor",
+      "artwork": "Illustrated The reactor heart with independent functional machinery and fixed hitboxes.",
+      "objects": [
+        "reactorCore",
+        "viewPort",
+        "gardenRack",
+        "panel",
+        "harness",
+        "archive",
+        "greg",
+        "lantern",
+        "engineFrame",
+        "engineHatch",
+        "fan",
+        "engineer"
+      ]
+    },
+    "bridge": {
+      "background": "bridge",
+      "artwork": "Illustrated The command bridge with independent functional machinery and fixed hitboxes.",
+      "objects": [
+        "helmConsole",
+        "viewPort",
+        "gardenRack",
+        "panel",
+        "harness",
+        "archive",
+        "greg",
+        "lantern",
+        "engineFrame",
+        "engineHatch",
+        "fan",
+        "engineer"
+      ]
+    },
+    "testbay": {
+      "background": "testBayWorld",
+      "artwork": "Production scrolling environment with separately authored interactive world-space controls.",
+      "objects": [
+        "engineer"
+      ]
+    },
+    "blackbox": {
+      "background": "blackBoxWorld",
+      "artwork": "Production scrolling environment with separately authored interactive world-space controls.",
+      "objects": [
+        "engineer"
+      ]
+    },
+    "computation": {
+      "background": "computationWorld",
+      "artwork": "Production scrolling environment with separately authored interactive world-space controls.",
+      "objects": [
+        "engineer"
+      ]
+    }
+  },
+  "replacement": "Every SVG is a separate reusable layer. Intrinsic exports are 4x logicalSize. Hitboxes live independently in js/hotspots.js. Build with tools/build-illustrated-assets.mjs. Campaign art: node tools/build-campaign-assets.mjs rebuilds both base and campaign layers.",
+  "circuitPanel": {
+    "background": "serviceBoard",
+    "gate": "logicValve",
+    "input": "sourceContact",
+    "output": "outputContact",
+    "signals": "Insulated cable color is decorative and stable. Numeric values and illuminated sockets indicate Boolean state."
+  }
+}

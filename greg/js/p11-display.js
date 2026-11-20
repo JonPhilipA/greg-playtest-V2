@@ -1,0 +1,9 @@
+import {decoderRegister,decoderRegisterHeading,decoderAssembly,decoderReadout} from './decoder-machinery.js';
+import {decodeByte,bitWeights} from './data-consoles.js';
+export function p11RegisterMarkup(mode,art,{flash=false}={}){return decoderRegister({bits:246,count:8,mode,art,flash});}
+export function p11DecoderMarkup(c,channel,{progress,locked=false,art,equipmentArt,flash=false,engaged=false,verified=false}){
+ const temperature=channel==='temperature',mode=c[channel],value=decodeByte(246,mode==='signed'),weights=bitWeights(mode==='signed');
+ const output=decoderReadout({title:temperature?'TEMPERATURE':'MOTOR SPEED',value,unit:temperature?'°C':'RPM',equipmentArt,verified:verified||engaged,status:verified||engaged?'SENSOR VERIFIED':'AWAITING VERIFICATION',details:`<div class="p11-operating-range operating-range"><small>EXPECTED OPERATING RANGE</small><strong>${temperature?'−40°C to +60°C':'0–255 RPM'}</strong></div>`});
+ return `<div class="decoder-stage-strip"><span>P11 / STAGE ${temperature?'A · CRYOGENIC SENSOR':'B · MOTOR SPEED'}</span><small>READ ONLY · SAME EIGHT SENSOR BITS</small></div><div class="decoder-body p11-binary-body p11-chain"><section class="p11-register">${decoderRegisterHeading({binary:'11110110'})}${p11RegisterMarkup(mode,art,{flash})}<p class="weight-equation">${weights.filter((_,i)=>(246>>(7-i))&1).map(w=>String(w).replace('-','−')).join(' + ')} = ${String(value).replace('-','−')}</p></section>${decoderAssembly({mode,scope:'console',locked,output})}</div>`;
+}
+export const p11GregMessage=(channel,message)=>message?.replace(/^G\.R\.E\.G\.:\s*/,'')||(channel==='temperature'?"The cooling system originally reported 246 degrees. That doesn’t fit its operating conditions. Check the decoder.":"The motor monitor originally reported a negative speed. The sensor bits are intact. Check how the decoder interprets them.");

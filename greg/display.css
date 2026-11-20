@@ -1,0 +1,14 @@
+/* Reuse the existing proportional game fit; fullscreen the complete application. */
+#app:fullscreen{display:grid;place-items:center;width:100vw;height:100dvh;margin:0;padding:0;background:#0b1421;overflow:hidden}
+#app::backdrop{background:#0b1421}
+#app:fullscreen .game{width:min(100vw,177.777778dvh);height:auto;aspect-ratio:16/9;max-height:100dvh}
+.fullscreen-control{display:inline-flex;align-items:center;justify-content:center;gap:10px;touch-action:manipulation}
+.fullscreen-control svg{flex:none;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.settings-window .fullscreen-control{padding:10px 16px;font:700 13px/1.4 'Trebuchet MS',Arial,sans-serif;min-height:43px}
+.title-fullscreen{position:absolute;right:3%;top:4%;z-index:3;width:40px;height:40px;padding:8px;border:1px solid #a18b61;border-radius:6px;background:#14283bc9;color:#ecd3a1;opacity:.8;cursor:pointer}
+.title-fullscreen:hover,.title-fullscreen:focus-visible{opacity:1;background:#2b4154}
+.fullscreen-status{font:13px/1.4 'Trebuchet MS',Arial,sans-serif;color:#d1dce5;margin:12px 0 0}
+.fullscreen-status:empty{display:none}
+.title-display-status{position:absolute;z-index:3;right:3%;top:calc(4% + 46px);max-width:min(290px,65%);margin:0;padding:10px 12px;background:#14283bf0;border:1px solid #8b795b;border-radius:5px}
+
+.menu-fullscreen{position:absolute;right:61px;top:18px;width:34px;height:34px;padding:6px;border:1px solid #9b865e;border-radius:6px;background:#22394c;color:#eddbb7}.menu-fullscreen:hover,.menu-fullscreen:focus-visible{background:#38546b}.menu-display-status{position:absolute;right:18px;top:53px;z-index:2;max-width:80%;padding:8px 10px;background:#14283bf0;border:1px solid #8b795b;border-radius:5px}.pause-window header{padding-right:85px}

@@ -1,0 +1,98 @@
+/* Shared binary hardware, followed by the existing foreground diagnostic's metal enclosure. */
+.signed-binary-console .binary-compare{display:flex;align-items:center;justify-content:center;gap:8px;flex-shrink:0;color:#a7becf;font:10px Consolas,monospace}
+.signed-binary-console .binary-compare button{min-height:32px;padding:6px 14px;font:700 11px 'Trebuchet MS',Arial,sans-serif}
+.signed-binary-console .binary-compare button[aria-pressed=true]{border-color:#a4d7df;color:#c4f1f3;background:linear-gradient(#365768,#203848);box-shadow:inset 0 0 7px #81d2dc22}
+.decoder-console{font-family:'Trebuchet MS',Arial,sans-serif}
+.decoder-console .console-title h2,.decoder-console button{font-family:'Trebuchet MS',Arial,sans-serif}
+.decoder-console .decoder-body.p11-binary-body{display:flex;flex-direction:column;justify-content:space-evenly;gap:14px;margin:12px 0 0;min-height:0}
+.p11-equipment-row{display:grid;grid-template-columns:24% minmax(0,1fr) 26%;gap:22px;align-items:center;width:100%;min-height:0}
+.decoder-console .p11-equipment-row .sensor-plate{display:flex;align-items:center;gap:8px;padding:9px;border-width:2px;box-shadow:3px 4px 0 #0003}
+.p11-equipment-row .sensor-art{width:52%;max-height:170px;flex-shrink:0}
+.p11-equipment-row .operating-range{border:0;padding:0;min-width:0}
+.p11-equipment-row .operating-range small{font-size:9px;line-height:1.5}
+.p11-equipment-row .operating-range strong{font-size:14px;line-height:1.5}
+.p11-reading .instrument-caption{font-size:10px;letter-spacing:1px}
+.p11-reading .binary-byte{justify-content:center;margin:6px 0;gap:9px;color:var(--accent);font:700 19px Consolas,monospace}
+.decoder-console .p11-reading .numeric-display{margin:6px 0;padding:6px;min-height:92px}
+.decoder-console .p11-reading .numeric-display strong{font-size:58px}
+.p11-equipment-row .mode-selector{gap:5px;min-width:0}
+.p11-equipment-row .mode-selector>span{font-size:11px;color:#b5c9d8}
+.p11-equipment-row .mode-selector small{font:11px/1.5 'Trebuchet MS',Arial,sans-serif;color:#b3c6d6;max-width:220px}
+.p11-equipment-row .console-switches{flex-wrap:nowrap;gap:7px}
+.decoder-console .p11-equipment-row .mode-selector button{min-width:0;min-height:42px;padding:9px 12px;font-size:12px}
+.p11-register{width:100%;border:2px ridge #65788a;border-radius:7px;background:linear-gradient(120deg,#2c3e50,#1a2939);padding:12px 10px 6px;box-shadow:inset 0 3px 10px #07142388}
+.p11-register .bit-weight-tools{padding:0 7px;font-size:10px}
+.p11-register .bit-weights{gap:1.7%;padding:0 1.45%;margin-top:9px}
+.p11-register .bit-weights span{font-size:13px;padding:5px 0}
+.p11-register-board{display:block;width:100%;height:auto;max-height:160px;overflow:visible;pointer-events:none}
+.p11-register-board [data-toggle]{cursor:default}
+.p11-register-bus{stroke:#8497a8;stroke-width:4;fill:none}
+.p11-register-board .signal-low{opacity:.38}
+.p11-register .weight-equation{font-size:13px;margin:0 0 4px;color:var(--accent)}
+.p11-register .bit-weights .weight-changed{background:#a68645;color:#fff1ca;border-color:#ffe1a0;box-shadow:0 0 12px #dfb66b66;transition:background .25s,box-shadow .25s}
+.decoder-console .binary-greg-status{display:flex;align-items:center;gap:10px;flex:1;min-width:0;padding:8px 12px;border:1px solid #586e82;border-left:3px solid #c6a56b;border-radius:5px;background:#132334}
+.decoder-console .binary-greg-status img{width:31px;height:42px;object-fit:contain}
+.decoder-console .binary-feedback{margin:0;color:#dce8ee;font:13px/1.5 'Trebuchet MS',Arial,sans-serif}
+/* Keep the verification window's size, row allocation and circuit viewport unchanged. */
+.game .verification-window{background:linear-gradient(130deg,#2d3d4e,#182839 70%);color:#d8e4ed;border:2px ridge #75899b;border-top:3px solid #b59a69;box-shadow:0 16px 60px #030c17cc,inset 0 0 0 3px #101e2d}
+.game .verification-window>header{background:linear-gradient(90deg,#23364a,#1c2d3e);border-bottom:1px solid #657689;padding-bottom:9px}
+.game .verification-window>header small{color:#d0b17a}
+.game .verification-window>header h3{color:#f4e5c5}
+.game .verification-window .diagnostic-close{background:linear-gradient(#42556a,#24384c);color:#f5dfae;border:2px ridge #9c8d73;box-shadow:0 2px 0 #0e1c2b}
+.game .verification-window .diagnostic-progress{background:#132638;border-color:#58768b;color:#d8e7ee}
+.game .verification-window .diagnostic-progress-copy strong{color:#f1d391}
+.game .verification-window .diagnostic-progress-copy span{color:#bbd0df}
+.game .verification-summary{background:#102132;border:2px ridge #526b80;border-radius:6px;box-shadow:inset 0 3px 12px #06121e88}
+.game .verification-result-copy{padding:12px 14px;gap:8px}
+.game .verification-result-copy h3{font-size:22px;color:#d4f1df}
+.game .verification-result-copy[data-result=fail] h3{color:#f1bf95}
+.game .verification-result-copy .verification-score{font-family:Consolas,monospace!important;font-size:17px;color:#bcd9e6}
+.verification-status-label{display:flex;align-items:center;gap:8px;color:#c9b184;font:10px/1.2 Consolas,monospace!important;letter-spacing:1.4px}
+.verification-status-label i{width:9px;height:9px;border-radius:50%;border:1px solid #9cd4bb;background:#73baad;box-shadow:0 0 8px #67d6bd55}
+[data-result=fail] .verification-status-label i{background:#d99a6c;border-color:#f0c48f;box-shadow:0 0 8px #dc8e5755}
+.game .verification-result-copy .diagnostic-outcome{background:#1d3547;border-left-color:#80b9af;color:#d0e3eb;font-size:13px}
+.game .verification-result-copy[data-result=fail] .diagnostic-outcome{border-left-color:#bc875e}
+.game .verification-result-copy .verification-failure{background:#352d2b;border:1px solid #9c745b;border-radius:4px;color:#e8cfb5;font-size:12px}
+.game .verification-result-copy .verification-failure dl{font:12px/1.5 Consolas,monospace}
+.game .verification-result-copy .diagnostic-note{color:#bbcdda;font-size:12px}
+.game .verification-result-copy .diagnostic-logical{color:#98afc0}
+.game .verification-result-copy table{color:#d1e5ed}
+.game .verification-result-copy th{background:#263d50;color:#edd6a3}
+.game .verification-result-copy td,.game .verification-result-copy th{border-color:#567083;font-family:Consolas,monospace!important}
+.game .verification-result-copy tr.pass{background:#1f413f}
+.game .verification-result-copy tr.fail{background:#563931}
+.game .verification-window button:focus-visible{outline-color:#f1d397}
+@media(max-height:800px),(max-width:1000px){
+ .decoder-console .decoder-body.p11-binary-body{gap:9px;margin-top:7px}
+ .p11-equipment-row{gap:12px;grid-template-columns:23% minmax(0,1fr) 27%}
+ .p11-equipment-row .sensor-art{max-height:112px}
+ .p11-equipment-row .operating-range strong{font-size:12px}
+ .p11-equipment-row .operating-range small{font-size:8px}
+ .decoder-console .p11-reading .numeric-display{min-height:65px;padding:2px}
+ .decoder-console .p11-reading .numeric-display strong{font-size:43px}
+ .p11-reading .binary-byte{font-size:16px;margin:3px 0}
+ .decoder-console .p11-equipment-row .mode-selector button{min-height:36px;padding:7px 9px;font-size:11px}
+ .p11-equipment-row .mode-selector small{font-size:10px}
+ .p11-register{padding:7px 6px 3px}
+ .p11-register .bit-weights{margin-top:6px}
+ .p11-register .bit-weights span{font-size:11px;padding:3px 0}
+ .p11-register-board{max-height:115px}
+ .p11-register .weight-equation{font-size:11px}
+ .decoder-console .console-footer{flex-wrap:nowrap}
+ .decoder-console .binary-greg-status{padding:6px 9px;gap:8px}
+ .decoder-console .binary-feedback{font-size:12px}
+ .decoder-console .binary-greg-status img{width:25px;height:35px}
+ .signed-binary-console .binary-compare{font-size:9px;gap:6px}
+ .signed-binary-console .binary-compare button{min-height:28px;padding:5px 9px;font-size:10px}
+}
+@media(max-width:650px){
+ .p11-equipment-row{grid-template-columns:1fr 1fr;gap:8px}
+ .decoder-console .p11-equipment-row .sensor-plate{display:none}
+ .p11-register .bit-weight-tools{font-size:8px}
+ .p11-register .weight-equation{font-size:9px}
+ .decoder-console .console-footer{flex-wrap:wrap}
+ .decoder-console .binary-greg-status{flex-basis:100%}
+ .decoder-console .console-footer .brass-button{flex:1}
+ .signed-binary-console .binary-compare>span{font-size:8px}
+}
+@media(prefers-reduced-motion:reduce){.p11-register .weight-changed{transition:none}}

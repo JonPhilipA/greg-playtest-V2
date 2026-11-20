@@ -1,0 +1,12 @@
+/* Reuse the opening portrait/text and paper window for deliberate conversations. */
+.game .overlay:has(>.centered-conversation){align-items:center;justify-content:center;padding:clamp(12px,2cqw,30px);background:#07101cc9;pointer-events:auto}
+.game .paper-window.centered-conversation{box-sizing:border-box;width:min(78%,840px);max-height:90%;overflow:auto;overscroll-behavior:contain;padding:clamp(20px,3cqw,42px);border:2px solid #b69358;border-radius:11px;background:#fafafa;color:#223447;box-shadow:0 15px 55px #050b18aa}
+.game .centered-conversation .kicker{color:#687b8c;font-size:clamp(10px,.85cqw,13px);letter-spacing:1.3px}
+.game .centered-conversation h2{margin:.5em 0 .8em;font-size:clamp(22px,2.4cqw,35px);color:#223447}
+.game .centered-conversation .opening-intro-speaker{grid-template-columns:clamp(48px,6cqw,86px) minmax(0,1fr);gap:clamp(15px,2cqw,28px)}
+.game .centered-conversation .opening-intro-speaker img{width:100%;max-height:105px}
+.game .centered-conversation .opening-intro-speaker p{font:clamp(15px,1.45cqw,22px)/1.55 'Trebuchet MS',Arial,sans-serif;margin:0;overflow-wrap:anywhere}
+.game .centered-conversation .window-actions{justify-content:flex-end;margin-top:clamp(22px,3cqw,40px)}
+.game .centered-conversation .window-actions button{min-width:155px;min-height:48px;font:700 clamp(14px,1.2cqw,18px)/1.3 'Trebuchet MS',Arial,sans-serif}
+.conversation-speaker-badge{font:700 12px 'Trebuchet MS',Arial,sans-serif;overflow-wrap:anywhere;padding:10px;border:2px ridge #b59c70;border-radius:7px;background:#e1e8ed;text-align:center}
+@media(max-width:700px){.game .paper-window.centered-conversation{width:96%;padding:18px}.game .centered-conversation .opening-intro-speaker{grid-template-columns:42px minmax(0,1fr);gap:12px}.game .centered-conversation .opening-intro-speaker p{font-size:14px}.game .centered-conversation h2{font-size:22px}.game .centered-conversation .window-actions button{min-height:44px;min-width:135px}}
