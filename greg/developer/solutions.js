@@ -1,6 +1,6 @@
 /** Reference solutions for test coverage only. The game never compares against these layouts. */
-import {LEVELS,createCircuit} from '/js/puzzles.js';
-import {connect} from '/js/simulator.js';
+import {LEVELS,createCircuit} from '../js/puzzles.js';
+import {connect} from '../js/simulator.js';
 export function solution(index){
   const c=createCircuit(LEVELS[index]);let count=0;
   const wire=(src,dst,pin=0,out=0)=>connect(c,{from:src,to:dst,in:pin,out});

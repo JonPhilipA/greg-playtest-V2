@@ -1,4 +1,4 @@
-import {DEFAULT_DOORWAY_TUNING,getDoorwayTuning,setDoorwayTuning} from '/js/room-door.js';
+import {DEFAULT_DOORWAY_TUNING,getDoorwayTuning,setDoorwayTuning} from '../js/room-door.js';
 
 const controls=[
  ['brightness','Interior brightness',0,2],

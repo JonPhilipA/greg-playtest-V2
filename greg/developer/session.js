@@ -1,8 +1,8 @@
-import {InventorySession} from '/js/inventory-session.js';
-import {serialize,restore} from '/js/world.js';
-import {validateInventory} from '/js/inventory.js';
-import {validateFabrication} from '/js/fabrication.js';
-import {isEarly} from '/js/curriculum-profile.js';
+import {InventorySession} from '../js/inventory-session.js';
+import {serialize,restore} from '../js/world.js';
+import {validateInventory} from '../js/inventory.js';
+import {validateFabrication} from '../js/fabrication.js';
+import {isEarly} from '../js/curriculum-profile.js';
 import {buildFixture} from './fixtures.js';
 export const developerKey=mode=>mode==='legacy'?'greg-developer-legacy-v1':'greg-developer-curriculum-v1';
 export class DeveloperSession{

@@ -1,7 +1,7 @@
 import {solution} from './solutions.js';
-import {REPAIRS} from '/js/repairs.js';
-import {createCircuit} from '/js/puzzles.js';
-import {connect} from '/js/simulator.js';
+import {REPAIRS} from '../js/repairs.js';
+import {createCircuit} from '../js/puzzles.js';
+import {connect} from '../js/simulator.js';
 const mapping={alarm:2,hull:5,firewall:7,navbits:8,trajectory:9,memory:11,reactor:12,alu:10};
 export function campaignSolution(id){
   if(id in mapping)return solution(mapping[id]);

@@ -1,7 +1,7 @@
 import {buildFixture} from './fixtures.js';
-import {SCENE_WORKSTATIONS} from '/js/scene-workstations.js';
-import {puzzleIntroKey} from '/js/puzzle-explanations.js';
-import {InventorySession} from '/js/inventory-session.js';
+import {SCENE_WORKSTATIONS} from '../js/scene-workstations.js';
+import {puzzleIntroKey} from '../js/puzzle-explanations.js';
+import {InventorySession} from '../js/inventory-session.js';
 /** Real prerequisite commands and inventory, in disposable memory; never a second puzzle implementation. */
 export async function buildWorkstationFixture(key,stationId=null){
  const stations=Object.hasOwn(SCENE_WORKSTATIONS,key)?SCENE_WORKSTATIONS[key]:null,station=stations?.find(s=>s.id===stationId)||(!stationId?stations?.[0]:null);

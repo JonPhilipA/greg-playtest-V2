@@ -1,7 +1,7 @@
 import {buildFixture} from './fixtures.js';
-import {dispatchCommand} from '/js/world.js';
-import {InventorySession} from '/js/inventory-session.js';
-import {OUTFITTER_CATALOG} from '/js/outfitter-catalog.js';
+import {dispatchCommand} from '../js/world.js';
+import {InventorySession} from '../js/inventory-session.js';
+import {OUTFITTER_CATALOG} from '../js/outfitter-catalog.js';
 export const OUTFITTER_FIXTURES=Object.freeze([
  ['locked','Outfitter · locked / P01 unfinished'],['unlocked','Outfitter · first Corridor visit'],['low','Outfitter · 100 credits'],['high','Outfitter · 100,000 credits'],
  ['engineer','Outfitter · all engineer palettes'],['greg','Outfitter · all G.R.E.G. palettes'],['purchase','Outfitter · ready to purchase'],['maybe-later','Outfitter · Bubblegum owned, not equipped'],['equip-now','Outfitter · Galaxy + Rose equipped'],
