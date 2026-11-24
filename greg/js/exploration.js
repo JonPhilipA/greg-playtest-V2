@@ -1,3 +1,4 @@
+import {DOOR_CENTERS,doorHotspot} from './room-door-layout.js';
 import {openingEnvironment,OPENING_WIDTHS} from './opening-layout.js';
 import {analysisEnvironment} from './development-environments.js';
 import {WORKSHOP_WIDTH} from './workshop-layout.js';
@@ -6,13 +7,13 @@ import {nextNavigationStop} from './navigation.js';
 export const VIEW_WIDTH=480,VIEW_HEIGHT=270,GARDEN_WIDTH=1440,LAYOUT_VERSION=1;
 export const GARDEN_AREAS=Object.freeze([190,720,1190]);
 export const GARDEN_HOTSPOTS=Object.freeze([
- {id:'back',label:'Return to previous deck',x:8,y:89,w:60,h:122,walk:73},
+ doorHotspot(DOOR_CENTERS.gardenBack,'back','Return to Maintenance Corridor',73),
  {id:'repair-alarm',label:'Atmospheric alarm service cover',x:350,y:140,w:43,h:48,walk:335},
  {id:'machine-info',label:'The life-support garden machinery',x:546,y:85,w:253,h:106,walk:637},
  {id:'repair-scrubber',label:'Scrubber permissive service cover',x:837,y:120,w:48,h:61,walk:832},
  {id:'repair-safetycutoff',label:'Safety cutoff service cover',x:1150,y:149,w:54,h:55,walk:1138},
- {id:'watch-record',label:'Watch record terminal',x:1253,y:140,w:30,h:39,walk:1244},
- {id:'forward',label:'Forward deck hatch',x:1332,y:87,w:85,h:126,walk:1315},
+ {id:'binary-decoder',label:'BINARY DATA DECODER',x:1242,y:100,w:76,h:106,walk:1250},
+ doorHotspot(DOOR_CENTERS.gardenWorkshop,'forward','NAND Workshop entrance',1315),
  {id:'greg',label:'Speak to G.R.E.G.',x:288,y:77,w:32,h:42,walk:290},
  {id:'greg-filtration',label:'Speak to G.R.E.G. at filtration',x:506,y:61,w:32,h:42,walk:512},
  {id:'greg-emergency',label:'Speak to G.R.E.G. at emergency systems',x:1245,y:72,w:32,h:42,walk:1244},

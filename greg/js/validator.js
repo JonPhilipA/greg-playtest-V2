@@ -1,9 +1,13 @@
+import {testAluFoundation} from './alu-foundation.js';
+import {testSubtractor} from './subtractor.js';
 import {testRipple} from './ripple-adder.js';
 import {isDataConsole,testDataConfiguration} from './data-consoles.js';
 import {evaluate,step,pulse} from './simulator.js';
 import {combinations} from './puzzles.js';
 /** Validate behavior, never the shape or gate arrangement of the player's network. */
 export function testCircuit(level,circuit) {
+  if(level.id==='float_nav')return testAluFoundation(circuit);
+  if(level.id==='addsub')return testSubtractor(circuit);
   if(level.id==='ripple_adder')return testRipple(circuit);
   if(isDataConsole(level.id,circuit))return testDataConfiguration(level.id,circuit);
   const rows=[];
@@ -14,7 +18,6 @@ export function testCircuit(level,circuit) {
   try {
     if(circuit.nodes.some(n=>n.faulty))throw Error('A burned component remains. Remove the damaged part and replace it with spare NAND gates.');
     if(circuit.nodes.filter(n=>n.type==='OUTPUT').length!==level.outputs.length)throw Error('This panel has an unexpected number of output terminals. Reset the panel to restore its required contacts.');
-    if(level.id==='addsub')for(const type of ['FAN4','XOR4','ADD4C'])if(!circuit.nodes.some(n=>n.type===type))throw Error('This datapath requires CONTROL SPLITTER (FAN4), XOR4 and ADD4C.');
     const allowed=new Set(level.gates);
     for(const n of circuit.nodes) if(!['INPUT','OUTPUT'].includes(n.type)&&!allowed.has(n.type)&&level.existingComponents?.[n.id]!==n.type) throw Error(`${n.type} is not available on this panel.`);
     // Fixed terminals are part of the panel, not editable truth-table metadata.

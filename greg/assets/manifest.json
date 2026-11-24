@@ -659,7 +659,7 @@
         864,
         270
       ],
-      "purpose": "Production Phase 4.6B.1 corridorScroll"
+      "purpose": "Layered maintenance service corridor: corridorScroll"
     },
     "moonExterior": {
       "file": "rooms/moon-exterior.svg",
@@ -840,6 +840,78 @@
         270
       ],
       "purpose": "Phase 4.6E.3 production campaign environment; controls remain independently interactive."
+    },
+    "corridorNear": {
+      "file": "rooms/corridor-foreground.svg",
+      "size": [
+        3456,
+        1080
+      ],
+      "logicalSize": [
+        864,
+        270
+      ],
+      "purpose": "Layered maintenance service corridor: corridorNear"
+    },
+    "pressureBulkheadFrame": {
+      "file": "objects/pressure-bulkhead-frame.svg",
+      "size": [
+        656,
+        656
+      ],
+      "logicalSize": [
+        164,
+        164
+      ],
+      "purpose": "Layered maintenance service corridor: pressureBulkheadFrame"
+    },
+    "pressureBulkheadLeaf": {
+      "file": "objects/pressure-bulkhead-leaf.svg",
+      "size": [
+        496,
+        556
+      ],
+      "logicalSize": [
+        124,
+        139
+      ],
+      "purpose": "Layered maintenance service corridor: pressureBulkheadLeaf"
+    },
+    "atmosphereFrame": {
+      "file": "objects/atmospheric-access-frame.svg",
+      "size": [
+        352,
+        552
+      ],
+      "logicalSize": [
+        88,
+        138
+      ],
+      "purpose": "Layered maintenance service corridor: atmosphereFrame"
+    },
+    "atmospherePassage": {
+      "file": "objects/atmospheric-passage.svg",
+      "size": [
+        244,
+        448
+      ],
+      "logicalSize": [
+        61,
+        112
+      ],
+      "purpose": "Layered maintenance service corridor: atmospherePassage"
+    },
+    "gardenBinaryKiosk": {
+      "file": "objects/garden-binary-kiosk.svg",
+      "size": [
+        304,
+        424
+      ],
+      "logicalSize": [
+        76,
+        106
+      ],
+      "purpose": "Binary Data Decoder computer: navy housing, cyan monitor, keyboard and live calibration display"
     }
   },
   "rooms": {
@@ -856,7 +928,6 @@
         "panel",
         "harness",
         "vessel",
-        "locker",
         "engineFrame",
         "engineHatch",
         "toolbox",
@@ -880,12 +951,12 @@
         "harness",
         "gauge",
         "reader",
-        "archive",
-        "securityFrame",
-        "bulkhead",
         "greg",
         "engineer",
-        "deckLift"
+        "corridorNear",
+        "atmospherePassage",
+        "engineFrame",
+        "engineHatch"
       ],
       "revisedExploration": {
         "worldWidth": 864,
@@ -930,7 +1001,6 @@
         "gardenRack",
         "panel",
         "harness",
-        "archive",
         "greg",
         "lantern",
         "engineFrame",

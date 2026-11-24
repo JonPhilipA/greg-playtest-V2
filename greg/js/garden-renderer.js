@@ -1,3 +1,6 @@
+import {DOOR_CENTERS,WALK_FLOOR} from './room-door-layout.js';
+import {drawGardenKiosk} from './garden-kiosk.js';
+import {gardenExitPhase} from './garden-exit.js';
 import {drawEquipment} from './equipment-effects.js';
 import {serviceState} from './curriculum-profile.js';
 import {pickupAvailability} from './inventory-gameplay.js';
@@ -9,8 +12,10 @@ export function drawGarden(r,w,a,{reduced,speaking}){
  blend('gardenFar',-80-cam*(reduced?1:.94),1600);blend('gardenWorld',-cam,1440);
  if(stress){c.save();c.globalAlpha=stress*.24;r.rect(0,33,480,195,'#050c18');c.restore();}
  c.save();c.translate(-cam,0);
- r.image('engineHatch',10,91,56,115);r.image('engineFrame',4,84,68,129);
- r.door('engineHatch','engineFrame',1338,92,72,116,a.campaignDoor,1329,82,91,133);
+ const exit=gardenExitPhase(w)||(a.campaignDoor>.98?'released':'locked');
+ r.shipDoor(DOOR_CENTERS.gardenBack,{amount:1,label:'MAINTENANCE'});
+ r.shipDoor(DOOR_CENTERS.gardenWorkshop,{amount:a.gardenDoorOverride??a.campaignDoor,released:exit==='ready'||exit==='released',emergency:exit==='emergency',label:'NAND WORKSHOP'});
+ if(cam+480>1200)drawGardenKiosk(r,w);
  const fault=!!serviceState(w)?.triggered&&!serviceState(w)?.applied;
  for(const x of [602,746])if(x>cam-50&&x<cam+530){
   c.save();c.translate(x,137);c.rotate(reduced?0:(fault?0:(a.scrubberAngle||0))*(x===602?1:-1));r.image('fan',-37,-37,74,74);c.restore();
@@ -35,9 +40,10 @@ export function drawGarden(r,w,a,{reduced,speaking}){
  for(const x of [305,491,918,1295])if(x>cam-55&&x<cam+535){c.save();c.globalAlpha=fault?.35:1;r.lantern(x,35,t,x*.02,reduced);c.restore();if(fault){const pulse=reduced?.65:.48+.18*Math.sin(t*2.7+x);c.save();c.globalAlpha=pulse;const glow=c.createRadialGradient(x+6,51,3,x+6,51,68);glow.addColorStop(0,'#ee3c38aa');glow.addColorStop(1,'#ee3c3800');c.fillStyle=glow;c.fillRect(x-63,17,138,110);r.lamp(x+6,53,3.4,true,'#f15c50');c.restore();}}
  c.save();c.translate(cam,0);drawEquipment(r,w,a,{reduced});c.restore();
  const actor=a.actor;
- c.fillStyle='#15212c80';c.beginPath();c.ellipse(actor.x,220,7,1.5,0,0,Math.PI*2);c.fill();
+ c.fillStyle='#15212c80';c.beginPath();c.ellipse(actor.x,WALK_FLOOR,7,1.5,0,0,Math.PI*2);c.fill();
  r.engineer(a);
  c.restore();blend('gardenNear',-cam*(reduced?1:1.025),1600);
+ r.canvas.dataset.gardenExit=exit||'compatibility';r.canvas.dataset.gardenSequence=a.gardenEmergencyPhase||'idle';r.canvas.dataset.workshopDoor=(a.gardenDoorOverride??a.campaignDoor).toFixed(3);
  r.canvas.dataset.cameraX=cam.toFixed(3);r.canvas.dataset.worldX=actor.x.toFixed(3);r.canvas.dataset.worldWidth='1440';r.canvas.dataset.scrubberSpeed=(a.scrubberSpeed||0).toFixed(3);r.canvas.dataset.gardenStress=stress.toFixed(3);r.canvas.dataset.scrubberFault=String(fault);r.canvas.dataset.gardenEmergency=String(fault);r.canvas.dataset.cameraOverride=String(!!a.cameraOverrideActive);
 }
 

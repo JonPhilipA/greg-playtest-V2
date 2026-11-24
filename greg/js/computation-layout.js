@@ -12,7 +12,7 @@ const notes={
   trajectory:{title:'WHAT HAPPENS TO THE CARRY?',partial:['A + B + carry-in','01 + 01 = __','NEXT STAGE ← LOW BIT'],full:['0011 + 0001 = 0100','CARRY OUT → CARRY IN','S = A XOR B XOR Cin']},
   ripple_adder:{title:'RIPPLE-CARRY ADDITION',partial:['FA0   FA1   FA2   FA3','Cout → ? Cin','C0 = 0 · S0 S1 S2 S3'],full:['FA0 → FA1 → FA2 → FA3','Cout → next Cin','S[3:0] + C4','ADD4C = FOUR FULL ADDERS']},
   twos_complement:{title:"TWO'S COMPLEMENT",partial:['+5 = 0101','INVERT + ADD 1','0101 → ____ → ____','4-BIT SIGNED · −8 TO +7'],full:['+5 = 0101','INVERT','1010','ADD 1','−5 = 1011','4-BIT SIGNED · −8 TO +7']},
-  addsub:{title:'SUBTRACTION THROUGH ADDITION',partial:['A − B = A + (−B)','ONE DATAPATH, TWO JOBS','HOW DO WE NEGATE B?'],full:['A − B = A + (~B) + 1','SUB 0: A + B','SUB 1: A + (~B) + 1']},
+  addsub:{title:'SUBTRACTION THROUGH ADDITION',partial:['A − B = A + (−B)','ONE DATAPATH, TWO JOBS','HOW DO WE NEGATE B?'],full:['A − B = A + (~B) + 1','INVERT B · INITIAL CARRY 1','FOUR-BIT RESULT (mod 16)']},
  };
 const states=Object.freeze(Object.fromEntries(Object.entries(notes).map(([id,n])=>[id,Object.freeze([false,true].map(complete=>Object.freeze({id,complete,title:id==='twos_complement'?(complete?"TWO'S COMPLEMENT":'NEGATIVE NUMBERS'):n.title,lines:Object.freeze([...(complete?n.full:n.partial)]),schematic:complete?'recovered':'unfinished'})))])));
 export const computationBoard=(w,id)=>states[id]?.[Number(w.machines?.[id]?.certified===true)]||null;

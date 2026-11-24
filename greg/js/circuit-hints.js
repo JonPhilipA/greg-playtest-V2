@@ -1,4 +1,6 @@
-import {rippleCircuit} from './ripple-adder.js';
+import {aluSolution} from './alu-foundation.js';
+import {subtractorSolution} from './subtractor.js';
+import {rippleSolution} from './ripple-adder.js';
 import {GUIDE_SHEETS} from './blueprints.js';
 import {REPAIRS} from './repairs.js';
 import {createCircuit} from './puzzles.js';
@@ -25,7 +27,6 @@ function construction(id){
  else if(id==='sensordiff')wire(gate('XOR','A','B'),'Y');
  else if(id==='hull'){const ab=gate('AND','A','B'),ac=gate('AND','A','C'),bc=gate('AND','B','C');wire(gate('OR',gate('OR',ab,ac),bc),'Y');}
  else if(id==='firewall'){const a=gate('NOT','A'),b=gate('NOT','B');wire(gate('OR',a,b),'Y');wire(gate('AND',a,b),'Z');}
- else if(id==='addsub'){const mask=gate('FAN4','M'),inverse=gate('XOR4','B',mask),adder=gate('ADD4C','A',inverse,'M');wire(adder,'Y');wire(adder,'C',0,1);}
  else if(id==='trajectory'){const p=gate('XOR','A','B');wire(gate('XOR',p,'I'),'S');wire(gate('OR',gate('AND','A','B'),gate('AND',p,'I')),'C');}
  else if(id==='memory'){wire(gate('DFF','A','K'),'Y');wire(gate('DFF','B','K'),'Z');}
  else if(id==='reactor'){const low=gate('DFF'),high=gate('DFF');wire('K',low,1);wire('K',high,1);wire(gate('NOT',low),low);wire(gate('XOR',low,high),high);wire(low,'L');wire(high,'H');}
@@ -40,16 +41,18 @@ function construction(id){
 export function circuitHintDefinition(w,id){
  if(!getPlayablePuzzle(id,w)||!REPAIRS[id]||isDataConsole(id,w.circuits?.[id]))return null;
  const service=isEarly(w)&&id==='scrubber'&&serviceState(w)?.triggered,existing=isEarly(w)&&id==='sensordiff'&&w.foundation.curriculum.xorUseVersion!==1;
- const graph=id==='ripple_adder'?rippleCircuit(w.circuits[id].configuration.rippleStage):construction(service?'demorgan':id);if(id==='ripple_adder')for(let i=1;i<graph.configuration.rippleStage;i++)graph.wires.push({from:'fa'+(i-1),out:1,to:'fa'+i,in:2});if(!graph)return null;if(id==='ripple_adder')graph.nodes=graph.nodes.filter(n=>!n.fixed);
+ const graph=id==='float_nav'?aluSolution():id==='addsub'?subtractorSolution():id==='ripple_adder'?rippleSolution():construction(service?'demorgan':id);if(!graph)return null;if(['ripple_adder','addsub','float_nav'].includes(id))graph.nodes=graph.nodes.filter(n=>!n.fixed&&!n.equipment);if(id==='float_nav')graph.wires=graph.wires.filter(w=>!w.panelInternal);
  const spec=REPAIRS[id],key=service?'service.scrubber.demorgan':id+(existing?':installed-xor':'');
  const counts={};for(const n of graph.nodes)counts[n.type]=(counts[n.type]||0)+1;
- return {id:key,key,puzzleId:id,name:spec.title,inputs:spec.inputs.map(n=>n.id),outputs:spec.outputs.map(n=>n.id),...graph,counts,stages:[],existing};
+ return {id:key,key,puzzleId:id,...(id==='float_nav'?{fixedIds:['Abus','Bbus','Cbus','adder']} : {}),name:spec.title,inputs:spec.inputs.map(n=>n.id),outputs:spec.outputs.map(n=>n.id),...graph,counts,stages:[],existing};
 }
-export function hintExampleGraph(w,id){if(id==='ripple_adder'){const c=rippleCircuit(w.circuits[id].configuration.rippleStage);for(let i=1;i<c.configuration.rippleStage;i++)c.wires.push({id:'hint-carry-'+i,from:'fa'+(i-1),out:1,to:'fa'+i,in:2});return c;}const guide=circuitHintDefinition(w,id);if(!guide)return null;const graph=createCircuit(REPAIRS[id]);graph.nodes.push(...structuredClone(guide.nodes));graph.wires=guide.wires.map((wire,index)=>({...wire,id:'hint-wire-'+index}));return graph;}
+export function hintExampleGraph(w,id){if(id==='float_nav')return aluSolution();if(id==='addsub')return subtractorSolution();if(id==='ripple_adder')return rippleSolution();const guide=circuitHintDefinition(w,id);if(!guide)return null;const graph=createCircuit(REPAIRS[id]);graph.nodes.push(...structuredClone(guide.nodes));graph.wires=guide.wires.map((wire,index)=>({...wire,id:'hint-wire-'+index}));return graph;}
 const numbers=['zero','one','two','three','four','five','six','seven','eight'];
 export function hintMessage(guide,level){
  if(!guide)return 'No verified construction guide is available for this panel.';
- if(guide.puzzleId==='ripple_adder')return ({1:'The installed Full Adders each handle one bit. Carry moves from the lower bit position to the next higher position.',2:'Look at Cout on the right of each stage and Cin on the lower left of the next stage.',3:'FA0 feeds FA1; FA1 feeds FA2; FA2 feeds FA3. C0 is already zero.',4:'Follow the gold carry paths. Make the connections yourself, then test the complete chain.'})[level]||'';
+ if(guide.puzzleId==='float_nav')return REPAIRS.float_nav.hints[level-1]||'';
+ if(guide.puzzleId==='addsub')return REPAIRS.addsub.hints[level-1]||'';
+ if(guide.puzzleId==='ripple_adder')return ({1:'Each Full Adder handles one bit position. Start with the least significant bit.',2:'These four outlines suggest positions for your Full Adders. Place the components yourself.',3:'Connect A0 and B0 to the first stage, then A1/B1, A2/B2 and A3/B3 to their corresponding stages.',4:'Connect CIN = 0 to the first stage, each COUT to the next CIN, and each SUM to C0–C3. Follow the ghost wires and build the connections yourself.'})[level]||'';
  if(level===1){if(guide.key==='service.scrubber.demorgan')return 'Compare the original truth table with what each available component does. Can different parts reproduce the same four results?';if(guide.existing)return 'Use the one installed XOR comparator; no additional components are needed.';const names=Object.entries(guide.counts).map(([type,n])=>(numbers[n]||n)+' '+type+' gate'+(n===1?'':'s'));return "You'll need "+names.join(names.length===2?' and ':', ')+'.';}
  return ({2:'These golden outlines show one way to arrange the gates.',3:"Now I'll show you which gate belongs in each position.",4:"Here's how the terminals connect. You still need to build it."})[level]||'';
 }

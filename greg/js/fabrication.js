@@ -5,7 +5,7 @@ import {functionalSignature} from './circuit-revision.js';
 import {REPAIRS} from './repairs.js';
 import {testCircuit} from './validator.js';
 import {validateInventory,FINITE_PICKUPS} from './inventory.js';
-export const FABRICATION_TYPES=Object.freeze(['NAND','NOT','AND','OR','NOR','XOR','XNOR','DFF','MUX4','ADD4','XOR4','FAN4','ADD4C']);
+export const FABRICATION_TYPES=Object.freeze(['NAND','NOT','AND','OR','NOR','XOR','XNOR','DFF','MUX4','ADD4','XOR4','FAN4','ADD4C','FA1','NOT4']);
 const firstEight=['ventilation','security','alarm','scrubber','safetycutoff','nandnot','nandand','nandor'];
 const demand=(ok,message)=>{if(!ok)throw Error(message);};
 export function fabricationEligible(w){
@@ -18,8 +18,9 @@ export function fabricationEligible(w){
 }
 export const FABRICATION_MILESTONES=Object.freeze({NOT:{source:'nandnot'},AND:{source:'nandand'},OR:{source:'nandor'},NOR:{source:'scrubber',blueprint:'bp.gate.nor'},NAND:{source:'safetycutoff',blueprint:'bp.gate.nand'},XOR:{source:'xorfab',blueprint:'bp.gate.xor'}});
 export function fabricationUnlocked(w,type){
+ if(type==='NOT4')return w.machines.twos_complement?.certified===true&&fabricationUnlocked(w,'NOT');
  if(type==='ADD4C'&&!w.machines.ripple_adder?.certified&&!w.foundation.curriculum.rippleLegacy)return false;
- if(['FAN4','ADD4C','XOR4'].includes(type)){if(!w.machines.trajectory?.certified)return false;const source=type==='XOR4'?'xorfab':'trajectory',key=type==='XOR4'?'XOR':'FA1',c=w.foundation.components.certified[key];return !!c?.active&&w.machines[source]?.certified===true&&w.foundation.applications[source]?.transactionId===c.transactionId&&recognizeConstruction(source,c.sourceGraph)?.componentId===key;}
+ if(['FA1','FAN4','ADD4C','XOR4'].includes(type)){if(!w.machines.trajectory?.certified)return false;const source=type==='XOR4'?'xorfab':'trajectory',key=type==='XOR4'?'XOR':'FA1',c=w.foundation.components.certified[key];return !!c?.active&&w.machines[source]?.certified===true&&w.foundation.applications[source]?.transactionId===c.transactionId&&recognizeConstruction(source,c.sourceGraph)?.componentId===key;}
  const rule=FABRICATION_MILESTONES[type],f=w.foundation,c=f.components.certified[type],d=f.components.discovered[type];if(!rule||!c||!d||c.sourcePuzzleId!==rule.source||c.transactionId!==d.transactionId||f.applications[rule.source]?.transactionId!==c.transactionId||!w.machines[rule.source]?.certified)return false;
  const proof=recognizeConstruction(c.sourcePuzzleId,c.sourceGraph);return !!proof&&proof.componentId===type&&proof.signature===c.signature&&(!rule.blueprint||f.blueprints.acquired[rule.blueprint]?.transactionId===c.transactionId);
 }
@@ -29,7 +30,7 @@ export const AUTOMATIC_SUPPLY_TARGET=100;
 export const automaticSupplyActive=w=>fabricatorActive(w)&&w.foundation.fabrication.autoSupply?.version===1&&w.foundation.fabrication.autoSupply.target===AUTOMATIC_SUPPLY_TARGET&&!w.saveProtection?.blocked&&fabricationEligible(w);
 export const automaticallySupplied=(w,type)=>automaticSupplyActive(w)&&fabricationUnlocked(w,type);
 /** A replenishing reserve is a capability, not a hundred unused hardware records. */
-export const manufacturedSupply=(w,type)=>Math.max(fabricatedAvailable(w,type).length,automaticallySupplied(w,type)?AUTOMATIC_SUPPLY_TARGET:0);
+export const manufacturedSupply=(w,type)=>Math.max(fabricatedAvailable(w,type).length,automaticallySupplied(w,type)?(type==='FA1'?4:type==='NOT4'?1:AUTOMATIC_SUPPLY_TARGET):0);
 export function ensureAutomaticSupply(w,transactionId){
  if(!fabricationEligible(w))return {activated:false};
  const f=w.foundation.fabrication;

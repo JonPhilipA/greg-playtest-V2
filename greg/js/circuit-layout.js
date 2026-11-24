@@ -1,7 +1,9 @@
+import {arithmeticComponentSize,carrySourceSize} from './arithmetic-component-art.js';
+import {aluSize} from './alu-foundation.js';
 import {ports} from './simulator.js';
 export const BOARD_WIDTH=1200,BOARD_HEIGHT=600,LAYOUT_VERSION=1;
 export const TRASH_BOUNDS={x:1040,y:516,w:144,h:68};
-const dimensions=n=>({w:n.fixed?176:112,h:n.fixed?108:n.type==='MUX4'?104:84});
+const dimensions=n=>aluSize(n)||arithmeticComponentSize(n)||carrySourceSize(n)||(n.rippleBit?{w:176,h:40}:{w:n.fixed?176:112,h:n.fixed?108:n.type==='MUX4'?104:84});
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 export function clampGate(n,width=BOARD_WIDTH,height=BOARD_HEIGHT){
   const {w,h}=dimensions(n);n.x=clamp(n.x,224,width-w-16);n.y=clamp(n.y,16,height-h-16);

@@ -1,4 +1,4 @@
-import {gardenDecoderComplete} from './garden-decoder.js';
+import {gardenExitPhase} from './garden-exit.js';
 import {GALLERY_IDS,initializeGallery,validateComparator} from './gallery-puzzles.js';
 import {validatePilotBindings} from './inventory-gameplay.js';
 import {SERVICE_ID,EARLY_IDS,isEarly,serviceState,servicePending,taskId,editableGraph} from './curriculum-profile.js';
@@ -77,7 +77,7 @@ export function checkEarlyCircuit(w,id,graph=editableGraph(w,id)){
   return checked;
  }catch(e){return {...checked,pass:false,error:e.message};}
 }
-export function canBreakScrubber(w){return isEarly(w)&&w.room==='life'&&!serviceState(w)?.triggered&&w.machines.safetycutoff?.certified&&w.foundation.applications.safetycutoff&&w.machines.scrubber.certified&&w.foundation.components.certified.NOR?.sourcePuzzleId==='scrubber'&&gardenDecoderComplete(w)&&w.positions.life>=1248;}
+export function canBreakScrubber(w){return w.room==='life'&&gardenExitPhase(w)==='ready'&&w.positions.life>=1248;}
 export function triggerBreakdown(w,transactionId){
  if(serviceState(w)?.triggered)return {duplicate:true};
  requireThat(canBreakScrubber(w),'Complete the finite repairs and Binary Data Decoder, then approach the Workshop exit.');

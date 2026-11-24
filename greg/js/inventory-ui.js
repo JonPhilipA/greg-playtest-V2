@@ -10,10 +10,13 @@ export function quantityBadge(quantity,{unlimited=false,authorized=false,compati
  if(unlimited&&authorized)return '∞';
  return String(Math.max(0,Number.isSafeInteger(quantity)?quantity:0));
 }
-export function componentCards(w,puzzleId,{practice=false}={}){
+export function componentCards(w,puzzleId,{practice=false,graph=null}={}){
  const p=Object.hasOwn(REPAIRS,puzzleId)?REPAIRS[puzzleId]:null;if(!p)return [];
  if(!practice&&puzzleId==='sensordiff'&&w.foundation.curriculum.xorUseVersion!==1)return [];
  const manufactured=!practice&&usesFabricatedInventory(w,puzzleId),finite=!practice&&(usesFiniteInventory(w,puzzleId)||manufactured),types=finite&&!manufactured?Object.keys(FINITE_BUDGETS[taskId(w,puzzleId)]):p.gates;
+ if(puzzleId==='float_nav')return ['XOR4','FAN4'].map(type=>{const quantity=Math.max(0,1-(graph||w.circuits[puzzleId]).nodes.filter(n=>n.type===type).length);return {type,quantity,finite:true,practice,automatic:manufactured&&automaticallySupplied(w,type),disabled:!quantity||!practice&&w.machines[puzzleId].certified,badge:String(quantity)};});
+ if(puzzleId==='addsub')return ['FA1','NOT4'].map(type=>{const limit=type==='FA1'?4:1,placed=(graph||w.circuits[puzzleId]).nodes.filter(n=>!n.fixed&&n.type===type).length,quantity=Math.max(0,limit-placed);return {type,quantity,finite:true,practice,automatic:manufactured&&automaticallySupplied(w,type),disabled:!quantity||!practice&&w.machines[puzzleId].certified,badge:String(quantity)};});
+ if(puzzleId==='ripple_adder')return [{type:'FA1',quantity:Math.max(0,4-(graph||w.circuits[puzzleId]).nodes.filter(n=>!n.fixed).length),finite:true,practice,automatic:manufactured&&automaticallySupplied(w,'FA1'),disabled:!practice&&w.machines[puzzleId].certified||(graph||w.circuits[puzzleId]).nodes.filter(n=>!n.fixed).length>=4,badge:String(Math.max(0,4-(graph||w.circuits[puzzleId]).nodes.filter(n=>!n.fixed).length))}];
  return types.map(type=>{const quantity=manufactured?manufacturedSupply(w,type):finite?GetAvailableGates(w.foundation.inventory,type).length:0;return {type,quantity,automatic:manufactured&&automaticallySupplied(w,type),finite,practice,compatibility:!finite&&!practice,disabled:finite&&(!quantity||w.machines[puzzleId].certified),badge:quantityBadge(quantity,{unlimited:!finite,authorized:!finite})};});
 }
 export function inventoryMarkup(w,puzzleId){

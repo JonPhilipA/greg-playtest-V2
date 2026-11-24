@@ -2,6 +2,7 @@ import {GALLERY_REPAIRS} from './gallery-puzzles.js';
 import {CAMPAIGN_ROOMS,CAMPAIGN_REPAIRS,campaignObjective,ENDINGS,NAND_DIALOGUE} from './campaign.js';
 import {SAFETY_CUTOFF} from './repairs.js';
 export const LINES={
+ 'garden-exit-fault':['G.R.E.G.',"Uh-oh. The scrubber just went offline. That bulkhead won't let us through until the air system is safe again."],
  'gallery-xor-intro':['G.R.E.G.',"These sensors should agree. We need a warning when their readings differ. XOR detects that disagreement. Inspect the sensor receiver to get started."],
  'gallery-build-xor':['G.R.E.G.',"XOR means exclusive OR: different inputs, warning on. The lower signal bench can build that function from four NANDs. Use the automatic NAND supply in your satchel; the Workshop’s original six are still on duty."],
  'scrubber-fault-short':['G.R.E.G.',"Oh, bolts. That was the scrubber. Your logic was sound; the hardware clearly had other plans. Let's check its service cover."],
@@ -17,11 +18,11 @@ export const LINES={
   restored:['G.R.E.G.',"Ventilation's running again. I've restored enough power to release the next bulkhead. Let's see what else survived."],
   stable:['G.R.E.G.','Pressure steady. The maintenance hatch is released. We can continue to the corridor.'],
   pass:['G.R.E.G.','Maintenance clearance. Apparently even a sinking ship has an access policy.'],
-  corridor:['G.R.E.G.','The next bulkhead checks restored engineering power and safe pressure. Both. The word “both” is doing considerable work.'],
+  corridor:['G.R.E.G.','The Garden door checks restored engineering power and safe pressure. Both. The word “both” is doing considerable work.'],
   authMissing:['G.R.E.G.','The authorization line comes from the repaired ventilation system. Restore it and check the pressure sensor.'],
   auth:['G.R.E.G.','Authorization accepted. A pleasant change from the last time you tried that. Forget I said “last”.'],
   safety:['G.R.E.G.','This line comes from the engine pressure switch. HIGH means the engine is below the safe-pressure threshold. The interlock must check it as well as engineering authorization.'],
-  interlock:['G.R.E.G.','The interlock is accepting incomplete clearance. It must require engineering authorization and safe pressure together. One without the other must keep the bulkhead shut.'],
+  interlock:['G.R.E.G.','The interlock is accepting incomplete clearance. It must require engineering authorization and safe pressure together. One without the other must keep the Garden door shut.'],
   door:['G.R.E.G.','Relay engaged. Mind the door; the Kestrel was built before soft-close became a virtue.'],
   clue:['ENGINEER','“Emergency authority: G.R.E.G. Crew consent overridden. Safety inhibit: manually applied.” You said the crash was a malfunction.'],
   evasive:['G.R.E.G.','I said the ship malfunctioned. I was… selective about the subject of that sentence. Keep the record. You will need it.'],
@@ -37,8 +38,8 @@ export function objective(w){
     if(w.pressure>=45)return 'The blower is running. Wait for the pressure to settle.';
     return 'Enter the maintenance corridor.';
   }
-  if(!w.machines.security.certified)return 'Repair the bulkhead’s two-condition interlock.';
-  return 'The bulkhead is open. Take the crew-deck lift to life support. The archive is optional.';
+  if(!w.machines.security.certified)return 'Repair the Garden door’s authorization interlock.';
+  return w.doors.security?'The Garden door is open. Proceed to Life Support.':'The interlock is repaired. Restore safe pressure to open the Garden door.';
 }
 Object.assign(LINES,NAND_DIALOGUE);
 for(const [id,r] of Object.entries(CAMPAIGN_ROOMS)){if(r.intro)LINES['intro-'+id]=['G.R.E.G.',r.intro];if(r.record)LINES['record-'+id]=['G.R.E.G.',r.record.reply];}

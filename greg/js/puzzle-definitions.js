@@ -917,13 +917,13 @@ export const PUZZLES = freeze([
   {
     "id": "addsub",
     "displayOrder": 19,
-    "name": "Adder/Subtractor Circuit",
+    "name": "Four-Bit Subtractor",
     "roomId": "computation",
     "type": "circuit",
     "contentVersion": 1,
     "validatorVersion": 1,
     "concepts": [
-      "Conditional inversion and two's complement subtraction"
+      "Four-bit subtraction through inversion and carry"
     ],
     "prerequisites": [
       "twos_complement"
@@ -943,7 +943,7 @@ export const PUZZLES = freeze([
       "requiresFabrication": true
     },
     "rewards": {
-      "description": "Certified ADDSUB4",
+      "description": "Certified four-bit subtractor",
       "implemented": true
     },
     "completionEvents": [
@@ -962,22 +962,23 @@ export const PUZZLES = freeze([
   {
     "id": "float_nav",
     "displayOrder": 20,
-    "name": "Floating-Point Navigation Error",
+    "name": "Controllable Adder/Subtractor",
     "roomId": "navigation",
-    "type": "representation",
+    "type": "circuit",
     "contentVersion": 1,
     "validatorVersion": 1,
     "concepts": [
-      "IEEE 754 binary32 fields"
+      "Hardware reuse",
+      "XOR conditional inversion",
+      "Control fan-out",
+      "Four-bit buses",
+      "Shared ADD/SUB datapath"
     ],
     "prerequisites": [
-      "cryo_signed",
-      "pressure_width"
+      "addsub"
     ],
     "requiredCertifications": [],
-    "conceptPrerequisites": [
-      "decoder.foundation"
-    ],
+    "conceptPrerequisites": [],
     "investigationRequirements": [
       "equipment:float_nav"
     ],
@@ -986,13 +987,16 @@ export const PUZZLES = freeze([
       "requiresLocalPresence": true
     },
     "toolPolicy": {
-      "source": "future-package",
-      "allowedTypes": [],
+      "source": "manufactured",
+      "allowedTypes": [
+        "XOR4",
+        "FAN4"
+      ],
       "requiresFabrication": true
     },
     "rewards": {
-      "description": "Float-inspection manual entry",
-      "implemented": false
+      "description": "P20 arithmetic foundation; authoritative Credits reward on engagement",
+      "implemented": true
     },
     "completionEvents": [
       {
@@ -1001,9 +1005,11 @@ export const PUZZLES = freeze([
       }
     ],
     "optionalBlueprintSuggestions": [],
-    "implemented": false,
-    "compatibility": null
+    "implemented": true,
+    "compatibility": null,
+    "curriculumOnly": true
   },
+
   {
     "id": "mux",
     "displayOrder": 21,

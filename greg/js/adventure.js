@@ -1,3 +1,6 @@
+import {floorSurface} from './room-door-layout.js';
+import {ALU_COMPLETE,ALU_INTRO} from './alu-foundation.js';
+import {legacyAddsub,SUBTRACTOR_COMPLETE} from './subtractor.js';
 import {TwosComplementUI} from './twos-complement-ui.js';
 import {FullscreenDisplay} from './fullscreen.js';
 import {EngineeringManual} from './manual-ui.js';
@@ -11,7 +14,9 @@ import {CircuitHintUI} from './circuit-hint-ui.js';
 import {pendingStoryConversation} from './story-milestones.js';
 import {installPopupPagination,textPages} from './popup-pages.js';
 import {AsciiTransmissionUI} from './ascii-transmission.js';
-import {ADD4C_INTRO} from './ripple-adder.js';
+import {PRESSURE_COMPLETE} from './pressure-register-lesson.js';
+import {rippleOverflowVisual} from './ripple-view.js';
+import {ADD4C_INTRO,RIPPLE_OVERFLOW} from './ripple-adder.js';
 import {arithmeticDialogueVisual,componentLabel} from './arithmetic-presentation.js';
 import {importantDialogue,puzzleIntroduction,conversationMarkup} from './dialogue-presentation.js';
 import {puzzleBrief,puzzleIntroKey} from './puzzle-explanations.js';
@@ -24,7 +29,8 @@ import {paintP01Guide} from './p01-guide-ui.js';
 import {OPENING_MESSAGES} from './opening-intro.js';
 import {GardenBinaryUI} from './garden-binary-ui.js';
 import {gardenDecoderComplete} from './garden-decoder.js';
-import {GardenEmergency,approachingWorkshop} from './garden-emergency.js';
+import {gardenExitPhase} from './garden-exit.js';
+import {GardenEmergency} from './garden-emergency.js';
 import {isDataConsole} from './data-consoles.js';
 import {DataConsoleUI} from './data-console-ui.js';
 import {launchMode} from './launch-mode.js';
@@ -41,7 +47,7 @@ import {fabricationEligible,fabricatorActive,fabricationTypes,FABRICATION_TYPES,
 import {nextNavigationStop,navigationOrigin,navigationKey} from './navigation.js';
 import {extendedGarden,extendedEnvironment,environmentWidth,clampWorldX,pointerWorldX,visibleHotspot} from './exploration.js';
 import {isEarly,SERVICE_ID,CURRICULUM_SAVE_KEY,serviceState,servicePending,editableGraph,roomRepairIds,campaignRoute,splitGallery} from './curriculum-profile.js';
-import {panelSpec,bulkheadStarterCleanup,canBreakScrubber,DEMORGAN_IDENTITY,SCRUBBER_PARTS_MESSAGES,DEMORGAN_COMPLETION_MESSAGES} from './garden-service.js';
+import {panelSpec,bulkheadStarterCleanup,DEMORGAN_IDENTITY,SCRUBBER_PARTS_MESSAGES,DEMORGAN_COMPLETION_MESSAGES} from './garden-service.js';
 import {damagedScrubberGraph,needsScrubberInspection} from './garden-malfunction.js';
 import {isGalleryCurriculum} from './gallery-puzzles.js';
 import {GardenUI} from './garden-ui.js';
@@ -58,7 +64,7 @@ import {combinations} from './puzzles.js';
 import {REPAIRS} from './repairs.js';
 import {ROOMS,roomHotspots,hotspotState} from './hotspots.js';
 import {LINES,MAINTENANCE_LOG,objective} from './dialogue.js';
-import {newWorld,loadWorld,saveWorld,updateWorld,inspect,has,flag,takePass,authorize,enterRoom,editCircuit,machineInputs,recoverLog,canTravel,recoverCampaignRecord,flightReady,engageFlight,investigatePuzzle,puzzleAvailability,testRepair,applyRepair,toggleDiagnostic,setDiagnostic,newInventoryPilot,newCurriculum,newRevisedCurriculum,dispatchCommand} from './world.js';
+import {newWorld,loadWorld,saveWorld,updateWorld,inspect,has,flag,takePass,authorize,enterRoom,editCircuit,machineInputs,canTravel,recoverCampaignRecord,flightReady,engageFlight,investigatePuzzle,puzzleAvailability,testRepair,applyRepair,toggleDiagnostic,setDiagnostic,newInventoryPilot,newCurriculum,newRevisedCurriculum,dispatchCommand} from './world.js';
 import {isInventoryPilot,usesFiniteInventory,inventoryRows,PICKUP_LOCATIONS,pickupAvailability} from './inventory-gameplay.js';
 import {FINITE_BUDGETS,FINITE_PICKUPS,FINITE_GATES} from './inventory.js';
 import {InventorySession} from './inventory-session.js';
@@ -96,7 +102,7 @@ let creditHud=null,outfitter=null,outfitterAssets=null,menuParent=null,manual=nu
 let currentLine=null,lineAfter=null,lineTimer,saveTimer,hoverId=null,hintIndex=0,draggedPart=null,testResult=null;
 const repairDialogue=[];
 const audio=new Audio(),animations=new Animations();
-const gardenEmergency=new GardenEmergency({animations,warning:showGardenEmergency,finished:()=>{setInert();refreshHUD();}});
+const gardenEmergency=new GardenEmergency({animations,warning:showGardenEmergency,slam:()=>{animations.scrubberFailureTime=0;audio.scrubberFailure((850-animations.actor.x)/480);reactions.react('surprised');engineerVisual.play('surprised',world,animations);},finished:()=>{setInert();refreshHUD();}});
 let queuedRoom=null,queuedPickupState=null,queuedIntent=null,transitioning=false,travelEpoch=0,edgeHover=0,toastTimer,engagementNoticeTimer;
 let reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const icons={
@@ -156,11 +162,13 @@ function persist(immediate=false){
 }
 function setInert(){const devLock=!!developer?.blocksGame;if(devLock)clearTimeout(lineTimer);const game=document.querySelector('#game');if(game)game.inert=devLock;const locked=devLock||gardenEmergency.active||!!power?.active||introPending||!!crash?.active||transitioning||!started||!!overlayType||presentation?.active||(nandBusy(world)&&!((isInventoryPilot(world)||isEarly(world))&&world.room==='relay'))||((pilotRequested||curriculumRequested)&&!pilotSession?.active)||pilotSession?.stale;if(locked)cancelMovement();document.querySelector('#overlay').inert=!!presentation?.active;const scrubberWorkbench=document.querySelector('#overlay > .workbench');if(scrubberWorkbench)scrubberWorkbench.inert=!!scrubberModal;document.querySelector('#title').inert=!started&&overlayType==='confirm';document.querySelector('#hotspots').inert=locked||hasPendingDiscovery();document.querySelector('.walk-layer').inert=locked||!corePowered(world);document.querySelector('.hud').inert=['pause','settings','outfitter','manual'].includes(overlayType)||lineCentered&&!linePaused||!!power?.active||introPending||!corePowered(world)||!!crash?.active||!started||gardenEmergency.active||!!diagnostic?.active||!!presentation?.active||hasPendingDiscovery();for(const b of document.querySelectorAll('[data-hotspot]'))b.disabled=(isInventoryPilot(world)||isEarly(world))&&nandBusy(world)&&b.dataset.hotspot!=='pickup-workshop.nand-cache';}
 function refreshRoom(){
+  const floor=floorSurface(world),walk=document.querySelector('.walk-layer');
+  walk.style.top=(floor.back/270*100)+'%';walk.style.height=((floor.front-floor.back)/270*100)+'%';
   const room=analysisEnvironment(world)||ROOMS[world.room];
   document.querySelector('#room-title').textContent=room.title;
   document.querySelector('#room-subtitle').textContent=room.subtitle+(developerRequested&&world.environmentPreview?(sceneWorkstations(world)?' · WORKSTATION TEST / NOT SAVED':' · ENVIRONMENT PREVIEW'):'')+(isEngineeringDemo(world)?' · DEMO / NOT SAVED':isInventoryPilot(world)?' · INVENTORY PILOT':'');
   document.querySelector('#hotspots').innerHTML=roomHotspots(world,animations.companion).map(h=>`<button class="hotspot" data-hotspot="${h.id}" data-id="${h.id}" ${h.puzzleId?`data-puzzle="${h.puzzleId}"`:h.kind==='tutorial'?'data-tutorial="signed-binary"':''} data-state="${hotspotState(world,h.id)}" aria-description="${esc(hotspotState(world,h.id))}" aria-label="${esc(h.label)}" title="${esc(h.label)}" style="left:${h.x/480*100}%;top:${h.y/270*100}%;width:${h.w/480*100}%;height:${h.h/270*100}%"></button>`).join('');
-  document.querySelector('#room-canvas').setAttribute('aria-label',sceneWorkstations(world)?'Illustrated '+analysisEnvironment(world).title+' with interactive workstations':isGalleryCurriculum(world)?'Illustrated Listening Gallery: sensor receiver, NAND signal bench, cryogenic decoder, hull voter, pressure register, future communications stations, Workshop return and closed Lab connection.':developmentEnvironment(world)?'Illustrated '+developmentEnvironment(world).title+' · read-only environment preview':CAMPAIGN_ROOMS[world.room]?'Illustrated '+CAMPAIGN_ROOMS[world.room].title+' with '+CAMPAIGN_ROOMS[world.room].repairs.length+' service covers, machinery, watch record terminal and forward hatch.':world.room==='engine'?'Illustrated engine room: brass blower, rising pressure gauge, steam leak, signal sensor, tool locker and maintenance hatch.':'Illustrated maintenance corridor: return hatch, engineering power monitor, pressure sensor, electrical service cover and locked archive bulkhead.');
+  document.querySelector('#room-canvas').setAttribute('aria-label',sceneWorkstations(world)?'Illustrated '+analysisEnvironment(world).title+' with interactive workstations':isGalleryCurriculum(world)?'Illustrated Listening Gallery: sensor receiver, NAND signal bench, cryogenic decoder, hull voter, pressure register, future communications stations, Workshop return and closed Lab connection.':developmentEnvironment(world)?'Illustrated '+developmentEnvironment(world).title+' · read-only environment preview':CAMPAIGN_ROOMS[world.room]?'Illustrated '+CAMPAIGN_ROOMS[world.room].title+' with '+CAMPAIGN_ROOMS[world.room].repairs.length+(world.room==='relay'?' service covers, machinery, and workshop doors.':' service covers, machinery, watch record terminal and forward hatch.'):world.room==='engine'?'Illustrated engine room: brass blower, rising pressure gauge, steam leak, signal sensor, parts toolbox and maintenance hatch.':'Illustrated maintenance corridor: return hatch, engineering power monitor, pressure sensor, authorization controls beside the Life-Support Garden entrance.');
   hoverId=null;document.querySelector('#hover-label').textContent='';setInert();refreshHUD();syncExploration();
 }
 function refreshHUD(){
@@ -173,7 +181,6 @@ function refreshHUD(){
   for(const b of document.querySelectorAll('[data-hotspot]')){
     const state=hotspotState(world,b.dataset.hotspot);if(b.dataset.state!==state)b.dataset.state=state;
     if(b.dataset.hotspot==='pickup-engine.not')b.dataset.pickupGlow=String(enginePartsGlow(world,{powerRestoring:!!power?.active}));
-    if(b.dataset.hotspot==='archive')b.tabIndex=world.doors.security?0:-1;
   }
   if(hoverId){const h=roomHotspots(world,animations.companion).find(x=>x.id===hoverId);if(h)document.querySelector('#hover-label').textContent=`${h.label} · ${hotspotState(world,hoverId)}`;}
   for(const el of document.querySelectorAll('[data-pressure]'))el.textContent=Math.round(world.pressure);
@@ -185,7 +192,7 @@ function renderLine(){
  const [speaker]=LINES[currentLine]||['G.R.E.G.'],text=lineMessages[lineIndex]??document.querySelector('#line').textContent;
  if(lineCentered){
   if(overlayType&&overlayType!=='story-conversation')return;
-  paper(speaker,conversationMarkup(speaker,text)+arithmeticDialogueVisual(currentLine,lineIndex,reduced)+(currentLine==='scrubber-demorgan-discovery'&&lineIndex===1?'<p class="lesson-equation"><strong>'+esc(DEMORGAN_IDENTITY)+'</strong></p>':''),[{label:'CONTINUE',action:'continue-dialogue'}],(currentLine.startsWith('problem-')?'EQUIPMENT INTRODUCTION':'KESTREL / CONVERSATION')+' · '+(lineIndex+1)+' OF '+lineMessages.length,'story-conversation');
+  paper(speaker,conversationMarkup(speaker,text)+arithmeticDialogueVisual(currentLine,lineIndex,reduced)+(currentLine==='ripple-overflow'?rippleOverflowVisual(world.circuits.ripple_adder):'')+(currentLine==='scrubber-demorgan-discovery'&&lineIndex===1?'<p class="lesson-equation"><strong>'+esc(DEMORGAN_IDENTITY)+'</strong></p>':''),[{label:'CONTINUE',action:'continue-dialogue'}],(currentLine.startsWith('problem-')?'EQUIPMENT INTRODUCTION':'KESTREL / CONVERSATION')+' · '+(lineIndex+1)+' OF '+lineMessages.length,'story-conversation');
   const button=document.querySelector('[data-action="continue-dialogue"]');button.dataset.dialogueTurn=String(++dialogueTurn);button.focus({preventScroll:true});return;
  }
  document.querySelector('#speaker').textContent=speaker;document.querySelector('#line').textContent=text;
@@ -246,6 +253,7 @@ function closeOverlay({deferDialogue=false}={}){
   menuParent=null;
   if(overlayType==='fabricator-lock'){showFabricator();return;}
   if(overlayType==='opening-conversation'){advanceOpeningIntro();return;}
+  if(overlayType==='story-conversation'&&currentLine==='garden-exit-fault'&&gardenEmergency.phase==='warning'){advanceLine();return;}
   if(overlayType==='story-conversation')linePaused=true;
   armedGuidePart=null;
   const returnFromEmergency=overlayType==='garden-emergency';
@@ -288,25 +296,20 @@ function inspectObject(id){
       paper('The needle tells the truth.',`<p>Pressure: <strong><span data-pressure>${Math.round(world.pressure)}</span> / 100</strong>.</p><p>${world.machines.ventilation.output?'The blower is relieving the pipe. Below 45, the pressure latch releases the maintenance hatch.':'The needle is climbing. The warning bell and steam leak will continue until the blower draws the pressure down.'}</p>`,[{label:'Back to room',action:'close'}],'AUXILIARY PRESSURE');break;
     case 'vent-panel':
       openPanel('ventilation');break;
-    case 'locker':
-      paper('The engineer’s locker.','<div class="inventory-item"><span class="pass-art" aria-hidden="true"></span><p>A worn crew identification card, a bent screwdriver, and an extremely old tea stain. The card identifies the KESTREL maintenance crew; it is not needed to open doors.</p></div>',[{label:'CLOSE',action:'close'}],'OPTIONAL / CREW DETAIL');break;
     case 'engine-door':
-      if(!world.doors.engine){paper('The pressure latch is holding.',`<p>A mechanical safety catch holds the hatch shut. Its release line comes from the ventilation governor.</p><p>Pressure must settle below 45. Current reading: <strong><span data-pressure>${Math.round(world.pressure)}</span></strong>.</p>`,[{label:'Back to the machinery',action:'close'}],'MAINTENANCE HATCH');return;}
+      if(!canTravel(world,'corridor')){paper('The pressure latch is holding.',`<p>A mechanical safety catch holds the hatch shut. Its release line comes from the ventilation governor.</p><p>Pressure must settle below 45. Current reading: <strong><span data-pressure>${Math.round(world.pressure)}</span></strong>.</p>`,[{label:'Back to the machinery',action:'close'}],'MAINTENANCE HATCH');return;}
       travel('corridor');break;
     case 'return':travel('engine');break;
-    case 'onward':if(canTravel(world,'life'))travel('life');else paper('The lift is still interlocked.','<p>Restore the bulkhead’s two-condition interlock and keep engine pressure safe. No archive record is required.</p>',[{label:'Back to corridor',action:'close'}]);break;
+    case 'onward':
+      if(canTravel(world,'life'))travel('life');
+      else paper('The Garden door is interlocked.',`<p>The door requires engineering authorization and safe pressure. Live signals: AUTH = ${machineInputs(world,'security').A}; SAFE = ${machineInputs(world,'security').B}.</p><p>Inspect the authorization control box beside the doorway.</p>`,[{label:'Find the interlock cover',action:'find-security-panel'},{label:'Back to corridor',action:'close'}]);
+      break;
     case 'reader':
       paper('Engineering authorization.',`<p>AUTH is <strong>${machineInputs(world,'security').A?'HIGH':'LOW'}</strong>. The engaged ventilation repair restores this power signal automatically. No maintenance pass is needed.</p><p>The interlock must also check safe pressure.</p>`,[{label:'CLOSE',action:'close'}],'ENGINEERING POWER MONITOR');break;
     case 'pressure':
-      say('safety');paper('The other half of permission.',`<p>The pressure safety line is <strong>${machineInputs(world,'security').B?'HIGH / SAFE':'LOW / UNSAFE'}</strong>. It comes from the engine room, not from a collectible item.</p><p>The bulkhead must check <em>both</em> signals. Its electrical service cover is below the conduit.</p>`,[{label:'Find the interlock cover',action:'find-security-panel'}],'PRESSURE SAFETY SENSOR');break;
+      say('safety');paper('The other half of permission.',`<p>The pressure safety line is <strong>${machineInputs(world,'security').B?'HIGH / SAFE':'LOW / UNSAFE'}</strong>. It comes from the engine room, not from a collectible item.</p><p>The Garden door must check <em>both</em> signals. Its control box is mounted beside the doorway.</p>`,[{label:'Find the interlock cover',action:'find-security-panel'}],'PRESSURE SAFETY SENSOR');break;
     case 'security-panel':
       openPanel('security');break;
-    case 'security-door':
-      if(!world.doors.security){paper('Two permissions. One bad interlock.',`<p>The relay plate reads <strong>AUTHORIZATION AND PRESSURE SAFE</strong>.</p><p>Live signals: AUTH = ${machineInputs(world,'security').A}; SAFE = ${machineInputs(world,'security').B}. ${world.machines.security.certified?'The logic is repaired. Check which real-world permission is missing.':'The service circuit is damaged. Open its cover to repair the two-condition interlock.'}</p>`,[{label:'Back to corridor',action:'close'}],'RESTRICTED RECORDS BULKHEAD');return;}
-      queueInteraction('archive');break;
-    case 'archive':
-      if(!recoverLog(world))return;
-      persist(true);showRecord(true);break;
     case 'greg':
       if(world.room==='engine'){say(world.machines.ventilation.certified?'stable':has(world,'inspected_sensor')?'panel':'fan',{force:true});attention(world.machines.ventilation.certified?'engine-door':has(world,'inspected_sensor')?'vent-panel':'sensor');}
       else{say('interlock',{force:true});attention('security-panel');}break;
@@ -357,11 +360,11 @@ function showScrubberDiscovery(){
 }
 function refreshPartStock(){
   if(!editor||!panel)return;
-  for(const card of componentCards(world,panel,{practice:!!practiceContext})){
+  for(const card of componentCards(world,panel,{practice:!!practiceContext,graph:editor.circuit})){
     const b=document.querySelector('[data-part="'+card.type+'"]');if(!b)continue;
     b.querySelector('.quantity-badge').textContent=card.badge;b.querySelector('.quantity-badge').classList.toggle('unlimited',!card.finite);b.setAttribute('aria-disabled',String(card.disabled));
     b.setAttribute('aria-label',card.type+' · '+(card.finite?card.quantity+' available':card.practice?'temporary practice supply':'compatibility supply'));
-    b.title=card.finite?'Drag or click to place '+card.type+' · '+card.quantity+(card.automatic?' available · automatic supply':' loose'):card.practice?'Temporary practice parts; no stock is consumed':'Legacy compatibility supply; no manufacturing entitlement';
+    b.title=(panel==='float_nav'&&['XOR4','FAN4'].includes(card.type)?(card.type==='XOR4'?'4-BIT CONDITIONAL INVERTER — XOR4: four XOR channels; MASK comes from FAN4. ':'CONTROL SPLITTER — FAN4: copy SUB to all four control lanes. '):'')+(card.finite?'Drag or click to place '+card.type+' · '+card.quantity+(card.automatic?' available · automatic supply':' loose'):card.practice?'Temporary practice parts; no stock is consumed':'Legacy compatibility supply; no manufacturing entitlement');
   }
 }
 function inspectCampaign(id){
@@ -379,21 +382,27 @@ function inspectCampaign(id){
   if(id==='back'&&world.room==='relay'&&!nandDoors(world).back){paper('The entrance latch is sealed.','<p>The surge burned its AND controller. Rebuild that function with NAND gates to release the entrance.</p>',[{label:'Inspect entrance controller',action:'open-nandand'},{label:'Back to workshop',action:'close'}]);return;}
   if(id==='back'){travel(campaignRoute(world)[index-1]);return;}
   if(id==='greg'&&world.room==='relay'){showNandBriefing({force:true});return;}
+  if(id==='greg'&&splitGallery(world)&&world.room==='navigation'){if(!world.machines.float_nav.certified)sayTeaching('float_nav');else paper('ALU arithmetic foundation restored','<p>One shared circuit now adds or subtracts. The later ALU construction and operation lessons remain planned.</p>',[{label:'CLOSE',action:'close'}]);return;}
   if(id==='greg'&&splitGallery(world)&&world.room==='computation'){const next=['navbits','trajectory','ripple_adder','twos_complement','addsub'].find(key=>!world.machines[key].certified);if(next)sayTeaching(next);else paper('Arithmetic complete','<p>Addition, negation, and subtraction are connected. Continue toward Navigation Control.</p>',[{label:'CLOSE',action:'close'}]);return;}
   if(id==='greg'&&isGalleryCurriculum(world)&&world.machines.xorfab?.certified){if(world.room==='blackbox'&&!world.foundation.curriculum.asciiActivity?.complete){LINES['intro-ascii']=['G.R.E.G.','The flight recorder stores character codes. Use the ASCII Transmission Terminal reference to read the message and identify its ending byte.'];say('intro-ascii',{force:true});return;}if(signedTutorialRequired(world)){say('signed-binary-intro',{force:true});return;}const next=['cryo_signed','hull','pressure_width','log_overflow'].find(key=>!world.machines[key].certified);sayTeaching(next||'pressure_width');return;}
   if(id==='greg'&&isGalleryCurriculum(world)){say(world.machines.sensordiff.certified?'gallery-build-xor':'gallery-xor-intro',{force:true});return;}
   if(id==='greg'||id.startsWith('greg-')){say((world.logs.includes(campaignRecord(world.room))?'record-':'intro-')+(splitGallery(world)&&['testbay','blackbox','computation'].includes(world.room)?'sensors':world.room),{force:true});return;}
-  if(id==='watch-record'&&world.room==='life'&&isEarly(world)){if(!gardenDecoderComplete(world)){openGardenBinary();return;}paper('Garden monitoring terminal','<p>BINARY DECODER CALIBRATED</p>',[{label:'Practice binary decoder',action:'garden-binary-practice'},{label:'Read watch record',action:'garden-watch-record'},{label:'Back to Garden',action:'close'}],'GARDEN / DATA MONITOR');return;}
-  if(id==='watch-record'){
+  if(id==='binary-decoder'&&world.room==='life'){openGardenBinary();return;}
+  if(id==='watch-record'&&world.room!=='relay'){
     if(!repairedRoom(world,world.room)){paper('The record terminal has no clean supply.','<p>Restore all local controllers to recover the watch record.</p>',[{label:'Open '+CAMPAIGN_REPAIRS[needed].short,action:'open-'+needed},{label:'Back to room',action:'close'}]);return;}
     recoverCampaignRecord(world);persist(true);showCampaignRecord(world.room);return;
   }
   if(id==='forward'){
+    if(world.room==='life'&&gardenExitPhase(world)==='ready'){const failed=dispatchCommand(world,{type:'TRIGGER_SCRUBBER_FAILURE'});if(failed.ok&&!failed.duplicate){cancelMovement();gardenEmergency.start(world);persist(true);refreshRoom();setInert();}return;}
+    if(world.room==='life'&&gardenExitPhase(world)==='emergency'){paper('WORKSHOP BULKHEAD LOCKED','<p>Inspect the failed scrubber controller. The air system must be safe before this bulkhead can release.</p>',[{label:'CLOSE',action:'close'}]);return;}
+    if(world.room==='life'&&gardenExitPhase(world)==='locked'){paper('WORKSHOP ACCESS LOCKED','<p>Complete the Garden controllers and calibrate the Binary Data Decoder at the computer kiosk.</p>',[{label:'CLOSE',action:'close'}]);return;}
     if(world.room==='bridge'){showHelm();return;}
     if(canAdvance(world,world.room)){travel(campaignRoute(world)[index+1]);return;}
-    paper('The forward latch is waiting.','<p>'+esc(objective(world))+'</p>',[{label:world.room==='relay'&&!fabricatorActive(world)?'Open fabricator':needed?'Open '+CAMPAIGN_REPAIRS[needed].short:'Read watch record',action:world.room==='relay'&&!fabricatorActive(world)?'open-fabricator':needed?'open-'+needed:'watch-record'},{label:'Back to room',action:'close'}]);return;
+    const nextAction=world.room==='relay'&&!fabricatorActive(world)?{label:'Open fabricator',action:'open-fabricator'}:needed?{label:'Open '+CAMPAIGN_REPAIRS[needed].short,action:'open-'+needed}:world.room!=='relay'?{label:'Read watch record',action:'watch-record'}:null;
+    paper('The forward latch is waiting.','<p>'+esc(objective(world))+'</p>',[...(nextAction?[nextAction]:[]),{label:'Back to room',action:'close'}]);return;
   }
   if(id==='machine-info'){
+    if(world.room==='navigation'&&splitGallery(world))room.intro='Upgrade the existing four-bit adder: use SUB to select addition or subtraction with the same hardware.';
     if(world.room==='bridge'){showHelm();return;}
     paper(room.title, '<p>'+esc(room.intro)+'</p><ul>'+room.repairs.map(key=>'<li>'+esc(CAMPAIGN_REPAIRS[key].short)+': '+(world.machines[key].certified?'verified':'needs repair')+'</li>').join('')+'</ul>',world.room==='relay'?[{label:'Close Screen',action:'close',preserveLabel:true}]:[...room.repairs.map(key=>({label:'Open '+CAMPAIGN_REPAIRS[key].short,action:'open-'+key})),...(availableBlueprints(world).length?[{label:'Inspect drawing drawer',action:'drawings'}]:[]),{label:'Back to room',action:'close'}]);
   }
@@ -403,12 +412,15 @@ function openSignedBinary(practice=false,showCompleted=false){
  closeOverlay();overlayType='signed-binary';cancelMovement();const host=document.querySelector('#overlay');host.hidden=false;const local=practice||signedTutorialSatisfied(world);gardenBinary=new SignedBinaryUI(host,{practice:local,resumeComplete:showCompleted,art:panelArt,reduced:()=>reduced,getWorld:()=>world,send:c=>dispatchCommand(world,c),persist:()=>{if(!local)persist(true);},effect:(...args)=>audio.effect(...args),close:closeOverlay});gardenBinary.mount();document.querySelector('#dialogue').hidden=true;setInert();
 }
 function openGardenBinary(practice=false){
- if(world.room!=='life'||!world.machines.safetycutoff?.certified){paper('Monitoring terminal offline','<p>Restore the emergency safety cutoff before calibrating this terminal.</p>',[{label:'Back to Garden',action:'close'}]);return;}
- closeOverlay();overlayType='garden-binary';cancelMovement();const host=document.querySelector('#overlay');host.hidden=false;gardenBinary=new GardenBinaryUI(host,{practice,art:panelArt,reduced:()=>reduced,getWorld:()=>world,send:c=>dispatchCommand(world,c),persist:()=>{if(!practice)persist(true);},effect:(...args)=>audio.effect(...args),close:closeOverlay});gardenBinary.mount();document.querySelector('#dialogue').hidden=true;setInert();
+ if(world.room!=='life'||isEarly(world)&&!world.machines.safetycutoff?.certified){paper('Binary Data Decoder offline','<p>Restore the emergency safety cutoff before calibrating this terminal.</p>',[{label:'Back to Garden',action:'close'}]);return;}
+ closeOverlay();overlayType='garden-binary';cancelMovement();const host=document.querySelector('#overlay');host.hidden=false;const local=practice||gardenDecoderComplete(world)||!isEarly(world);gardenBinary=new GardenBinaryUI(host,{practice:local,art:panelArt,reduced:()=>reduced,getWorld:()=>world,send:c=>{const r=dispatchCommand(world,c);if(r.ok&&r.completed){audio.effect('door');refreshHUD();}return r;},persist:()=>{if(!local)persist(true);},effect:(...args)=>audio.effect(...args),close:closeOverlay});gardenBinary.mount();document.querySelector('#dialogue').hidden=true;setInert();
 }
 function showGardenEmergency(){
- if(!servicePending(world)||world.room!=='life')return;dispatchCommand(world,{type:'ACK_SERVICE_WARNING'});persist(true);paper('SCRUBBER SYSTEM FAILURE','<p>The Life-Support Garden’s atmospheric scrubber has suffered a critical control failure.</p>',[{label:'INVESTIGATE',action:'investigate-emergency'}],'KESTREL / ATMOSPHERIC EMERGENCY','garden-emergency');document.querySelector('.paper-window')?.classList.add('garden-emergency-warning');
+ if(!servicePending(world)||world.room!=='life')return;
+ dispatchCommand(world,{type:'ACK_SERVICE_WARNING'});persist(true);
+ say('garden-exit-fault',{force:true,centered:true,messages:["Uh-oh. The scrubber just went offline. That bulkhead won't let us through until the air system is safe again.","We'd better check the scrubber controller. Something's definitely wrong."],after:()=>{gardenEmergency.returnToEngineer(world);setInert();}});
 }
+
 function showScrubberService(){openPanel('scrubber');}
 function showFabricator(){
  const active=fabricatorActive(world),types=fabricationTypes(world);
@@ -452,7 +464,7 @@ function syncExploration(){
  for(const b of document.querySelectorAll('[data-hotspot]')){
   const h=byId.get(b.dataset.hotspot);if(!h)continue;
   b.dataset.worldX=h.x;b.dataset.worldWidth=h.w;b.style.left=((h.x-cam)/480*100)+'%';if(h.id==='greg')b.style.top=(h.y/270*100)+'%';
-  b.hidden=!visibleHotspot(h,cam);if(b.hidden)b.tabIndex=-1;else if(b.dataset.hotspot!=='archive')b.tabIndex=0;
+  b.hidden=!visibleHotspot(h,cam);if(b.hidden)b.tabIndex=-1;else b.tabIndex=0;
  }
  for(const direction of [-1,1]){const b=document.querySelector('[data-edge="'+direction+'"]');if(!b)continue;const stop=nextNavigationStop(world,navigationOrigin(world,animations.actor),direction),available=wide&&ready&&!!stop;b.hidden=!available;if(stop){b.dataset.destination=stop.id;b.setAttribute('aria-label','Walk '+(direction<0?'left':'right')+' to '+stop.label);b.querySelector('.edge-label').textContent=stop.label;}b.classList.toggle('revealed',edgeHover===direction);}
 }
@@ -477,6 +489,7 @@ function openAsciiTerminal(){
  dataConsole=new AsciiTransmissionUI(document.querySelector('#overlay'),{getWorld:()=>world,send:c=>dispatchCommand(world,c),persist:()=>persist(true),close:closeOverlay});dataConsole.mount();setInert();
 }
 function openPanel(id,{practice=false}={}){
+  if(id==='addsub'&&world.machines.addsub?.certified&&legacyAddsub(world.circuits.addsub))practice=true;
   if(id==='adc_precision'&&isEarly(world)&&world.foundation.curriculum.galleryVersion===1){openAsciiTerminal();return;}
   if(overlayType==='repair'&&panel===id&&Boolean(practiceContext)===practice)return;
   if(currentLine?.startsWith('p01-guide-'))resetLine();
@@ -486,6 +499,11 @@ function openPanel(id,{practice=false}={}){
   const inspection=investigatePuzzle(world,id),availability=puzzleAvailability(world,id);
   if(!inspection.ok||!['BUILDABLE','TESTED','APPLIED'].includes(availability.state)){paper('Equipment unavailable','<p>'+esc(inspection.error||availability.reason||'Complete the required earlier repair before opening this equipment.')+'</p>',[{label:'CLOSE',action:'close'}],'KESTREL / REPAIR REQUIREMENTS');return;}
   if(id==='security'&&!practice){const cleared=bulkheadStarterCleanup(world);if(cleared&&editCircuit(world,id,cleared).ok)persist(true);}
+  if(id==='pressure_width'&&!practice&&!world.machines.pressure_width.certified&&!world.dialogueSeen.includes(puzzleIntroKey(id,world))){
+   const story=pendingStoryConversation(world);
+   if(story?.id===puzzleIntroKey(id,world)){cancelMovement();LINES[story.id]=['G.R.E.G.',story.messages[0]];say(story.id,{messages:story.messages,centered:true});return;}
+  }
+  if(id==='float_nav'&&!practice&&!world.machines.float_nav.certified&&!world.dialogueSeen.includes(puzzleIntroKey(id,world))){const key=puzzleIntroKey(id,world);LINES[key]=['G.R.E.G.',ALU_INTRO[0]];say(key,{messages:ALU_INTRO,centered:true});return;}
   const introduction=id==='twos_complement'?null:puzzleIntroduction(id,world,{practice}),introKey=puzzleIntroKey(id,world);
   if(currentLine&&lineCentered){
    if(currentLine===introKey){linePaused=false;renderLine();return;}
@@ -502,12 +520,12 @@ function openPanel(id,{practice=false}={}){
   editor?.resizeObserver?.disconnect();practiceContext=practice?createPractice(id):null;panel=id;overlayType='repair';hintIndex=0;testResult=null;pendingInteraction=null;
   if(isDataConsole(id,world.circuits[id])){editor=null;const host=document.querySelector('#overlay');host.hidden=false;dataConsole=new (id==='twos_complement'?TwosComplementUI:GALLERY_DATA_IDS.includes(id)?GalleryDataUI:DataConsoleUI)(host,{id,art:panelArt,getWorld:()=>world,control:action=>dispatchCommand(world,{type:'CONVERTER_CONTROL',puzzleId:id,action}),edit:graph=>editCircuit(world,id,graph),test:()=>testRepair(world,id),hintUsed:()=>{const r=dispatchCommand(world,{type:'RECORD_CONSOLE_HINT',puzzleId:id});if(r.ok)persist(true);return r;},verifyStage:stage=>dispatchCommand(world,{type:id==='cryo_signed'?'VERIFY_DECODER_STAGE':'VERIFY_GALLERY_STAGE',puzzleId:id,stage}),engage:validationId=>applyRepair(world,id,validationId),effect:(...args)=>audio.effect(...args),reduced:()=>reduced,persist:()=>persist(true),close:closeOverlay,applied:r=>{closeOverlay();finishRepair(id,r.events||[],{pass:true});}});dataConsole.mount();setInert();return;}
   const damageView=needsScrubberInspection(world,id,{practice});
-  const r=panelSpec(world,id),cards=componentCards(world,id,{practice}),finite=!practice&&cards.some(card=>card.finite),gateTypes=cards.map(card=>card.type),c=damageView?damagedScrubberGraph(world):structuredClone(practiceContext?.circuit||editableGraph(world,id)),diagnostic=practice?null:world.foundation.diagnostics[id],inputs={...(practiceContext?.inputs||diagnostic?.inputs||machineInputs(world,id))};
+  const r=panelSpec(world,id),cards=componentCards(world,id,{practice,graph:practiceContext?.circuit}),finite=!practice&&cards.some(card=>card.finite),gateTypes=cards.map(card=>card.type),c=damageView?damagedScrubberGraph(world):structuredClone(practiceContext?.circuit||editableGraph(world,id)),diagnostic=practice?null:world.foundation.diagnostics[id],inputs={...(practiceContext?.inputs||diagnostic?.inputs||machineInputs(world,id))};
   const host=document.querySelector('#overlay');host.hidden=false;const explanation=puzzleBrief(id,world);
-  host.innerHTML=`<section class="repair workbench" role="dialog" aria-modal="true" aria-label="${esc(r.title)} service panel"><header class="repair-top"><button class="repair-close" data-action="close" aria-label="Close service panel">×</button><h2>${practice?'Practice · ':isEngineeringDemo(world)?'Demo · ':''}${esc(r.title)}</h2><button class="repair-manual" data-action="manual" aria-label="Open Engineering Manual" title="Engineering Manual · return to this circuit">${svg('book')}</button><span class="header-hazard" aria-hidden="true"></span></header><div class="workbench-main"><div class="board-wrap"><svg id="circuit-board" class="board" viewBox="0 0 1200 600" role="group" tabindex="0" aria-label="Circuit workspace. Drag terminals to wire. Toggle CLOCK 0 to 1 to capture. Mouse wheel zooms, Alt-drag pans, 0 fits the board."></svg><button id="node-trash" class="board-trash" data-action="trash-node" aria-label="Delete selected gate" title="Drag a gate here to discard, or select a gate and click"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 10v7M14 10v7"/></svg></button></div><nav class="workbench-actions" aria-label="Circuit actions"><button id="clear-panel" class="workbench-action" data-action="clear-panel" title="Clear gates and wires; preserve fixed input and output modules"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 14L13 4l8 8-9 9H7l-4-4zM9 8l8 8M7 21h14"/></svg><span>CLEAR PANEL</span></button><button class="workbench-action" data-action="monitor"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16M15 9v11M3 14h18"/></svg><span>TRUTH TABLE</span></button>${workbenchAction('engage',{action:'test'})}${workbenchAction('hint')}</nav></div><div class="repair-brief"><div class="repair-instructions"><strong class="puzzle-objective" data-puzzle-objective>OBJECTIVE: ${esc(explanation?.objective||r.problem)}</strong><p id="repair-feedback" class="repair-feedback" role="status" aria-live="polite">${esc(explanation?explanation.broken+' '+explanation.behavior:r.problem)}</p></div><strong class="repair-spec">${esc(explanation?.constraint||r.spec)}</strong></div><div class="repair-tray"><div class="parts-tray" style="--part-count:${gateTypes.length}"><span>${practice?'Temporary practice parts · no rewards':finite?'Physical components':isInventoryPilot(world)?'Compatibility supply · later puzzles remain unrestricted':'Spare Parts:'}</span>${gateTypes.map(g=>`<button draggable="true" class="part" data-part="${g}" title="Drag or click to place ${g}"><svg viewBox="0 0 42 34" aria-hidden="true">${gateSymbol(g)}</svg><span>${componentLabel(g)}</span><b class="quantity-badge" aria-hidden="true">${cards.find(card=>card.type===g).badge}</b></button>`).join('')}</div></div><div id="monitor-host"></div></section>`;
-  const board=host.querySelector('#circuit-board'),bounds=board.getBoundingClientRect(),height=id==='ripple_adder'?600:Math.max(560,Math.round(1200*bounds.height/bounds.width));board.setAttribute('viewBox',`0 0 1200 ${height}`);
+  host.innerHTML=`<section class="repair workbench" role="dialog" aria-modal="true" aria-label="${esc(r.title)} service panel"><header class="repair-top"><button class="repair-close" data-action="close" aria-label="Close service panel">×</button><h2>${practice?'Practice · ':isEngineeringDemo(world)?'Demo · ':''}${esc(r.title)}</h2><button class="repair-manual" data-action="manual" aria-label="Open Engineering Manual" title="Engineering Manual · return to this circuit">${svg('book')}</button><span class="header-hazard" aria-hidden="true"></span></header><div class="workbench-main"><div class="board-wrap"><svg id="circuit-board" class="board" viewBox="0 0 1200 600" role="group" tabindex="0" aria-label="Circuit workspace. Drag terminals to wire. Toggle CLOCK 0 to 1 to capture. Mouse wheel zooms, Alt-drag pans, 0 fits the board."></svg><button id="node-trash" class="board-trash" data-action="trash-node" aria-label="Delete selected gate" title="Drag a gate here to discard, or select a gate and click"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 10v7M14 10v7"/></svg></button></div><nav class="workbench-actions" aria-label="Circuit actions"><button id="clear-panel" class="workbench-action" data-action="clear-panel" title="Clear gates and wires; preserve fixed input and output modules"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 14L13 4l8 8-9 9H7l-4-4zM9 8l8 8M7 21h14"/></svg><span>CLEAR PANEL</span></button><button class="workbench-action" data-action="monitor"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16M15 9v11M3 14h18"/></svg><span>TRUTH TABLE</span></button>${workbenchAction('engage',{action:'test'})}${workbenchAction('hint')}</nav></div><div class="repair-brief"><div class="repair-instructions"><strong class="puzzle-objective" data-puzzle-objective>OBJECTIVE: ${esc(explanation?.objective||r.problem)}</strong><p id="repair-feedback" class="repair-feedback" role="status" aria-live="polite">${esc(explanation?id==='float_nav'?explanation.intro:explanation.broken+' '+explanation.behavior:r.problem)}</p></div><strong class="repair-spec">${esc(explanation?.constraint||r.spec)}</strong></div><div class="repair-tray"><div class="parts-tray" style="--part-count:${gateTypes.length}"><span>${practice?'Temporary practice parts · no rewards':finite?'Physical components':isInventoryPilot(world)?'Compatibility supply · later puzzles remain unrestricted':'Spare Parts:'}</span>${gateTypes.map(g=>`<button draggable="true" class="part" data-part="${g}" title="Drag or click to place ${g}"><svg viewBox="0 0 42 34" aria-hidden="true">${gateSymbol(g)}</svg><span>${id==='float_nav'?(g==='XOR4'?'4-BIT CONDITIONAL INVERTER — XOR4':'CONTROL SPLITTER — FAN4'):componentLabel(g)}</span><b class="quantity-badge" aria-hidden="true">${cards.find(card=>card.type===g).badge}</b></button>`).join('')}</div></div><div id="monitor-host"></div></section>`;
+  const board=host.querySelector('#circuit-board'),bounds=board.getBoundingClientRect(),height=id==='float_nav'?640:['ripple_adder','addsub'].includes(id)?600:Math.max(560,Math.round(1200*bounds.height/bounds.width));board.setAttribute('viewBox',`0 0 1200 ${height}`);
   editor=new Editor(board,{
-    trashTarget:host.querySelector('#node-trash'),onSelectionChange:node=>{host.querySelector('#node-trash').classList.toggle('has-selection',!!node);},circuit:c,inputs,state:structuredClone(practiceContext?.state||diagnostic?.state||world.machineStates[id]||{}),height,width:1200,workbench:true,preserveLayout:(damageView&&!!c.layout)||id==='ripple_adder',theme:'illustrated',art:panelArt,wirePalette:id==='ventilation'?['#e33239']:['#326dcc','#d8aa2d','#b154a5','#db563a','#d73742','#4a9a67'],
+    trashTarget:host.querySelector('#node-trash'),onSelectionChange:node=>{host.querySelector('#node-trash').classList.toggle('has-selection',!!node);},circuit:c,inputs,state:structuredClone(practiceContext?.state||diagnostic?.state||world.machineStates[id]||{}),height,width:1200,workbench:true,preserveLayout:(damageView&&!!c.layout)||['ripple_adder','addsub','float_nav'].includes(id),theme:'illustrated',art:panelArt,wirePalette:id==='ventilation'?['#e33239']:['#326dcc','#d8aa2d','#b154a5','#db563a','#d73742','#4a9a67'],
     onChange:()=>{if(practiceContext){try{const events=circuitEditEvents(practiceContext.circuit,editor.circuit);practiceContext.edit(editor.circuit);testResult=null;present(events);return {ok:true,circuit:practiceContext.circuit};}catch(e){feedback(e.message,true);return {ok:false};}}const result=editCircuit(world,id,editor.circuit);if(!result.ok){feedback(result.error,true);present([{type:'component.unavailable',parameters:{reason:result.error}}]);return result;}if(result.functional){editor.state={};editor.signalUntil=0;testResult=null;feedback('Circuit changed. Verify both signal states before engaging the machine.');}if(id==='ventilation'&&editor.circuit.nodes.some(n=>n.type==='NOT'))armedGuidePart=null;present(result.events);persist();refreshPartStock();return {...result,circuit:editableGraph(world,id)};},
     onInput:n=>{if(practiceContext){practiceContext.toggle(n.id);Object.assign(inputs,practiceContext.inputs);editor.refresh(inputs,practiceContext.state);present([{type:'input.toggled'}]);return;}const result=toggleDiagnostic(world,id,n.id);if(!result.ok){feedback(result.error,true);return;}Object.assign(inputs,result.diagnostic.inputs);editor.state=structuredClone(result.diagnostic.state);editor.refresh(inputs,editor.state);present(result.events);persist();feedback(n.role==='clock'?'Clock toggled. Only rising edges capture data.':'Logical evaluation updated immediately. Highlighted leads show their actual signal values.');},
     onMessage:feedback,
@@ -541,11 +559,9 @@ function openPanel(id,{practice=false}={}){
   });
   refreshPartStock();
   if(id==='ventilation'&&!practice&&p01Guided(world)){armedGuidePart=world.foundation.dataInspector.p01Guide?.selected?'NOT':null;host.querySelector('#clear-panel span').textContent='CLEAR CIRCUIT';board.addEventListener('click',e=>{if(armedGuidePart&&!e.target.closest('[data-node],[data-pin],[data-wire]')&&!editor.readOnly){e.preventDefault();e.stopImmediatePropagation();editor.add('NOT',editor.point(e));if(editor.circuit.nodes.some(n=>n.type==='NOT'))armedGuidePart=null;}},true);board.addEventListener('keydown',e=>{if(armedGuidePart&&e.target===board&&e.key==='Enter'){e.preventDefault();editor.add('NOT');if(editor.circuit.nodes.some(n=>n.type==='NOT'))armedGuidePart=null;}},true);}
-  if(id==='addsub')host.querySelector('.workbench').classList.add('addsub-bench');
-  if(id==='ripple_adder'){
-    host.querySelector('.workbench').classList.add('ripple-bench');host.querySelector('.parts-tray').innerHTML='<span>Installed Full Adder bench</span><small>A/B and sum leads are protected. Drag Cout to the next Cin. Clear Panel removes only your carry links.</small>';
-    feedback(c.configuration.rippleStage===2?"Connect FA0 Cout to FA1 Cin. Try 01 + 01, then TEST & ENGAGE to expand the bench.":'Connect the three carry links from left to right. Verify all 256 pairs, including 15 + 1 with a separate final carry.');
-  }
+  if(id==='float_nav')host.querySelector('.workbench').classList.add('ripple-construction','alu-foundation');
+  if(id==='addsub')host.querySelector('.workbench').classList.add('subtractor-bench','ripple-construction');
+  if(id==='ripple_adder')host.querySelector('.workbench').classList.add('ripple-construction');
   if(id==='hull'&&isGalleryCurriculum(world)){host.querySelector('.workbench').classList.add('hull-voter-console');host.querySelector('.repair-top h2').textContent='Hull Sensor Voter · A / B / C';host.querySelector('.repair-spec').textContent='THREE SENSORS · TWO OR MORE REPORTS';host.querySelector('#circuit-board').setAttribute('aria-label','Hull voting assembly. Toggle HULL A, HULL B and HULL C to experiment; wire real manufactured gates; verify all eight sensor combinations.');}
   if(id==='sensordiff'&&!practice&&world.foundation.curriculum.xorUseVersion!==1)host.querySelector('.parts-tray').innerHTML='<span>Installed diagnostic equipment · XOR comparator protected</span><small>Toggle the two sensors, inspect Truth Table, and reconnect their routing. No loose XOR gates are granted.</small>';
   if(damageView){
@@ -569,7 +585,7 @@ function openPanel(id,{practice=false}={}){
 function feedback(message,error=false){const el=document.querySelector('#repair-feedback');if(el){el.textContent=message;el.className=`repair-feedback ${error?'error':''}`;}}
 function runTest(){
   if(!editor||!panel||diagnostic?.active||presentation?.active||editor.readOnly&&!editor.damageInspection||editor.drag||editor.wiring||scrubberModal)return;
-  const id=panel,sourceEditor=editor,practice=!!practiceContext,rippleStageA=id==='ripple_adder'&&editor.circuit.configuration.rippleStage===2,serviceRun=isEarly(world)&&id==='scrubber'&&serviceState(world)?.triggered,graph=structuredClone(editor.circuit);
+  const id=panel,sourceEditor=editor,practice=!!practiceContext,serviceRun=isEarly(world)&&id==='scrubber'&&serviceState(world)?.triggered,graph=structuredClone(editor.circuit);
   testResult=practice?practiceContext.test():testRepair(world,id);
   // Test is authoritative now; Apply remains a separate explicit engagement transaction.
   let applied=null;
@@ -590,7 +606,7 @@ function runTest(){
     onFrame:frame=>{if(editor===sourceEditor&&viewer){viewer.showDiagnosticFrame(frame);viewer.svg.querySelectorAll('[tabindex]').forEach(n=>n.setAttribute('tabindex','-1'));}},
     onEngage:practice?null:()=>{
       if(editor!==sourceEditor||panel!==id)return diagnosticOutcome(model,{ok:false,error:'The circuit editor changed. Test the current circuit again.'});
-      if(rippleStageA){const r=dispatchCommand(world,{type:'ADVANCE_RIPPLE',puzzleId:id});persist(true);return {kind:'stage-expanded',success:r.ok,detail:r.error||'Two-adder carry verified. Build the four-stage chain next.'};}
+
       applied=applyRepair(world,id,model.validationId);persist(true);
       events=[...(applied.events||[])].filter(e=>!e.type.startsWith('circuit.test_'));
       return diagnosticOutcome(model,applied);
@@ -623,7 +639,10 @@ function finishRepair(id,events,model){
   // Close both editing layers before presenting any earned discovery or repair dialogue.
   if(events.some(e=>e.type==='service.equivalence.confirmed'))audio.effect('door');
   present(events);persist(true);
-  if(id==='ripple_adder'&&!world.dialogueSeen.includes('intro-add4c')){LINES['intro-add4c']=['G.R.E.G.',ADD4C_INTRO[0]];say('intro-add4c',{messages:ADD4C_INTRO,centered:true});setInert();return;}
+  if(id==='ripple_adder'&&!world.dialogueSeen.includes('intro-add4c')){LINES['ripple-overflow']=['G.R.E.G.',RIPPLE_OVERFLOW[0]];LINES['intro-add4c']=['G.R.E.G.',ADD4C_INTRO[0]];say('ripple-overflow',{messages:RIPPLE_OVERFLOW,centered:true,after:()=>say('intro-add4c',{messages:ADD4C_INTRO,centered:true})});setInert();return;}
+  if(id==='pressure_width'&&!world.dialogueSeen.includes('story-pressure-register-complete')){LINES['story-pressure-register-complete']=['G.R.E.G.',PRESSURE_COMPLETE[0]];say('story-pressure-register-complete',{messages:PRESSURE_COMPLETE,centered:true});setInert();return;}
+  if(id==='float_nav'&&!world.dialogueSeen.includes('story-alu-foundation-complete')){LINES['story-alu-foundation-complete']=['G.R.E.G.',ALU_COMPLETE[0]];say('story-alu-foundation-complete',{messages:ALU_COMPLETE,centered:true});setInert();return;}
+  if(id==='addsub'&&!world.dialogueSeen.includes('story-subtractor-complete')){LINES['story-subtractor-complete']=['G.R.E.G.',SUBTRACTOR_COMPLETE[0]];say('story-subtractor-complete',{messages:SUBTRACTOR_COMPLETE,centered:true});setInert();return;}
   const statusMonitor=id==='firewall' &&isGalleryCurriculum(world);
   if(statusMonitor&&!reduced)document.querySelector('[data-hotspot="repair-firewall"]')?.animate([{boxShadow:'0 0 22px 5px #9ce7d788',background:'#a4edda22'},{boxShadow:'0 0 0 0 #9ce7d700',background:'transparent'}],{duration:750,easing:'ease-out'});
   if(events.some(e=>e.type==='service.equivalence.confirmed')&&serviceState(world)?.discoveryPending){showScrubberDiscovery();setInert();return;}
@@ -655,7 +674,7 @@ function monitor(){
   if(!repair.sequential)host.querySelectorAll('[data-test-row]').forEach(row=>row.addEventListener('click',()=>{if(practiceContext){Object.assign(practiceContext.inputs,rows[Number(row.dataset.testRow)].inputs);Object.assign(editor.inputs,practiceContext.inputs);editor.refresh(editor.inputs,practiceContext.state);host.innerHTML='';return;}const updated=setDiagnostic(world,panel,rows[Number(row.dataset.testRow)].inputs);if(!updated.ok){feedback(updated.error,true);return;}Object.assign(editor.inputs,updated.diagnostic.inputs);editor.refresh(editor.inputs,editor.state);present(updated.events);persist();host.innerHTML='';feedback('Diagnostic inputs applied. Numbers and illuminated sockets show HIGH or LOW. Cable colors identify leads.');}));
 }
 function showRecord(first=false){
-  paper(MAINTENANCE_LOG.title,`<pre>${esc(MAINTENANCE_LOG.text)}</pre><p>A line has been underlined in a different hand: <em>Ask the guide who gave the order.</em></p>`,[{label:first?'Keep the record':'Close notebook',action:'close'},...(world.room==='corridor'?[{label:'Take the crew-deck lift',action:'crew-lift'}]:[])],MAINTENANCE_LOG.stamp,first?'record':'journal-record');
+  paper(MAINTENANCE_LOG.title,`<pre>${esc(MAINTENANCE_LOG.text)}</pre><p>A line has been underlined in a different hand: <em>Ask the guide who gave the order.</em></p>`,[{label:first?'Keep the record':'Close notebook',action:'close'}],MAINTENANCE_LOG.stamp,first?'record':'journal-record');
 }
 function journal(){
   const list=[['Engine room',['ventilation']],['Maintenance corridor',['security']],...campaignRoute(world).slice(2).map(id=>[CAMPAIGN_ROOMS[id].title,roomRepairIds(world,id,CAMPAIGN_ROOMS[id].repairs)])];
@@ -767,12 +786,11 @@ async function begin(){
 const actions={
  outfitter:openOutfitter,settings:()=>settings(),'main-menu':returnToMainMenu,'title-menu':unlockTitle,'title-new':newFromTitle,'title-continue':continueFromTitle,'learn-overview':()=>showMissionBriefing(false),
   'activate-fabricator':activateFabricator,'open-fabricator':()=>{closeOverlay();queueInteraction('fabricator');},
-  'investigate-emergency':closeOverlay,'garden-binary-practice':()=>openGardenBinary(true),'garden-watch-record':()=>{if(recoverCampaignRecord(world,'life')){persist(true);showCampaignRecord('life');say('record-life',{force:true});}else paper('Record terminal offline','<p>Restore the scrubber before recovering this watch record.</p>',[{label:'Back to Garden',action:'close'}]);},
+  'investigate-emergency':closeOverlay,'garden-binary-practice':()=>openGardenBinary(true),
   'continue-dialogue':advanceLine,begin,close:closeOverlay,help,pause,journal,inventory,'current-curriculum':()=>{location.href=location.pathname+'?curriculum=1';},'open-safetycutoff':()=>{closeOverlay();queueInteraction('repair-safetycutoff');},'open-service':()=>{closeOverlay();queueInteraction('repair-scrubber',{intent:'service'});},'inspect-scrubber-history':()=>gardenUI.history(),'grab-emergency-parts':()=>{if(panel!=='scrubber'||!servicePending(world)||serviceState(world).drawerCollected)return;beginScrubberModal();inspectPickup('garden.demorgan-kit');},record:()=>showRecord(),reload:()=>location.reload(),manual:()=>teaching.manual(),drawings:()=>teaching.cabinet(),
   'begin-demo':async()=>{world=createDemoSession().world;animations.enter(world);refreshRoom();await begin();openPanel('scrubber');},
   'exit-demo':()=>{presentation?.cancel();location.href=location.pathname;},
   'export-save':()=>{const raw=world.saveProtection?.originalSnapshot||world.foundation.migration?.originalSnapshot;if(!raw)return;const url=URL.createObjectURL(new Blob([raw],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download='greg-original-notebook.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);},
-  'crew-lift':()=>{closeOverlay();travel('life');},
   'find-sensor':()=>{closeOverlay();queueInteraction('sensor');},
   'find-vent-panel':()=>{closeOverlay();attention('vent-panel');},
   'find-security-panel':()=>{closeOverlay();attention('security-panel');},
@@ -868,7 +886,7 @@ async function boot(){
     if(['pause','settings','outfitter','manual'].includes(overlayType)&&e.key==='Escape'){e.preventDefault();closeOverlay();return;}
     if(gardenEmergency.active&&gardenEmergency.phase!=='warning')return;
     if(power?.active)return;
-    if(overlayType==='story-conversation'&&e.key==='Escape'){e.preventDefault();if(currentLine==='scrubber-demorgan-discovery'){advanceLine();return;}resetLine();overlayType='dialogue-cancelled';closeOverlay();return;}
+    if(overlayType==='story-conversation'&&e.key==='Escape'){e.preventDefault();if(['scrubber-demorgan-discovery','garden-exit-fault'].includes(currentLine)){advanceLine();return;}resetLine();overlayType='dialogue-cancelled';closeOverlay();return;}
     if(overlayType==='opening-conversation'&&['Enter',' '].includes(e.key)){e.preventDefault();if(!e.repeat)advanceOpeningIntro();return;}
     if(overlayType==='story-conversation'&&['Enter',' '].includes(e.key)){e.preventDefault();e.stopPropagation();if(!e.repeat)advanceLine();return;}
     if(overlayType==='opening-conversation'&&e.key==='Escape'){e.preventDefault();advanceOpeningIntro();return;}
@@ -896,12 +914,12 @@ async function boot(){
       if(!developer?.blocksGame){crash?.tick(introDelta,performance.now());power?.tick(dt);}animations.power=power?.active?power.view:null;if(!developer?.blocksGame){resumePendingDiscoveries();resumeMilestoneStory();}
       if(started&&!developer?.blocksGame&&overlayType!=='pause'&&overlayType!=='settings'&&overlayType!=='manual'&&overlayType!=='confirm'&&overlayType!=='outfitter'){
         if(isEarly(world)&&world.room==='life'&&!overlayType&&!presentation?.active&&(!pendingInteraction||pendingInteraction==='forward')&&!currentLine&&!repairDialogue.length&&!hasPendingDiscovery()){
-          if(!gardenEmergency.active&&canBreakScrubber(world)&&approachingWorkshop(world,animations.actor)){const failed=dispatchCommand(world,{type:'TRIGGER_SCRUBBER_FAILURE'});if(failed.ok&&!failed.duplicate){cancelMovement();animations.scrubberFailureTime=0;audio.scrubberFailure((850-animations.actor.x)/480);reactions.react('surprised');engineerVisual.play('surprised',world,animations);gardenEmergency.start(world);persist(true);refreshRoom();setInert();}}
+
           if(!gardenEmergency.active&&servicePending(world)&&!serviceState(world).failureAnnounced)showGardenEmergency();
         }
         const wasStable=has(world,'pressure_stable'),wasBusy=nandBusy(world),previousNandPhase=nandPhase(world),faultAge=animations.scrubberFailureTime??Infinity;
         if(!previewRequested)updateWorld(world,dt,panel&&editor&&!practiceContext&&!diagnostic?.active&&!presentation?.active&&!servicePending(world)?{id:panel,inputs:editor.inputs,state:editor.state}:null);animations.update(dt,world,reduced,!power?.active&&!introPending&&!overlayType&&!presentation?.active&&!transitioning&&!gardenEmergency.active&&!pilotSession?.stale);
-        gardenEmergency.tick(dt,world,reduced);
+        gardenEmergency.tick(dt,world,reduced);animations.gardenEmergencyPhase=gardenEmergency.phase||'idle';
 
         if(wasBusy!==nandBusy(world))setInert();
         if(world.room==='relay'&&previousNandPhase!==nandPhase(world)&&nandPhase(world)==='blackout')engineerVisual.play('surprised',world,animations);

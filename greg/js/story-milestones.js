@@ -1,3 +1,7 @@
+import {PRESSURE_INTRO} from './pressure-register-lesson.js';
+import {puzzleIntroKey} from './puzzle-explanations.js';
+import {ALU_INTRO} from './alu-foundation.js';
+import {SUBTRACTOR_INTRO} from './subtractor.js';
 import {ADD4C_INTRO} from './ripple-adder.js';
 import {automaticSupplyActive} from './fabrication.js';
 import {isEarly,galleryEnabled,splitGallery} from './curriculum-profile.js';
@@ -5,6 +9,9 @@ import {isEarly,galleryEnabled,splitGallery} from './curriculum-profile.js';
 // Presentation eligibility only. Existing applied repairs are the authority; dialogueSeen
 // records completion. No record collection, inventory, room or puzzle state is awarded here.
 export const STORY_CONVERSATIONS=Object.freeze({
+ [puzzleIntroKey('pressure_width')]:{room:null,messages:PRESSURE_INTRO},
+ 'problem-float_nav-alu-v1':{room:'navigation',messages:ALU_INTRO},
+ 'problem-addsub-subtractor-v1':{room:'computation',messages:SUBTRACTOR_INTRO},
  'intro-add4c':{room:'computation',messages:ADD4C_INTRO},
  'story-fabricator-online':{room:null,messages:[
   "Well, look at that. The fabricator's back online!",
@@ -36,7 +43,13 @@ export function pendingStoryConversation(w){
  if(w.ending)return null;
  for(const [id,story]of Object.entries(STORY_CONVERSATIONS)){
   if(story.room!==null&&w.room!==(splitGallery(w)&&story.room==='sensors'?'blackbox':story.room)||story.legacyOnly&&isEarly(w)||w.dialogueSeen.includes(id)||w.dialogueSeen.includes(story.coveredBy))continue;
+  if(id===puzzleIntroKey('pressure_width')){
+   if(galleryEnabled(w)&&w.room===(splitGallery(w)?'testbay':'sensors')&&w.machines.cryo_signed?.certified&&w.machines.hull?.certified&&typeof w.foundation.applications.hull?.transactionId==='string'&&!w.machines.pressure_width?.certified)return {id,...story};
+   continue;
+  }
   if(id==='story-fabricator-online'){if(automaticSupplyActive(w))return {id,...story};continue;}
+  if(id==='problem-float_nav-alu-v1'){if(w.machines.addsub?.certified&&!w.machines.float_nav?.certified)return {id,...story};continue;}
+  if(id==='problem-addsub-subtractor-v1'){if(w.machines.twos_complement?.certified&&!w.machines.addsub?.certified&&w.positions.computation>=850)return {id,...story};continue;}
   if(id==='intro-add4c'){if(w.machines.ripple_adder?.certified&&w.foundation.applications.ripple_adder&&!w.foundation.curriculum.rippleLegacy)return {id,...story};continue;}
   const required=id==='story-gallery-recovered'?(galleryEnabled(w)?['sensordiff','xorfab','cryo_signed','hull','pressure_width','log_overflow']:['hull','firewall']):id==='story-reactor-context'?['memory','reactor']:['alu','flightmemory','override'];
   if((id!=='story-gallery-recovered'||!galleryEnabled(w)||w.foundation.curriculum.asciiActivity?.complete)&&required.every(key=>w.machines[key]?.certified&&typeof w.foundation.applications[key]?.transactionId==='string'))return {id,...story};

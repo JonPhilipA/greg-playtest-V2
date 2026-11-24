@@ -1,4 +1,5 @@
 import {signedTutorialRequired} from './signed-binary.js';
+import {gardenExitPhase} from './garden-exit.js';
 import {gardenDecoderComplete} from './garden-decoder.js';
 import {isEarly,galleryEnabled,serviceState,roomRepairIds,splitGallery,campaignRoute,puzzleRoom} from './curriculum-profile.js';
 import {ACTIVE_PROFILE,getPuzzle,getPlayablePuzzle,ROOM_IDS,roomPuzzles} from './puzzle-definitions.js';
@@ -23,7 +24,7 @@ export function checkPrerequisites(w,id,{profile=ACTIVE_PROFILE}={}){
   return result(missing);
 }
 export function checkRoomRepairs(w,room,{profile=ACTIVE_PROFILE}={}){
-  return result((((isEarly(w)&&room==='life')||(galleryEnabled(w)&&room==='sensors')||(splitGallery(w)&&['testbay','blackbox','computation'].includes(room)))?roomRepairIds(w,room,room==='life'?['alarm','scrubber']:[]).map(id=>getPlayablePuzzle(id,w)):roomPuzzles(room,profile)).filter(p=>!checkRepairStatus(w,p.id,{profile})).map(p=>({kind:'repair',id:p.id,message:'Restore '+p.name+' to release this room.'})));
+  return result((((isEarly(w)&&room==='life')||(galleryEnabled(w)&&room==='sensors')||(splitGallery(w)&&['testbay','blackbox','computation','navigation'].includes(room)))?roomRepairIds(w,room,room==='life'?['alarm','scrubber']:[]).map(id=>getPlayablePuzzle(id,w)):roomPuzzles(room,profile)).filter(p=>!checkRepairStatus(w,p.id,{profile})).map(p=>({kind:'repair',id:p.id,message:'Restore '+p.name+' to release this room.'})));
 }
 export function checkRoomRelease(w,room,{profile=ACTIVE_PROFILE}={}){
   if(!ROOM_IDS.includes(room))return result([{kind:'room',id:room,message:'Unknown room.'}]);
@@ -33,10 +34,10 @@ export function checkRoomRelease(w,room,{profile=ACTIVE_PROFILE}={}){
   if(room==='blackbox'&&galleryEnabled(w)&&!w.foundation.curriculum.asciiActivity?.complete)missing.push({kind:'concept',id:'ascii.transmission',message:'Complete the ASCII Transmission Terminal.'});
   if(galleryEnabled(w)&&room==='relay'&&!w.foundation.fabrication.nand)missing.push({kind:'tool',id:'fabrication.nand',message:'Authorize the Workshop fabricator before entering the Listening Gallery.'});
   if(galleryEnabled(w)&&!splitGallery(w)&&room==='sensors')missing.push({kind:'content',id:'gallery.next-package',message:'Listening Gallery curriculum complete through P16. The Computation Lab is not yet available in the campaign.'});
-  if(splitGallery(w)&&room==='navigation'&&!w.foundation.curriculum.arithmeticGrandfathered&&!getPuzzle('float_nav').implemented)missing.push({kind:'content',id:'navigation.next-package',message:'P19 complete. Navigation Control P20–P22 remain planned; your arithmetic progress is saved.'});
+  if(splitGallery(w)&&room==='navigation'&&!w.foundation.curriculum.arithmeticGrandfathered&&!getPuzzle('mux').implemented)missing.push({kind:'content',id:'navigation.next-package',message:'Further ALU lessons remain planned; your arithmetic progress is saved.'});
   if(splitGallery(w)&&room==='testbay'&&signedTutorialRequired(w))missing.push({kind:'concept',id:'decoder.signed',message:'Complete the Signed Binary Tutorial in the Environmental Test Bay.'});
-  if(isEarly(w)&&room==='life'&&!serviceState(w)?.triggered&&!gardenDecoderComplete(w))missing.push({kind:'concept',id:'decoder.foundation',message:'Calibrate the Garden Binary Data Decoder before departing.'});
-  if(isEarly(w)&&room==='life'&&!serviceState(w)?.applied)missing.push({kind:'service',id:'service.scrubber.demorgan',message:'Complete the scrubber emergency replacement before entering the NAND workshop.'});
+  if(isEarly(w)&&room==='life'&&gardenExitPhase(w)!=='released'&&!serviceState(w)?.triggered&&!gardenDecoderComplete(w))missing.push({kind:'concept',id:'decoder.foundation',message:'Calibrate the Garden Binary Data Decoder before departing.'});
+  if(isEarly(w)&&room==='life'&&gardenExitPhase(w)!=='released')missing.push({kind:'service',id:'service.scrubber.demorgan',message:'Complete the scrubber emergency replacement before entering the NAND workshop.'});
   if(profile==='curriculum'&&room==='engine'&&!(w.pressure<45&&w.machines?.ventilation?.output===1))missing.push({kind:'pressure',message:'The live engine pressure is not safe.'});
   return result(missing);
 }
@@ -75,7 +76,7 @@ export function puzzleAvailability(w,id,{profile=ACTIVE_PROFILE,allowAdjacent=fa
   return {state:'BUILDABLE',reason:'Ready to construct and test.',missing:[]};
 }
 export function availableWorkOrders(w,room=w.room,options={}){
-  return (isEarly(w)&&(room==='sensors'||splitGallery(w)&&['testbay','blackbox','computation'].includes(room))?roomRepairIds(w,room,[]).map(getPuzzle):roomPuzzles(room,options.profile||ACTIVE_PROFILE)).filter(p=>p.implemented).map(p=>({id:p.id,name:p.name,displayOrder:p.displayOrder,...puzzleAvailability(w,p.id,options)}));
+  return (isEarly(w)&&(room==='sensors'||splitGallery(w)&&['testbay','blackbox','computation','navigation'].includes(room))?roomRepairIds(w,room,[]).map(getPuzzle):roomPuzzles(room,options.profile||ACTIVE_PROFILE)).filter(p=>p.implemented).map(p=>({id:p.id,name:p.name,displayOrder:p.displayOrder,...puzzleAvailability(w,p.id,options)}));
 }
 export function canTravelTo(w,room){
   if(!ROOM_IDS.includes(room))return false;

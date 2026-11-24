@@ -1,5 +1,6 @@
-import {isEarly,serviceState} from './curriculum-profile.js';
-import {CAMPAIGN_ROOMS,CAMPAIGN_REPAIRS,CAMPAIGN_ORDER,canAdvance,campaignRecord,serviceSlots,nandPhase,nandDoors} from './campaign.js';
+import {DOOR_CENTERS} from './room-door-layout.js';
+import {campaignRoute,isEarly,serviceState,splitGallery} from './curriculum-profile.js';
+import {CAMPAIGN_ROOMS,CAMPAIGN_REPAIRS,CAMPAIGN_ORDER,campaignRecord,serviceSlots,nandPhase,nandDoors} from './campaign.js';
 import {machineInputs} from './world.js';
 
 /** Composition of independent machinery; live lights/screens come from the actual circuit. */
@@ -10,11 +11,9 @@ export function drawCampaign(r,w,a,{reduced=false,speaking=false}={}){
   const powered=!isNand||['ready','entry','sealing'].includes(phase)||w.machines.nandnot?.output===1;
   const outputs=id=>w.machines[id]?.outputs||{},value=(id,key)=>outputs(id)[key]??0;
   if(powered){r.lantern(46,37,t,1.2+CAMPAIGN_ORDER.indexOf(w.room),reduced);r.lantern(351,37,t,8.5,reduced);}
-  // In the NAND workshop the independent entrance leaves close behind the engineer.
-  if(isNand)r.door('engineHatch','engineFrame',5,97,47,110,a.nandBackDoor??doors.back,0,89,61,124);
-  else{r.rect(5,97,47,110,'#152131');r.image('engineFrame',0,89,61,124);}
-  r.sign(isNand?'ENTRY / AND':'BACK',8,78,43);
-
+  const route=campaignRoute(w),roomIndex=route.indexOf(w.room);
+  const names={engine:'ENGINEERING',corridor:'MAINTENANCE',life:'GARDEN',relay:'NAND WORKSHOP',sensors:'LISTENING GALLERY',computation:'COMPUTATION LAB',navigation:'CHART ROOM',reactor:'REACTOR CORE',bridge:'COMMAND BRIDGE'};
+  r.shipDoor(DOOR_CENTERS.compactBack,{amount:isNand?a.nandBackDoor:1,released:isNand?!!doors.back:true,label:names[route[roomIndex-1]]||'BACK'});
   if(w.room==='life')r.image('gardenRack',116,60,105,39);
   else if(w.room==='navigation'||w.room==='bridge')r.image('viewPort',116,58,112,46.5);
   else{
@@ -52,7 +51,7 @@ export function drawCampaign(r,w,a,{reduced=false,speaking=false}={}){
     r.text(m2.certified?'REMOTE COMMAND / ISOLATED':'REMOTE COMMAND / EXPOSED',152,203,room.accent,3.1,'center');
   }else if(w.room==='navigation'){
     if(m1.certified){c.save();c.strokeStyle=m2.certified?'#d1b875':'#6b9eb4';c.lineWidth=.9;c.beginPath();c.moveTo(106,137);c.lineTo(130,127);c.lineTo(154,136);c.lineTo(178,122);c.lineTo(192,132);c.stroke();for(const [x,y] of [[106,137],[130,127],[154,136],[178,122],[192,132]])r.lamp(x,y,1.1,true,'#d9c48b');c.restore();}
-    r.text(m1.certified?`FIX ${value(first,'C')}${value(first,'S')}  COURSE ${value(second,'C')}${value(second,'S')}`:'STAR FIX / UNRESOLVED',152,179,'#d5e3db',4.8,'center');
+    if(splitGallery(w))r.text(w.machines.float_nav?.certified?'ADD / SUB · VERIFIED':'ALU / ARITHMETIC UPGRADE',152,179,'#d5e3db',3.9,'center');else r.text(m1.certified?`FIX ${value(first,'C')}${value(first,'S')}  COURSE ${value(second,'C')}${value(second,'S')}`:'STAR FIX / UNRESOLVED',152,179,'#d5e3db',4.8,'center');
   }else if(w.room==='reactor'){
     const phase=(value(second,'H')<<1)|value(second,'L');
     r.lamp(102,157,2,m1.certified&&value(first,'Y')===1,'#9cc6d0');r.lamp(102,172,2,m1.certified&&value(first,'Z')===1,'#9cc6d0');
@@ -65,12 +64,9 @@ export function drawCampaign(r,w,a,{reduced=false,speaking=false}={}){
     if(w.machines.flightmemory?.certified)r.text(`Q ${value('flightmemory','C')}${value('flightmemory','S')}`,119,198,'#c5d5d2',3.2,'center');
     c.save();c.strokeStyle='#d8a856';c.lineWidth=2;c.beginPath();c.moveTo(152,190);c.lineTo(w.ending==='greg'?155:149,173);c.stroke();c.restore();
   }
-  const open=isNand?!!doors.forward:canAdvance(w,w.room),amount=typeof a.campaignDoor==='number'?a.campaignDoor:Number(open);
-  r.door('engineHatch','engineFrame',394,89,75,122,w.room==='bridge'?0:amount,386,84,91,130);
-  const next=CAMPAIGN_ORDER[CAMPAIGN_ORDER.indexOf(w.room)+1];
-  const names={relay:'NAND WORKSHOP',sensors:'SENSOR ARRAY',navigation:'CHART ROOM',reactor:'REACTOR CORE',bridge:'COMMAND BRIDGE'};
-  r.sign(w.room==='bridge'?'HELM / LOCAL':names[next]||'CREW DECKS',392,73,78);
-  r.lamp(431,84,1.4,open,'#b9d2b9');
+  r.shipDoor(DOOR_CENTERS.compactForward,{
+    amount:a.campaignDoor,released:!!a.campaignDoorTarget,label:w.room==='bridge'?'HELM / LOCAL':names[route[roomIndex+1]]||'FORWARD',
+  });
   if(isNand){
     const outage=phase==='blackout',emergency=!powered&&!['ready','entry','sealing'].includes(phase);
     if(outage||emergency){

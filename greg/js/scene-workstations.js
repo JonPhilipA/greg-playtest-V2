@@ -16,7 +16,7 @@ export const SCENE_WORKSTATIONS=Object.freeze({
   station('hull','P12 · Hull Sensor Voter / Structural Test',708,145,68,50,742),
   station('pressure_width','P13 · Pressure Register / Vessel Instrument',800,119,70,44,835),
  ]),
- computation:Object.freeze(COMPUTATION_AREAS.map(a=>station(a.id,'P'+a.number+' · '+({navbits:'Half Adder',trajectory:'Full Adder',ripple_adder:'Four-Bit Ripple-Carry Adder',twos_complement:"Two’s Complement Converter",addsub:'Adder/Subtractor Circuit'}[a.id]),a.station.x,a.station.y,a.station.w,a.station.h,a.station.walk))),
+ computation:Object.freeze(COMPUTATION_AREAS.map(a=>station(a.id,'P'+a.number+' · '+({navbits:'Half Adder',trajectory:'Full Adder',ripple_adder:'Four-Bit Ripple-Carry Adder',twos_complement:"Two’s Complement Converter",addsub:'Four-Bit Subtractor'}[a.id]),a.station.x,a.station.y,a.station.w,a.station.h,a.station.walk))),
  blackbox:Object.freeze([
   station('adc_precision','ASCII Transmission Terminal · Unnumbered',561,116,102,59,609),
   station('log_overflow','P14 · Navigation Log Overflow / Data Recovery',697,121,70,31,741),

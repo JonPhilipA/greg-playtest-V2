@@ -1,4 +1,5 @@
 import {signedTutorialRequired} from './signed-binary.js';
+import {gardenExitPhase} from './garden-exit.js';
 import {gardenDecoderComplete} from './garden-decoder.js';
 import {isEarly,serviceState,roomRepairIds,splitGallery,campaignRoute,LEGACY_ROUTE,GALLERY_ROUTE} from './curriculum-profile.js';
 import {checkRoomRepairs,checkRoomRelease,checkRepairStatus} from './progression.js';
@@ -49,12 +50,13 @@ export function campaignObjective(w){
   if(!room)return null;
   if(w.room==='relay'&&nandBusy(w))return nandPhase(w)==='entry'?'The workshop doors are open. Step inside…':nandPhase(w)==='blackout'?'Power failure. Emergency lighting is coming online…':'The power surge has sealed both doors.';
   if(w.room==='relay'&&nandPhase(w)==='emergency')return 'Emergency power only. Rebuild the lighting inverter with NAND.';
-  if(isEarly(w)&&w.room==='life'&&serviceState(w)?.triggered&&!serviceState(w).applied)return !serviceState(w).circuitInspected?'Scrubber hardware fault. Inspect the damaged controller behind its service cover.':!serviceState(w).drawerCollected?'Open the scrubber panel and grab its emergency components.':"Recreate the original scrubber behavior using the available components.";
-  if(isEarly(w)&&w.room==='life'&&w.machines.safetycutoff?.certified&&!serviceState(w)?.triggered)return gardenDecoderComplete(w)?'Binary decoder calibrated. Proceed to the NAND Workshop.':'Calibrate the Binary Data Decoder at the Garden monitoring terminal.';
+  if(isEarly(w)&&w.room==='life'&&serviceState(w)?.triggered&&!serviceState(w).applied)return !serviceState(w).circuitInspected?'INSPECT THE FAILED SCRUBBER CONTROLLER.':!serviceState(w).drawerCollected?'Open the scrubber panel and grab its emergency components.':"Recreate the original scrubber behavior using the available components.";
+  if(isEarly(w)&&w.room==='life'&&gardenExitPhase(w)==='released')return 'PROCEED TO THE NAND WORKSHOP.';
+  if(isEarly(w)&&w.room==='life'&&w.machines.safetycutoff?.certified&&!serviceState(w)?.triggered)return gardenDecoderComplete(w)?'PROCEED TO THE NAND WORKSHOP.':'Calibrate the Binary Data Decoder at the computer kiosk.';
   if(isEarly(w)&&!splitGallery(w)&&w.room==='sensors'&&w.machines.log_overflow?.certified)return 'LISTENING GALLERY COMPLETE · Proceed toward the Computation Lab. Its campaign lessons are not yet available.';
   if(isEarly(w)&&w.room==='relay'&&w.machines.nandor.certified&&!w.foundation.fabrication.nand)return 'The fabricator restores automatic component supply when the final NAND controller is engaged.';
   if(w.room===(splitGallery(w)?'testbay':'sensors')&&w.machines.xorfab?.certified&&signedTutorialRequired(w))return 'CALIBRATE SIGNED BINARY AT THE TRAINING CONSOLE.';
-  if(splitGallery(w)&&w.room==='navigation'&&!w.foundation.curriculum.arithmeticGrandfathered)return 'P19 COMPLETE · Navigation Control reached. P20–P22 remain planned.';
+  if(splitGallery(w)&&w.room==='navigation'&&!w.foundation.curriculum.arithmeticGrandfathered)return w.machines.float_nav?.certified?'P20 COMPLETE · ALU arithmetic foundation restored. Further ALU lessons remain planned.':'UPGRADE THE FOUR-BIT ADDER SO SUB SELECTS ADDITION OR SUBTRACTION.';
   if(w.room===(splitGallery(w)?'blackbox':'sensors')&&w.machines.pressure_width?.certified&&!w.foundation.curriculum.asciiActivity?.complete)return 'DECODE THE ASCII TRANSMISSION AT THE VAULT TERMINAL.';
   const next=roomRepairIds(w,w.room,room.repairs).find(id=>!(id==='ripple_adder'&&w.foundation.curriculum.rippleLegacy)&&!w.machines[id].certified);
   if(next)return next==='firewall'&&w.circuits.firewall.configuration?'CONFIGURE THE SENSOR STATUS DECODER.':next==='adc_precision'?'REPAIR THE CORRUPTED TRANSMISSION.':next==='log_overflow'?'DIAGNOSE THE NAVIGATION LOG STORAGE.':'Repair the '+CAMPAIGN_REPAIRS[next].short.toLowerCase()+'.';

@@ -1,5 +1,8 @@
+import {validateAluShape} from './alu-foundation.js';
+import {subtractorCircuit,validateSubtractorShape,legacyAddsub} from './subtractor.js';
 import './arithmetic-modules.js';
-import {rippleCircuit,validateRippleShape} from './ripple-adder.js';
+import {legacyRippleCircuit,validateLegacyRippleShape} from './ripple-legacy.js';
+import {rippleCircuit,validateRippleShape,legacyRipple} from './ripple-adder.js';
 import {galleryDataTest} from './gallery-data.js';
 import {validateAsciiActivity} from './ascii-transmission.js';
 import {galleryEnabled} from './curriculum-profile.js';
@@ -7,9 +10,8 @@ import {createCircuit} from './puzzles.js';
 import {functionalSignature} from './circuit-revision.js';
 import {testCircuit} from './validator.js';
 import {CONVERTER_ID,converterCircuit,validateConverter} from './twos-complement.js';
-export const ARITHMETIC_IDS=Object.freeze(['navbits','trajectory','ripple_adder',CONVERTER_ID,'addsub']);
-const input=(id,label,width=1)=>({id,type:'INPUT',label,width});
-export const ADDSUB_SPEC={id:'addsub',room:'computation',title:'Adder/Subtractor Circuit',short:'adder/subtractor',plate:'COMPUTATION LAB / P19',inputs:[input('A','A [3:0]',4),input('B','B [3:0]',4),input('M','SUB')],outputs:[{id:'Y',type:'OUTPUT',label:'RESULT [3:0]',width:4},{id:'C',type:'OUTPUT',label:'CARRY / NO BORROW',width:1}],gates:['FAN4','XOR4','ADD4C'],source:{A:3,B:2,M:0},expected:({A,B,M})=>{const n=A+(B^(M?15:0))+M;return {Y:n&15,C:n>>4};},spec:'RESULT = A + (B XOR {4×SUB}) + SUB (mod 16)',problem:'Build ADD/SUB hardware. Fan SUB to all four XOR positions and the full-adder carry-in. SUB 0 adds; SUB 1 subtracts by inverting B and adding 1.',hints:['P18 showed A − B = A + (~B) + 1. The same SUB control must cause both inversion and carry-in.','FAN4 repeats one control bit across four positions. XOR4 conditionally inverts B. ADD4C is four full-adder stages with an initial carry-in.','Connect SUB to FAN4 and ADD4C Cin; B and FAN4 to XOR4; A and XOR4 to ADD4C; route SUM and carry to the outputs.'],explanation:'Four ripple-connected full adders compute A + (B XOR a repeated SUB mask) + SUB. Addition uses unchanged B and Cin 0. Subtraction uses inverted B and Cin 1. Keep four sum bits; carry is the addition carry or subtraction no-borrow flag.',restored:'One datapath, two operations. Subtraction is addition of a negative representation.'};
+export const ARITHMETIC_IDS=Object.freeze(['navbits','trajectory','ripple_adder',CONVERTER_ID,'addsub','float_nav']);
+export {SUBTRACTOR_SPEC as ADDSUB_SPEC} from './subtractor.js';
 
 /** Stable identities preserve earned work; numbers never identify saved repairs. */
 export function initializeArithmetic(w,specs,saved=null){
@@ -27,7 +29,7 @@ export function initializeArithmetic(w,specs,saved=null){
    if(saved.foundation?.circuits?.[id])f.circuits[id]=structuredClone(saved.foundation.circuits[id]);
    for(const key of [id,'equipment:'+id])f.investigations[key]=saved.foundation?.investigations?.[key]===true;
   }
-  w.circuits[id]??=id===CONVERTER_ID?converterCircuit():id==='ripple_adder'?rippleCircuit():createCircuit(specs[id]);
+  w.circuits[id]??=id===CONVERTER_ID?converterCircuit():id==='ripple_adder'?rippleCircuit():id==='addsub'?subtractorCircuit():createCircuit(specs[id]);
   w.machines[id]??={status:'off',certified:false,output:0,outputs:{}};
   f.circuits[id]??={functionalRevision:0,signature:functionalSignature(w.circuits[id]),contentVersion:1,validatorVersion:1};
  }
@@ -39,7 +41,22 @@ export function initializeArithmetic(w,specs,saved=null){
   w.machines[CONVERTER_ID].certified=true;f.curriculum.completed[CONVERTER_ID]=true;
   f.curriculum.arithmeticGrandfathered={puzzleId:CONVERTER_ID,reason:'campaign-already-beyond-arithmetic',rewards:false};
  }
- validateConverter(w.circuits[CONVERTER_ID].configuration);validateRippleShape(w.circuits.ripple_adder);
+ if(legacyRipple(w.circuits.ripple_adder)&&!w.machines.ripple_adder.certified){
+  f.curriculum.archives['p17:carry-bench-v1']??={graph:structuredClone(w.circuits.ripple_adder),machine:structuredClone(w.machines.ripple_adder),readOnly:true,retired:true};
+  w.circuits.ripple_adder=rippleCircuit();const meta=f.circuits.ripple_adder;meta.functionalRevision++;meta.signature=functionalSignature(w.circuits.ripple_adder);
+  for(const table of ['tested','diagnostics','applications'])delete f[table].ripple_adder;
+  delete f.curriculum.rippleTwoProof;
+ }
+ if(legacyAddsub(w.circuits.addsub)&&!w.machines.addsub.certified){
+  f.curriculum.archives['p19:controlled-addsub-v1']??={graph:structuredClone(w.circuits.addsub),machine:structuredClone(w.machines.addsub),application:structuredClone(f.applications.addsub||null),readOnly:true,retired:true};
+  for(const part of Object.values(f.fabrication?.instances||{}))if(part.owner?.puzzleId==='addsub'){const node=w.circuits.addsub.nodes.find(n=>n.id===part.owner.nodeId);if(part.owner.kind!=='draft'||node?.fabricatedId!==part.id||node.type!==part.componentType)throw Error('Historical P19 hardware ownership needs recovery.');part.owner={kind:'bag'};}
+  w.circuits.addsub=subtractorCircuit();const meta=f.circuits.addsub;meta.functionalRevision++;meta.signature=functionalSignature(w.circuits.addsub);
+  for(const table of ['tested','applications','diagnostics'])delete f[table].addsub;
+  delete f.curriculum.completed.addsub;
+ }
+ validateAluShape(w.circuits.float_nav);
+ if(!legacyAddsub(w.circuits.addsub))validateSubtractorShape(w.circuits.addsub);
+ validateConverter(w.circuits[CONVERTER_ID].configuration);if(legacyRipple(w.circuits.ripple_adder))validateLegacyRippleShape(w.circuits.ripple_adder);else validateRippleShape(w.circuits.ripple_adder);
  // Historical identities, never display numbers. Existing receipts and completed Full Adders stay intact.
  if(saved&&previous!==2){
   const advanced=saved.machines?.twos_complement?.certified||saved.machines?.addsub?.certified||saved.ending||['memory','reactor','alu','flightmemory','override'].some(id=>saved.machines?.[id]?.certified)||saved.discovered?.some(r=>['reactor','bridge'].includes(r));
@@ -50,10 +67,10 @@ export function initializeArithmetic(w,specs,saved=null){
  }
  f.curriculum.asciiActivity??={version:1,stage:0,complete:false};
  validateAsciiActivity(f.curriculum.asciiActivity);
- if(w.circuits.ripple_adder.configuration.rippleStage===4){
+ if(legacyRipple(w.circuits.ripple_adder)&&w.circuits.ripple_adder.configuration.rippleStage===4){
   const proof=f.curriculum.rippleTwoProof;
   if(proof?.version!==1||typeof proof.transactionId!=='string'||typeof proof.signature!=='string')throw Error('Missing two-adder carry proof.');
-  const signed=JSON.parse(proof.signature),two=rippleCircuit(2);two.wires=signed.wires;
+  const signed=JSON.parse(proof.signature),two=legacyRippleCircuit(2);two.wires=signed.wires;
   if(functionalSignature(two)!==proof.signature||!testCircuit(specs.ripple_adder,two).pass)throw Error('Invalid two-adder carry proof.');
  }
  f.curriculum.arithmeticVersion=2;f.curriculum.revision=4;

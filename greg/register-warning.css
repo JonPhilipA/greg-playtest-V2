@@ -1,43 +1,97 @@
-/* P13: the engineering choice is width; the cells demonstrate its consequences. */
-.pressure-console .console-working{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(64px,100px) auto auto;align-content:space-evenly;gap:9px;overflow:auto;padding:10px 16px}
-.pressure-console .puzzle-console-brief>[data-puzzle-problem]{display:none}
-.pressure-console .puzzle-console-brief{padding:9px 3px;min-height:0}
-.pressure-requirement{display:flex;align-items:center;justify-content:center;gap:22px;color:#e7c788}
-.pressure-requirement small,.pressure-hardware-label,.pressure-width-selector legend,.pressure-test-controls>span{font:11px Consolas,monospace;letter-spacing:1px;color:#b1c4d1}
-.pressure-requirement strong{font:700 30px Consolas,monospace;color:#ffe0a1}
-.pressure-requirement strong span{font-size:17px}.pressure-requirement>span{font-size:12px;color:#bdced9}
-.pressure-width-selector{box-sizing:border-box;width:min(690px,95%);margin:0 auto;min-width:0;padding:5px 18px 6px;border:3px ridge #9b957f;border-radius:12px;background:linear-gradient(155deg,#425569,#1a2c3e);box-shadow:0 4px #0c1926;text-align:center}
-.pressure-width-selector legend{padding:0 15px;color:#efd39b;font-weight:700}
-.pressure-width-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;position:relative}
-.pressure-width-controls:before{content:'';position:absolute;left:12%;right:12%;top:50%;height:6px;background:#0d1f2c;border-top:2px solid #8e794f}
-.pressure-width-controls button{position:relative;display:flex;justify-content:center;align-items:center;gap:10px;min-height:61px;cursor:pointer;border:3px ridge #8b9ca9;border-radius:8px;background:linear-gradient(#4f6275,#263b4f);color:#b4c5d1;box-shadow:0 3px #10202d}
-.pressure-width-controls strong{font:700 32px Consolas,monospace}.pressure-width-controls span{font:700 13px 'Trebuchet MS',Arial,sans-serif;letter-spacing:1px}
-.pressure-width-controls i{width:9px;height:9px;background:#0f1f2a;border:1px solid #91a3b1;border-radius:50%}
-.pressure-width-controls [aria-pressed=true]{border-color:#ebcf97;color:#c2f3f0;background:linear-gradient(#426578,#223e51);box-shadow:inset 0 0 12px #8ae6e122,0 3px #10202d}
-.pressure-width-controls [aria-pressed=true] i{background:#99eee9;box-shadow:0 0 10px #78ded988}
-.pressure-width-selector>small{display:block;font:9px Consolas,monospace;letter-spacing:1px;color:#9ab0bf;margin-top:5px}
-.pressure-hardware{display:flex;flex-direction:column;justify-content:center;min-height:0}.pressure-hardware-label{display:flex;justify-content:space-between;padding:0 5px 4px;font-size:9px}
-.pressure-console .memory-bank{gap:6px;padding:6px 8px;border-width:3px;max-height:76px}.pressure-console .memory-cell{padding:4px 2px;gap:0;border-width:2px}.pressure-console .memory-cell b{font-size:23px}.pressure-console .memory-cell small,.pressure-console .memory-cell em{font-size:9px}
-.pressure-console .memory-cell.enabled{border-color:#b59b70;box-shadow:inset 0 0 7px #d1ad5433}.pressure-console .memory-cell.high{background:linear-gradient(#685738,#39372c);color:#ffe0a0}.pressure-console .memory-cell.dormant{opacity:.3}
-.cell-activated{animation:register-activate .55s ease-out 1}@keyframes register-activate{45%{background:#54756a;box-shadow:0 0 13px #a9eee17a}}
-.pressure-capacity{display:grid;grid-template-columns:1fr 45px 1fr;align-items:center;gap:0 15px;width:min(760px,96%);justify-self:center;text-align:center;background:#0e2231;padding:7px 15px;border:1px solid #526b7e;border-radius:8px}
-.pressure-capacity small,.pressure-sample-readings small{display:block;font:9px Consolas,monospace;letter-spacing:1px;color:#a7bfcb}
-.pressure-capacity strong{font:700 38px Consolas,monospace;color:#a7e8e5}.pressure-capacity strong span{font-size:17px}.capacity-comparison{font:30px Consolas,monospace;color:#a6b8c6}
-.pressure-capacity p{grid-column:1/-1;margin:2px 0 0;font:700 11px 'Trebuchet MS',Arial,sans-serif;letter-spacing:.5px;color:#b3e8c9}.pressure-capacity.insufficient p,.pressure-capacity.insufficient [data-register-maximum]{color:#ffad87}.pressure-capacity.oversized p{color:#ebc67f}
-.pressure-sample{display:grid;grid-template-columns:minmax(260px,1fr) minmax(340px,1.4fr);align-items:center;gap:20px}
-.pressure-test-controls{text-align:center}.pressure-console .console-switches{justify-content:center;gap:6px;margin:5px 0 0}.pressure-console .console-switches button{min-height:39px;padding:6px 12px;font-size:13px}
-.pressure-sample-readings{display:grid;grid-template-columns:1fr 22px 1fr;align-items:center;text-align:center;background:#162c3b;border-radius:7px;padding:7px 10px}.pressure-sample-readings strong{font:700 26px Consolas,monospace;color:#bce9e2}.pressure-sample-readings strong span{font-size:12px}.pressure-sample-readings.overflow [data-stored-value]{color:#ffac83}.pressure-sample-readings p{grid-column:1/-1;margin:4px 0 0;font:10px Consolas,monospace;color:#b5c8d5}.pressure-sample-readings .console-lamp{width:9px;height:9px;margin-right:6px}
-.pressure-console .console-instruction{font-size:13px;padding:9px 12px}
-@media(max-height:780px),(max-width:1050px){
- .pressure-console{padding:10px}.pressure-console .console-title{padding-bottom:7px}.pressure-console .console-title h2{font-size:24px}.pressure-console .puzzle-console-brief{font-size:12px;padding:6px 2px}.pressure-console .console-working{padding:6px 9px;gap:5px;grid-template-rows:auto auto minmax(48px,1fr) auto auto}
- .pressure-requirement{gap:16px}.pressure-requirement small{font-size:9px}.pressure-requirement strong{font-size:24px}.pressure-requirement>span{font-size:10px}
- .pressure-width-selector{width:min(570px,95%);padding:3px 12px 4px;border-width:2px}.pressure-width-selector legend{font-size:10px}.pressure-width-controls button{min-height:44px;border-width:2px;gap:8px}.pressure-width-controls strong{font-size:26px}.pressure-width-controls span{font-size:11px}.pressure-width-selector>small{font-size:8px;margin-top:3px}
- .pressure-console .memory-bank{padding:3px 6px;gap:4px}.pressure-console .memory-cell{padding:2px}.pressure-console .memory-cell b{font-size:18px}.pressure-console .memory-cell small,.pressure-console .memory-cell em{font-size:8px}.pressure-hardware-label{font-size:8px;padding-bottom:2px}
- .pressure-capacity{padding:4px 10px;width:min(650px,96%)}.pressure-capacity strong{font-size:30px}.pressure-capacity small{font-size:8px}.pressure-capacity p{font-size:10px}.pressure-sample{gap:12px;grid-template-columns:1fr 1.4fr}.pressure-test-controls>span{font-size:9px}.pressure-console .console-switches{gap:4px;margin-top:3px}.pressure-console .console-switches button{min-height:32px;padding:5px 9px;font-size:11px}.pressure-sample-readings{padding:4px 7px}.pressure-sample-readings small{font-size:8px}.pressure-sample-readings strong{font-size:22px}.pressure-sample-readings p{font-size:9px}
- .pressure-console .console-footer{padding-top:7px;gap:9px}.pressure-console .console-instruction{font-size:11px;padding:7px}.pressure-console .console-footer .brass-button{min-height:40px;font-size:12px;padding:8px 12px}
+/* P13: one illustrated sixteen-position register; all levers are sensor driven. */
+.pressure-console{width:98%;height:98%;max-height:98%;padding:1.1%;font-size:clamp(11px,1cqw,17px);border-color:#718091;background:linear-gradient(135deg,#394b5c,#263a4c 72%,#394b5c)}
+/* The workbench reads top to bottom, with two brass control decks around the data path. */
+.pressure-console .console-title{padding-bottom:.5cqw;gap:1cqw;flex:none}
+.pressure-console .console-title h2{font-size:2cqw}
+.pressure-console .console-title small{font-size:.7cqw}
+.pressure-console .console-close{width:3.3cqw;height:3.3cqw;flex-basis:3.3cqw;font-size:2.4cqw}
+.pressure-console .puzzle-console-brief{display:flex;flex-direction:row;justify-content:space-between;align-items:center;gap:1cqw;padding:.35cqw .3cqw;flex:none}
+.pressure-console .puzzle-console-brief .puzzle-objective,.pressure-console .puzzle-console-brief>[data-puzzle-problem]{font-size:.82cqw}
+.pressure-console .console-working{
+ border:0;background:none;box-shadow:none;min-height:0;padding:.7cqw .65cqw .35cqw;overflow:hidden;
+ display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto auto auto;align-content:center;
 }
-@media(max-width:700px){
- .pressure-requirement>span{display:none}.pressure-sample{grid-template-columns:1fr;gap:6px}.pressure-test-controls{display:flex;align-items:center;justify-content:center;gap:10px}.pressure-console .memory-bank{gap:2px}.pressure-capacity{width:100%;padding:4px}.pressure-capacity small{font-size:7px}.pressure-capacity strong{font-size:26px}
+.pressure-control{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.15cqw .8cqw;
+ justify-self:center;width:92%;min-width:0;padding:.45cqw 1cqw .3cqw;
+ border:2px solid #121d2a;border-radius:.55cqw;background:linear-gradient(#3d5061,#263747);
+ box-shadow:inset 0 0 0 1px #8293a0,0 2px #101c28;
 }
-@media(prefers-reduced-motion:reduce){.pressure-console *{animation:none!important;transition:none!important}}
-.pressure-console.reduced-motion *{animation:none!important;transition:none!important}
+.pressure-control label,.pressure-hardware-label,.pressure-binary,.pressure-meter small,.pressure-sensor strong{text-transform:uppercase}
+.pressure-control label{color:#f5e5c7;font:700 1.08cqw/1.2 'Trebuchet MS',Arial,sans-serif;letter-spacing:.045em}
+.pressure-control output{
+ justify-self:end;text-align:right;min-width:8.4cqw;padding:.2cqw .65cqw;
+ background:#0c1c2a;border:1px solid #778898;border-radius:.3cqw;
+ color:#dbedf5;font:700 1.62cqw/1.06 Consolas,monospace;font-variant-numeric:tabular-nums;
+}
+.pressure-width-control{margin-top:.6cqw;box-shadow:inset 0 0 0 1px #b09867,0 2px #101c28}
+.pressure-width-control output{color:#ffe1a5}
+.pressure-range{grid-column:1/-1;display:grid;grid-template-columns:4.6cqw minmax(0,1fr) 4.6cqw;align-items:center;gap:.65cqw}
+.pressure-range>span{font:700 .76cqw Consolas,monospace;white-space:nowrap;color:#d4dce1}
+.pressure-range>span:last-child{text-align:right}
+.pressure-range input{appearance:none;width:100%;min-width:0;height:2.2cqw;margin:0;background:transparent;cursor:ew-resize;touch-action:pan-y}
+.pressure-range input::-webkit-slider-runnable-track{height:1.08cqw;border:2px solid #101a23;border-radius:.28cqw;background:linear-gradient(#3b281c,#b18d53 50%,#715133);box-shadow:0 1px #82929e,inset 0 1px 3px #0008}
+.pressure-range input::-moz-range-track{height:1.08cqw;border:2px solid #101a23;border-radius:.28cqw;background:linear-gradient(#3b281c,#b18d53 50%,#715133);box-shadow:0 1px #82929e,inset 0 1px 3px #0008}
+.pressure-range input::-webkit-slider-thumb{appearance:none;width:2.22cqw;height:2.2cqw;margin-top:calc(-.56cqw - 2px);border:2px solid #101924;border-radius:.35cqw;background:repeating-linear-gradient(90deg,transparent 0 22%,#202c3b70 22% 28%,transparent 28% 37%),linear-gradient(#dbe4e9,#8193a4);box-shadow:inset 0 0 0 2px #f0f1eaaa,0 2px 4px #0009}
+.pressure-range input::-moz-range-thumb{width:2.22cqw;height:2.2cqw;border:2px solid #101924;border-radius:.35cqw;background:repeating-linear-gradient(90deg,transparent 0 22%,#202c3b70 22% 28%,transparent 28% 37%),linear-gradient(#dbe4e9,#8193a4);box-shadow:inset 0 0 0 2px #f0f1eaaa,0 2px 4px #0009}
+.pressure-range input:focus-visible{outline:2px solid #f7dda1;outline-offset:2px}
+.pressure-range input:disabled{cursor:default;opacity:.5}
+
+.pressure-source{display:grid;justify-items:center;padding-top:.45cqw}
+.pressure-sensor{display:flex;align-items:center;gap:.6cqw;padding:.18cqw 1.15cqw .18cqw .3cqw;border:2px solid #131e29;border-radius:.45cqw;background:linear-gradient(#53677b,#2a3e51);box-shadow:inset 0 0 0 1px #8796a2,0 2px #101b28}
+.pressure-sensor svg{width:3.35cqw;height:3.35cqw}
+.pressure-sensor strong{font:700 .8cqw Consolas,monospace;color:#f4dfb5;letter-spacing:.055em}
+.pressure-lead{display:block;width:2.55cqw;height:1.28cqw;overflow:hidden;pointer-events:none}
+.pressure-lead .cable-shadow{stroke:#263540}
+
+.pressure-register-shell{
+ position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-width:0;height:15.2cqw;
+ padding:.5cqw 1.1cqw .45cqw;border:3px solid #101924;border-radius:.72cqw;
+ background:linear-gradient(165deg,#3d5061,#263a4c 75%);box-shadow:inset 0 0 0 2px #a08a60,inset 0 0 0 5px #263a4c,inset 0 8px 18px #07131b70,0 3px #0b1621;
+}
+.pressure-register-shell:before,.pressure-register-shell:after{content:'';position:absolute;width:.45cqw;height:.45cqw;top:.57cqw;border:1px solid #101a24;border-radius:50%;background:linear-gradient(135deg,#f1d291,#96713f);pointer-events:none}
+.pressure-register-shell:before{left:.6cqw}.pressure-register-shell:after{right:.6cqw}
+.pressure-hardware-label{display:flex;align-items:center;justify-content:space-between;gap:.8cqw;padding:.3cqw .65cqw .5cqw;border-bottom:1px solid #a78d5e7a;color:#f4dfb2;font:700 1cqw Consolas,monospace;letter-spacing:.04em}
+.pressure-hardware-label span,.pressure-hardware-label small{color:#bacbd7;font-size:.75cqw;white-space:nowrap}
+.pressure-bit-bank{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));align-items:center;padding:.2cqw .2cqw}
+.pressure-console .memory-cell{display:grid;justify-items:center;align-content:center;gap:.22cqw;position:relative;border:0;border-right:1px solid #9aabbb26;border-radius:0;padding:.22cqw .24cqw;background:none;box-shadow:none;text-shadow:none;cursor:default;transition:opacity .14s}
+.pressure-console .memory-cell:last-child{border-right:0}
+.pressure-console .memory-cell.first-active:not(:first-child){box-shadow:inset 2px 0 #c9a65f}
+.pressure-console .memory-cell.dormant{opacity:.5;filter:grayscale(1)}
+.pressure-bit-display{display:grid;place-items:center;width:84%;height:2.55cqw;border:2px inset #526777;border-radius:.28cqw;background:#101e2d;color:#c4cad0;font:700 1.92cqw/1 Consolas,monospace;box-shadow:inset 0 2px 5px #0006}
+.memory-cell.high .pressure-bit-display{color:#daedf6;border-color:#7b9bb0}
+.pressure-console .memory-cell .pressure-bit-toggle{display:block;width:1.86cqw;height:3.85cqw;pointer-events:none;overflow:visible}
+.pressure-switch-lever{transition:transform .14s cubic-bezier(.25,.7,.3,1)}
+.pressure-console .memory-cell .pressure-bit-label{font:700 .95cqw/1.2 Consolas,monospace;color:#e9dfc7}
+.pressure-bit-weight{font:700 .8cqw/1.2 Consolas,monospace;color:#cfbd99;white-space:nowrap}
+.pressure-binary{display:flex;justify-content:center;align-items:center;gap:.65cqw;padding:.45cqw .3cqw .15cqw;border-top:1px solid #8193a64a;color:#b9cbd8;font:.74cqw Consolas,monospace}
+.pressure-binary code{font-size:1cqw;letter-spacing:.14em;color:#e5eef3}
+
+.pressure-sample-readings{display:grid;grid-template-columns:1fr 1fr;column-gap:1cqw;width:70%;justify-self:center;text-align:center}
+.pressure-lead-output{grid-column:2;justify-self:center}
+.pressure-meter{display:grid;align-content:center;gap:.22cqw;min-height:4.1cqw;padding:.35cqw .5cqw;background:linear-gradient(#0a1825,#142b3c);border:2px solid #101c29;border-radius:.45cqw;box-shadow:inset 0 0 0 1px #7d8b92,0 2px #101c28}
+.pressure-meter small{font:700 .74cqw Consolas,monospace;letter-spacing:.07em;color:#bfccd3}
+.pressure-meter strong{font:700 2cqw/1 Consolas,monospace;color:#e8dfca}
+.pressure-meter strong span{font-size:.93cqw;color:#bbced9}
+.pressure-meter [data-stored-value]{color:#d0e6f1}
+.pressure-sample-readings>[data-storage-status]{grid-column:1/-1;min-height:1.1cqw;margin:.25cqw 0 0;font:700 .75cqw/1.25 Consolas,monospace;color:#ffb5a7}
+.pressure-sample-readings.overflow [data-stored-value]{color:#ffb5a7}
+.pressure-sample-readings.overflow .pressure-meter:last-of-type{box-shadow:inset 0 0 0 1px #ad685b,0 2px #101c28}
+
+.pressure-console .console-footer{flex:none;display:grid;grid-template-columns:minmax(0,1fr) repeat(2,17.2cqw);align-items:stretch;min-height:5cqw;padding-top:.4cqw;gap:.8cqw}
+.pressure-console .console-instruction{min-width:0;display:flex;align-items:center;font-size:.88cqw;padding:.6cqw .8cqw;line-height:1.35;background:#20364a;color:#e4dfd0;border-color:#d3b173}
+@container (max-width:640px){
+ .pressure-control,.pressure-meter,.pressure-sensor{border-width:1px}
+ .pressure-range input::-webkit-slider-thumb{border-width:1px;margin-top:calc(-.56cqw - 1px);box-shadow:inset 0 0 0 1px #f0f1eaaa}
+ .pressure-range input::-moz-range-thumb{border-width:1px;box-shadow:inset 0 0 0 1px #f0f1eaaa}
+ .pressure-range input::-webkit-slider-runnable-track{border-width:1px}
+ .pressure-range input::-moz-range-track{border-width:1px}
+ .pressure-register-shell{border-width:2px}
+ .pressure-bit-display{border-width:1px}
+}
+.pressure-console .p13-completion-overlay{position:absolute;inset:0;z-index:10;background:#061321a8}.pressure-console .p13-completion-overlay .completion-card{max-height:95%;overflow:auto}.pressure-test-results{margin:.4em 0;padding:.4em;border:1px solid #6d8795;border-radius:4px;font-size:.75em;text-align:left}.pressure-test-results summary{cursor:pointer;color:#e4c88f}.pressure-test-results>div{max-height:8em;overflow:auto;font-family:Consolas,monospace}.pressure-test-results p{margin:.25em}.pressure-test-results .pass{color:#b6e4ce}.pressure-test-results .fail{color:#ffb69e}.pressure-console .completion-card>p{font-size:.85em}
+@media(prefers-reduced-motion:reduce){.pressure-console *{animation:none!important;transition:none!important}}.pressure-console.reduced-motion *{animation:none!important;transition:none!important}
+
+.game .pressure-console .verification-window.p13-completion-overlay{position:absolute;inset:0;z-index:10;width:100%;height:100%;max-height:100%;display:block;margin:0;padding:0;border:0;background:none;box-shadow:none;overflow:hidden}
+.game .pressure-console .p13-completion-overlay .verification-result-copy.completion-card{max-height:100%;overflow:auto;gap:7px;padding:20px 26px}.game .pressure-console .p13-completion-overlay .completion-card>p{margin:0;font:13px/1.3 'Trebuchet MS',Arial,sans-serif}.game .pressure-console .p13-completion-overlay .completion-emblem{width:90px;height:72px}
+@container game (max-width:1155px){.game .pressure-console .p13-completion-overlay .verification-summary{padding:9px}.game .pressure-console .p13-completion-overlay .verification-result-copy.completion-card{gap:4px;padding:13px 20px}.game .pressure-console .p13-completion-overlay .completion-emblem{width:60px;height:48px}.game .pressure-console .p13-completion-overlay .completion-rewards>div{padding:6px}.game .pressure-console .p13-completion-overlay .completion-card h3{font-size:23px}.game .pressure-console .p13-completion-overlay .completion-puzzle{font-size:16px}}

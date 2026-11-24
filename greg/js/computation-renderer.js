@@ -1,3 +1,4 @@
+import {rippleWord} from './ripple-adder.js';
 import {COMPUTATION_AREAS,computationBoard} from './computation-layout.js';
 import {converterSigned} from './twos-complement.js';
 const ink='#26474d',teal='#366c6e',rust='#a16b4d';
@@ -59,7 +60,7 @@ export function drawComputationLab(r,w,a,{trace,reduced=false}={}){
   c.restore();
   const s=area.scope;
   if(area.id==='addsub'){
-   const value=w.machines?.addsub?.certified?w.machines.addsub.outputs?.Y:undefined;
+   const value=w.machines?.addsub?.certified?(w.circuits?.addsub?.configuration?.subtractorVersion?rippleWord(w.machines.addsub.outputs||{},'C'):w.machines.addsub.outputs?.Y):undefined;
    r.rect(s.x,s.y,s.w,s.h,'#102836');r.text('RESULT [3:0]',s.x+s.w/2,s.y+5,'#a2c4bc',2.9,'center');r.text(Number.isInteger(value)?value.toString(2).padStart(4,'0'):'—',s.x+s.w/2,s.y+14,'#a7e1cd',6.6,'center');
   }else trace(c,s.x,s.y,s.w,s.h,reduced?0:a.time*.4,'#90c6bd',area.number*.11);
   if(area.id==='twos_complement'){

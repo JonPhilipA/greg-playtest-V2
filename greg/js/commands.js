@@ -1,4 +1,6 @@
-import {rippleCircuit,testRipple,validateRippleShape} from './ripple-adder.js';
+import {validateAluShape} from './alu-foundation.js';
+import {validateSubtractorShape} from './subtractor.js';
+import {validateRippleShape} from './ripple-adder.js';
 import {asciiCommand} from './ascii-transmission.js';
 import {advanceConverter} from './twos-complement.js';
 import {outfitterCommand,outfitterUnlocked} from './outfitter-state.js';
@@ -115,7 +117,6 @@ export function executeCommand(state,command,runtime){
       if(galleryEnabled(w)&&['firewall','adc_precision'].includes(id)&&!galleryStageProgress(w,id).complete)return fail('Verify both equipment stages before final testing or engagement.');
         if(id==='cryo_signed'&&!decoderProgress(w).complete)return {ok:false,error:'Verify both P11 sensor stages before engaging the system.'};
       if(command.validationId&&ticket.validationId!==command.validationId)return {ok:false,error:'The validation record is stale.'};
-      if(id==='ripple_adder'&&(w.circuits[id].configuration.rippleStage!==4||!f.curriculum.rippleTwoProof))return {ok:false,error:'Complete both carry-chain stages before engagement.'};
       const tested=isEarly(w)?checkEarlyCircuit(w,id,w.circuits[id]):testCircuit(REPAIRS[id],w.circuits[id]);if(!tested.pass)return {ok:false,error:tested.error};
       if(id==='security'){
         const inputs=runtime.machineInputs(w,id);if(!inputs.A||!inputs.B)return {ok:false,error:!inputs.A?'Tests passed. Engage the ventilation repair to restore engineering authorization before engaging the bulkhead.':'Tests passed. Restore safe engine pressure before engaging the bulkhead.',pending:true};
@@ -128,7 +129,7 @@ export function executeCommand(state,command,runtime){
         event('component.installed',{id,instanceIds:installed.installed});
       }
       installFabricated(w,id,transactionId);
-      recordCompatibility(w,id);if(galleryEnabled(w)&&['navbits','trajectory','ripple_adder','twos_complement','addsub'].includes(id)){f.curriculum.completed[id]=true;if(id==='trajectory')delete f.curriculum.catchUp.trajectory;}
+      recordCompatibility(w,id);if(galleryEnabled(w)&&['navbits','trajectory','ripple_adder','twos_complement','addsub','float_nav'].includes(id)){f.curriculum.completed[id]=true;if(id==='trajectory')delete f.curriculum.catchUp.trajectory;}
       recordLesson(w,id,'APPLY');
       if(isEarly(w)&&id==='sensordiff')f.curriculum.concepts['xor.disagreement']=true;
       if(isEarly(w)&&id==='xorfab')f.curriculum.certifications.XOR=true;
@@ -167,7 +168,7 @@ export function executeCommand(state,command,runtime){
         if(id==='twos_complement')return fail('Operate the physical converter controls.');
         const graph=structuredClone(command.circuit);
         if(isDataConsole(id)&&(id!=='firewall'||galleryEnabled(w)))validateDataShape(id,graph);
-        const before=w.circuits[id];if(id==='ripple_adder')validateRippleShape(graph,before);reconcileFabricatedEdit(w,id,graph,transactionId);
+        const before=w.circuits[id];if(id==='ripple_adder')validateRippleShape(graph,before);if(id==='addsub')validateSubtractorShape(graph);if(id==='float_nav')validateAluShape(graph);reconcileFabricatedEdit(w,id,graph,transactionId);
         for(const e of reconcilePilotEdit(w,id,graph,transactionId))event(e.type,{id,instanceIds:e.instanceIds});
         for(const e of circuitEditEvents(before,graph,{placement:!usesFiniteInventory(w,id)}))event(e.type,{id,...e.parameters});
         const signature=functionalSignature(graph),meta=f.circuits[id],functional=meta.signature!==signature;
@@ -175,8 +176,10 @@ export function executeCommand(state,command,runtime){
         if(id==='cryo_signed')invalidateDecoderStages(w,before,graph);
         if(galleryEnabled(w)&&['firewall','adc_precision'].includes(id))invalidateGalleryStages(w,id,before,graph);
         if(functional){
+          const rippleInputs=['ripple_adder','addsub','float_nav'].includes(id)?f.diagnostics[id]?.inputs:null;
           meta.functionalRevision++;meta.signature=signature;
           delete f.tested[id];delete f.applications[id];delete f.diagnostics[id];delete f.curriculum.completed[id];
+          if(rippleInputs)f.diagnostics[id]={inputs:{...rippleInputs},state:{},signature};
           runtime.invalidateRepair(w,id);
           invalidateComponentSource(w,id);recordLesson(w,id,'BUILD');
           for(const key of Object.keys(f.tested))if(f.tested[key].dependencyKey!==dependencySignature(w,key))delete f.tested[key];
@@ -184,12 +187,7 @@ export function executeCommand(state,command,runtime){
         result={functional,functionalRevision:meta.functionalRevision};break;
       }
       case 'ASCII_CONTROL':result=asciiCommand(w,command);break;
-      case 'ADVANCE_RIPPLE':{
-        if(id!=='ripple_adder'||w.circuits[id].configuration.rippleStage!==2||w.machines[id].certified)return fail('The two-adder bench is not pending.');
-        const proof=testRipple(w.circuits[id]);if(!proof.pass)return fail(proof.error);
-        f.curriculum.rippleTwoProof={version:1,signature:functionalSignature(w.circuits[id]),transactionId};
-        w.circuits[id]=rippleCircuit(4);const meta=f.circuits[id];meta.functionalRevision++;meta.signature=functionalSignature(w.circuits[id]);delete f.tested[id];delete f.diagnostics[id];result={expanded:true};break;
-      }
+      case 'ADVANCE_RIPPLE':return fail('P17 is a single four-adder construction. Place and wire the modules, then verify and engage.');
       case 'CONVERTER_CONTROL':{
         if(id!=='twos_complement'||w.machines[id].certified)return fail('This converter is already installed or unavailable.');
         const c=advanceConverter(w.circuits[id].configuration,command.action);w.circuits[id].configuration=c;
@@ -229,7 +227,7 @@ export function executeCommand(state,command,runtime){
         if(command.type==='TOGGLE_INPUT'&&!node)return fail('Unknown diagnostic input.');
         const signature=functionalSignature(w.circuits[id]),previous=f.diagnostics[id]?.signature===signature?f.diagnostics[id]:{inputs:runtime.machineInputs(w,id),state:w.machineStates[id]||{},signature};
         const inputs={...previous.inputs},changes=[];
-        const requested=command.type==='TOGGLE_INPUT'?{[node.id]:((inputs[node.id]||0)+1)%(id==='ripple_adder'&&w.circuits[id].configuration.rippleStage===2?4:2**(node.width||1))}:command.inputs;
+        const requested=command.type==='TOGGLE_INPUT'?{[node.id]:((inputs[node.id]||0)+1)%(2**(node.width||1))}:command.inputs;
         if(!requested||typeof requested!=='object'||Array.isArray(requested))return fail('Diagnostic input values are required.');
         for(const [key,value]of Object.entries(requested)){
           const pin=REPAIRS[id].inputs.find(n=>n.id===key);

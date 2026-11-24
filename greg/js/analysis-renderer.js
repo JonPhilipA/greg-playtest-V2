@@ -1,3 +1,4 @@
+import {analysisDoorCenter,WALK_FLOOR} from './room-door-layout.js';
 import {drawComputationLab} from './computation-renderer.js';
 import {drawEquipment} from './equipment-effects.js';
 import {PICKUP_LOCATIONS,pickupAvailability} from './inventory-gameplay.js';
@@ -15,6 +16,12 @@ export function drawAnalysisEnvironment(r,w,a,{reduced=false}={}){
  const env=analysisEnvironment(w),c=r.ctx,cam=a.cameraX||0,t=reduced?0:a.time;
  const img=r.assets.get(env.asset),scale=img.width/env.width;c.drawImage(img,cam*scale,0,480*scale,img.height,0,0,480,270);
  c.save();c.translate(-cam,0);
+ const preview=!!developmentEnvironment(w);
+ const back=analysisDoorCenter(env.width,false),forward=analysisDoorCenter(env.width,true);
+ const labels={galleryWorld:['NAND WORKSHOP','COMPUTATION LAB'],galleryObservatoryWorld:['NAND WORKSHOP','TEST BAY'],testBayWorld:['LISTENING GALLERY','BLACK BOX VAULT'],blackBoxWorld:['TEST BAY','COMPUTATION LAB'],computationWorld:['BLACK BOX VAULT','NAVIGATION']};
+ const [entryLabel,exitLabel]=labels[env.asset];
+ r.shipDoor(back,{amount:1,label:entryLabel});
+ r.shipDoor(forward,{amount:preview?0:a.campaignDoor,released:!preview&&!!a.campaignDoorTarget,label:exitLabel});
  if(env.visual){drawGallerySplit(r,a,env,{reduced,trace,world:w});}
  else if(env.roomId==='sensors'){
   if(!developmentEnvironment(w)){r.lamp(186,149,2.2,w.machines.sensordiff?.certified,'#8dc47b');r.lamp(379,190,2.2,w.machines.xorfab?.certified,'#e4b25c');r.text(w.machines.sensordiff?.certified?'DISAGREEMENT / ONLINE':'DISAGREEMENT / OFFLINE',279,142,'#e8be71',3,'center');}
@@ -32,6 +39,6 @@ export function drawAnalysisEnvironment(r,w,a,{reduced=false}={}){
 
  for(const x of (env.visual?{observatory:[75,633],testbay:[203,424,666,863],vault:[84,246,531,778]}[env.visual]:(env.roomId==='computation'?[84,877]:w.environmentPreview==='gallery'?[104,407,689,964,1338]:[79,304,600,870]))){c.save();c.globalAlpha=reduced?.04:.035+.008*Math.sin(t*1.3+x);const g=c.createRadialGradient(x+6,68,2,x+6,68,28);g.addColorStop(0,'#ffcc78');g.addColorStop(1,'#ffcc7800');c.fillStyle=g;c.fillRect(x-22,40,56,56);c.restore();}
  c.save();c.translate(cam,0);drawEquipment(r,w,a,{reduced});c.restore();
- const actor=a.actor;c.fillStyle='#101b2880';c.beginPath();c.ellipse(actor.x,220,7,1.5,0,0,Math.PI*2);c.fill();r.engineer(a);
+ const actor=a.actor;c.fillStyle='#101b2880';c.beginPath();c.ellipse(actor.x,WALK_FLOOR,7,1.5,0,0,Math.PI*2);c.fill();r.engineer(a);
  c.restore();r.canvas.dataset.environment=w.environmentPreview||({sensors:'gallery',testbay:'testbay',blackbox:'blackbox',computation:'computation'}[env.roomId])||(env.roomId==='sensors'?'gallery':'computation');r.canvas.dataset.worldWidth=String(env.width);r.canvas.dataset.cameraX=cam.toFixed(3);r.canvas.dataset.worldX=actor.x.toFixed(3);r.canvas.dataset.previewOnly=String(!!developmentEnvironment(w));r.canvas.dataset.workstations=String(w.environmentWorkstations===true);
 }

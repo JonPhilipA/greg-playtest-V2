@@ -1,3 +1,4 @@
+import {ALU_SPEC} from './alu-foundation.js';
 import {RIPPLE_SPEC} from './ripple-adder.js';
 import {ADDSUB_SPEC} from './arithmetic-curriculum.js';
 // The original simulator and behavior validator are shared with the first release.
@@ -56,3 +57,6 @@ Object.defineProperty(REPAIRS,'ripple_adder',{value:RIPPLE_SPEC,enumerable:false
 Object.defineProperty(CAMPAIGN_REPAIRS,'ripple_adder',{value:RIPPLE_SPEC,enumerable:false});
 Object.defineProperty(REPAIRS,'addsub',{value:ADDSUB_SPEC,enumerable:false});
 Object.defineProperty(CAMPAIGN_REPAIRS,'addsub',{value:ADDSUB_SPEC,enumerable:false});
+
+Object.defineProperty(REPAIRS,'float_nav',{value:ALU_SPEC,enumerable:false});
+Object.defineProperty(CAMPAIGN_REPAIRS,'float_nav',{value:ALU_SPEC,enumerable:false});

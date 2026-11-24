@@ -3,7 +3,7 @@ import {gateSymbol} from './panel-art.js';
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 /** Advisory topology matching, independent of node positions, instance IDs and validation. */
 export function matchBlueprint(sheet,graph){
- const fixed={...Object.fromEntries(sheet.inputs.map((id,i)=>[id,graph.nodes.find(n=>n.id===id&&n.type==='INPUT')?.id||graph.nodes.filter(n=>n.type==='INPUT')[i]?.id])),...Object.fromEntries(sheet.outputs.map((id,i)=>[id,graph.nodes.find(n=>n.id===id&&n.type==='OUTPUT')?.id||graph.nodes.filter(n=>n.type==='OUTPUT')[i]?.id]))};
+ const fixed={...Object.fromEntries((sheet.fixedIds||[]).map(id=>[id,graph.nodes.find(n=>n.id===id)?.id])),...Object.fromEntries(graph.nodes.filter(n=>n.fixed&&['ZERO','ONE'].includes(n.type)).map(n=>[n.id,n.id])),...Object.fromEntries(sheet.inputs.map((id,i)=>[id,graph.nodes.find(n=>n.id===id&&n.type==='INPUT')?.id||graph.nodes.filter(n=>n.type==='INPUT')[i]?.id])),...Object.fromEntries(sheet.outputs.map((id,i)=>[id,graph.nodes.find(n=>n.id===id&&n.type==='OUTPUT')?.id||graph.nodes.filter(n=>n.type==='OUTPUT')[i]?.id]))};
  let best={map:fixed,score:-1,connected:[]},attempts=0;
  function search(index,map,used){
   if(++attempts>4096)return;

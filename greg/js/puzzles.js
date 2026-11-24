@@ -32,6 +32,7 @@ export const LEVELS=[
     problem:'Rebuild a gated arithmetic register and a mutually exclusive pilot selector. Then route control through your circuit.',spec:'On ↑CLK: S ← ARM·(A⊕B), C ← ARM·AB. AI = ARM·PILOT. MANUAL = ARM·¬PILOT.',conceptText:'A complete digital system combines a datapath, stored state, and control logic. ARM gates the data; PILOT selects who receives control.',hint:['Build a half adder. AND each result with ARM before feeding two clocked DFFs.','AI CTRL = ARM AND PILOT. MANUAL = ARM AND NOT PILOT. After testing, set ARM=1 and choose PILOT, then engage the live route.'],explanation:'Your arithmetic, storage, and control logic all work together. The final live output route determines who flies the ship.'},
 ];
 export function createCircuit(level) {
+  if(level.circuitFactory)return level.circuitFactory();
   return {nodes:[...level.inputs.map((n,i)=>({...n,x:32,y:44+i*78,value:0,fixed:true})),...level.outputs.map((n,i)=>({...n,x:904,y:44+i*78,fixed:true}))],wires:[]};
 }
 export function combinations(level) {

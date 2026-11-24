@@ -1,0 +1,89 @@
+import {aluSolution} from '/js/alu-foundation.js';
+import {subtractorSolution} from '/js/subtractor.js';
+import {rippleCircuit,rippleSolution} from '/js/ripple-adder.js';
+import {COMPUTATION_AREAS} from '/js/computation-layout.js';
+import {CONVERTER_SAMPLES} from '/js/twos-complement.js';
+import {freshSignedBinary,SIGNED_COMPARISON_CONTROLS} from '/js/signed-binary.js';
+import {puzzleIntroKey} from '/js/puzzle-explanations.js';
+import {isDataConsole,dataCircuit} from '/js/data-consoles.js';
+import {newWorld,newRevisedCurriculum,dispatchCommand,editCircuit,testRepair,applyRepair,certify,updateWorld,takePass,authorize,enterRoom,recoverLog,recoverCampaignRecord,investigatePuzzle} from '/js/world.js';
+import {InventorySession} from '/js/inventory-session.js';
+import {REPAIRS} from '/js/repairs.js';
+import {createCircuit} from '/js/puzzles.js';
+import {CAMPAIGN_ROOMS,CAMPAIGN_ORDER} from '/js/campaign.js';
+import {CORE_SWITCH_ID} from '/js/opening-state.js';
+import {isEarly} from '/js/curriculum-profile.js';
+import {PUZZLES,COMPATIBILITY_PUZZLES,getPlayablePuzzle} from '/js/puzzle-definitions.js';
+import {GUIDE_SHEETS} from '/js/blueprints.js';
+import {campaignSolution} from '/__dev/campaign-solutions.js';
+export const CURRENT_IDS=['ventilation','security','alarm','scrubber','safetycutoff','nandnot','nandand','nandor','sensordiff','xorfab','cryo_signed','hull','pressure_width','log_overflow','navbits','trajectory','ripple_adder','twos_complement','addsub','float_nav'];
+export const FIXTURE_CIRCUITS=[['not','Correct NOT','ventilation'],['and','Correct AND','security'],['or','Correct OR','alarm'],['nor','Correct NOR construction','scrubber'],['nor-bad','Incorrect NOR construction','scrubber'],['nand','Correct NAND construction','safetycutoff'],['nand-bad','Incorrect NAND construction','safetycutoff'],['xor','Four-NAND XOR','xorfab'],['decoder','Correct channel interpretations','cryo_signed'],['decoder-bad','Incorrect channel interpretations','cryo_signed'],['voter','Correct majority voter','hull'],['voter-bad','Incorrect majority voter','hull'],['width','Correct nine-bit register','pressure_width'],['width-bad','Incorrect eight-bit register','pressure_width'],['integer','Correct unsigned log storage','log_overflow'],['integer-bad','Incorrect eight-bit log storage','log_overflow']];
+export function fixtureCircuit(id,{incorrect=false,mode='curriculum'}={}){
+ if(id==='ripple_adder'){const c=rippleSolution();if(incorrect)c.wires=c.wires.filter(w=>!(w.to==='fa2'&&w.in===2));return c;}
+ if(id==='twos_complement')return {nodes:[],wires:[],configuration:{stage:2,step:'complete',bits:14,proofs:[13,11,14]}};
+ if(id==='float_nav'){const c=aluSolution();if(incorrect)c.wires=c.wires.filter(w=>w.to!=='adder'||w.in!==2);return c;}
+ if(id==='addsub'){const c=subtractorSolution();if(incorrect)c.wires=c.wires.filter(w=>w.to!=='fa0'||w.in!==2);return c;}
+ if(isDataConsole(id)&&(id!=='firewall'||mode!=='legacy')){const c=dataCircuit(id);if(!incorrect)c.configuration={cryo_signed:{temperature:'signed',speed:'unsigned'},pressure_width:{width:9},firewall:{isolateMask:48,setMask:16},adc_precision:{recognition:79,bytes:[71,79,0,88,89,0]},log_overflow:{type:'uint16_t'}}[id];else if(id==='pressure_width')c.configuration={width:8};else if(id==='adc_precision')c.configuration={recognition:79,bytes:[71,79,48,88,89,0]};return c;}
+ const c=createCircuit(REPAIRS[id]);const wire=(from,to,pin=0)=>c.wires.push({id:'fixture-'+c.wires.length,from,to,in:pin,out:0});
+ if(['scrubber','safetycutoff'].includes(id)&&mode==='curriculum'){
+  c.nodes.push({id:'combine',type:id==='scrubber'?'OR':'AND',x:360,y:160},{id:'invert',type:'NOT',x:650,y:160});wire('A','combine');wire(incorrect?'A':'B','combine',1);wire('combine','invert');wire('invert','Y');return c;
+ }
+ if(id==='sensordiff'){c.nodes.push({id:'comparator',type:'XOR',label:'Recovered XOR gate',x:560,y:220});wire('A','comparator');wire('B','comparator',1);wire('comparator','Y');return c;}
+ if(id==='xorfab'){c.nodes.push(...structuredClone(GUIDE_SHEETS.xor.nodes));c.wires=GUIDE_SHEETS.xor.wires.map((w,i)=>({...w,id:'fixture-'+i}));if(incorrect)c.wires.find(w=>w.to==='left'&&w.in===0).from='B';return c;}
+ const solved=campaignSolution(id);if(id==='hull'&&incorrect)solved.wires=solved.wires.filter(w=>w.to!=='Y');return solved;
+}
+export function puzzleCatalog(mode='curriculum',world=null){const context=world||{foundation:{earlyCurriculum:{version:1},exploration:{galleryRoomsVersion:1},curriculum:{galleryVersion:1}},machines:{}};return (mode==='legacy'?[...PUZZLES.filter(p=>p.id!=='twos_complement'),...COMPATIBILITY_PUZZLES]:PUZZLES).map(p=>{const live=getPlayablePuzzle(p.id,mode==='curriculum'?context:null),playable=mode==='curriculum'?CURRENT_IDS.includes(p.id)&&!!live:!!live;return {...p,room:playable?live.roomId:p.displayOrder>=17&&p.displayOrder<=19?'computation':p.roomId,playable,status:playable?(mode==='curriculum'?'Playable':'Legacy adapter'):'Planned',complete:world?.machines?.[p.id]?.certified===true};});}
+const requireResult=(r,label)=>{if(!r?.ok&&!r?.applied)throw Error(r?.error||label||'Fixture command failed');return r;};
+const send=(w,c)=>requireResult(dispatchCommand(w,c),c.type);
+const apply=(w,id)=>{if(id==='adc_precision'&&isEarly(w)){send(w,{type:'ASCII_CONTROL',action:'decode',answer:'OK'});send(w,{type:'ASCII_CONTROL',action:'terminator',index:2});return;}if(id==='ripple_adder'){requireResult(investigatePuzzle(w,id));requireResult(editCircuit(w,id,fixtureCircuit(id)));const t=testRepair(w,id);if(!t.pass)throw Error(t.error);requireResult(applyRepair(w,id,t.validationId));return;}if(id==='twos_complement'){requireResult(investigatePuzzle(w,id));for(const action of ['continue','continue','continue','invert','continue','add','continue','verify','invert','add','verify','invert','add','verify'])send(w,{type:'CONVERTER_CONTROL',puzzleId:id,action});const t=testRepair(w,id);if(!t.pass)throw Error(t.error);requireResult(applyRepair(w,id,t.validationId));return;}if(['firewall','adc_precision','log_overflow'].includes(id)&&isEarly(w)&&w.foundation.curriculum.galleryVersion===1){requireResult(investigatePuzzle(w,id));requireResult(editCircuit(w,id,fixtureCircuit(id)));for(const stage of id==='firewall'?['isolate','set']:id==='adc_precision'?['encoding','buffer']:[]){const r=send(w,{type:'VERIFY_GALLERY_STAGE',puzzleId:id,stage});if(!r.pass)throw Error(r.error);}const t=testRepair(w,id);if(!t.pass)throw Error(t.error);requireResult(applyRepair(w,id,t.validationId));return;}if(id==='cryo_signed'){requireResult(investigatePuzzle(w,id));requireResult(editCircuit(w,id,fixtureCircuit(id)));for(const stage of ['temperature','speed']){const r=send(w,{type:'VERIFY_DECODER_STAGE',puzzleId:id,stage});if(!r.pass)throw Error(r.error);}const t=testRepair(w,id);if(!t.pass)throw Error(t.error);requireResult(applyRepair(w,id,t.validationId));return;}const r=certify(w,id,fixtureCircuit(id,{mode:isEarly(w)?'curriculum':'legacy'}));if(!r.applied)throw Error(r.error||'Fixture failed '+id);};
+const settle=w=>{for(let i=0;i<180;i++)updateWorld(w,.05);};
+const acknowledge=w=>{for(const eventId of [...w.foundation.presentation.pending])send(w,{type:'MARK_PRESENTATION_SEEN',eventId});};
+async function memoryWriter(w){const map=new Map(),storage={getItem:k=>map.get(k)??null,setItem:(k,v)=>map.set(k,v)},locks={request:async(name,options,fn)=>fn({name})},session=new InventorySession({storage,locks,key:'developer-fixture-memory'});await session.acquire();session.bind(w);return session;}
+/** All prerequisites and ownership are produced by the same commands as gameplay, in private memory. */
+export async function buildFixture(id='ventilation',{mode='curriculum',after=false,pending=false,skipSupply=false,stock=null,fresh=false,decoderStage='temperature'}={}){
+ if(id==='after-binary')id='before-maintenance';
+ const scenario=id,serviceScenario=['service-damaged','service-ready','service-cleared','service-partial','service-built','service-verified'].includes(id);const aliases={'ascii-nul':'adc_precision','ripple-four':'ripple_adder','ripple-ready':'ripple_adder','ripple-complete':'ripple_adder','supply-before':'nandor','supply-restoration':'nandor','supply-active':'after-workshop','supply-xor-locked':'sensordiff','supply-xor-unlocked':'xorfab','supply-later':'hull','story-opening':'ventilation','story-corridor':'security','story-record':'security','story-gallery-before':'log_overflow','story-gallery-pending':'log_overflow','story-gallery-seen':'log_overflow','p09-before':'sensordiff','p09-pickup':'sensordiff','p09-ready':'sensordiff','p09-complete':'sensordiff','p10-initial':'xorfab','p10-stock':'xorfab','p10-correct':'xorfab','p10-incorrect':'xorfab','p10-blueprint':'xorfab','computation-entry':'log_overflow'};id=serviceScenario?'maintenance':aliases[id]||id;if(['supply-restoration','supply-xor-unlocked','story-opening','story-record','story-gallery-pending','story-gallery-seen'].includes(scenario))after=true;if(scenario==='p09-before')skipSupply=true;if(scenario==='p09-complete'||scenario==='p10-blueprint')after=true;if(scenario==='p10-blueprint')pending=true;if(scenario==='computation-entry'||scenario==='ripple-complete')after=true;if(scenario==='p10-initial')stock={};
+ let w=mode==='curriculum'?newRevisedCurriculum():newWorld();const session=await memoryWriter(w);try{
+  if(fresh)return w;
+  w.flags.push('awakened');w.dialogueSeen.push('awake');
+  if(mode==='curriculum'&&['opening-activated','opening-intro'].includes(id)){send(w,{type:'ACK_CRASH'});send(w,{type:'ACTIVATE_EMERGENCY_CORE',targetId:CORE_SWITCH_ID});return w;}
+  if(isEarly(w))for(const c of [{type:'ACK_CRASH'},{type:'ACTIVATE_EMERGENCY_CORE',targetId:CORE_SWITCH_ID},{type:'MARK_MISSION_BRIEFING'}])send(w,c);
+  const ready=key=>{if(key==='adc_precision'){if(scenario==='ascii-nul')send(w,{type:'ASCII_CONTROL',action:'decode',answer:'OK'});if(after)apply(w,key);acknowledge(w);return w;}if(key!=='nandor'&&w.foundation.fabrication.autoSupply&&!w.dialogueSeen.includes('story-fabricator-online'))w.dialogueSeen.push('story-fabricator-online');if((key!=='pressure_width'||after)&&!w.dialogueSeen.includes(puzzleIntroKey(key,w)))w.dialogueSeen.push(puzzleIntroKey(key,w));acknowledge(w);requireResult(investigatePuzzle(w,key));if(scenario==='ripple-ready')requireResult(editCircuit(w,key,fixtureCircuit(key)));if(after)apply(w,key);if(scenario==='computation-entry'&&!enterRoom(w,'computation'))throw Error('Fixture Lab route is locked.');if(scenario==='story-opening')settle(w);if(scenario==='story-record')requireResult(dispatchCommand(w,{type:'RECOVER_LOG'}));if(scenario==='story-gallery-seen')w.dialogueSeen.push('story-gallery-recovered');if(!pending)acknowledge(w);return w;};
+  if(mode==='legacy'){
+   if(id==='ventilation')return ready(id);apply(w,'ventilation');settle(w);enterRoom(w,'corridor');if(id==='security')return ready(id);apply(w,'security');
+   for(const room of CAMPAIGN_ORDER){if(!enterRoom(w,room))throw Error('Fixture travel failed '+room);if(room==='relay'){for(let i=0;i<6;i++)updateWorld(w,.5);w.nandEvent.explained=true;}for(const key of CAMPAIGN_ROOMS[room].repairs){if(key===id)return ready(id);apply(w,key);}}throw Error('This legacy puzzle has no playable fixture.');
+  }
+  if(mode==='curriculum'&&id.startsWith('p01-')){
+   const stage=id.slice(4);if(stage!=='fan'){send(w,{type:'INSPECT',targetId:'fan'});send(w,{type:'CollectGate',pickupId:'engine.not'});}
+   if(['wiring','ready','complete'].includes(stage)){requireResult(investigatePuzzle(w,'ventilation'));const graph=fixtureCircuit('ventilation');if(stage==='wiring')graph.wires=graph.wires.filter(w=>w.to!=='Y');requireResult(editCircuit(w,'ventilation',graph));if(stage==='complete'){const t=testRepair(w,'ventilation');if(!t.pass)throw Error(t.error);requireResult(applyRepair(w,'ventilation',t.validationId));settle(w);}}
+   acknowledge(w);w.positions.engine=stage==='fan'?94:stage==='collected'?153:354;return w;
+  }
+  const supply=(pickup,target)=>{if(!(skipSupply&&id===target))send(w,{type:'CollectGate',pickupId:pickup});};
+  send(w,{type:'INSPECT',targetId:'sensor'});supply('engine.not','ventilation');if(id==='ventilation')return ready(id);apply(w,'ventilation');settle(w);enterRoom(w,'corridor');send(w,{type:'INSPECT',targetId:'pressure'});supply('corridor.and','security');if(id==='security')return ready(id);apply(w,'security');enterRoom(w,'life');supply('garden.or','alarm');if(id==='alarm')return ready(id);apply(w,'alarm');supply('garden.nor-kit','scrubber');if(id==='scrubber')return ready(id);apply(w,'scrubber');supply('garden.cutoff-kit','safetycutoff');if(id==='safetycutoff')return ready(id);apply(w,'safetycutoff');acknowledge(w);
+  if(id==='before-binary'){w.positions.life=1244;return w;}
+  for(const control of [{action:'bits',value:1},{action:'bits',value:3},{action:'next'},{action:'read',answer:5},{action:'bits',value:11},{action:'build'},{action:'read',answer:6},{action:'bits',value:13},{action:'build'}])send(w,{type:'GARDEN_BINARY_CONTROL',...control});w.positions.life=1244;
+  if(id==='before-maintenance')return w;
+  w.positions.life=1250;
+  send(w,{type:'TRIGGER_SCRUBBER_FAILURE'});if(id==='emergency-warning'){w.positions.life=1315;return w;}if(id==='maintenance'&&!serviceScenario){send(w,{type:'ACK_SERVICE_WARNING'});w.dialogueSeen.push(puzzleIntroKey('scrubber',w));return w;}
+  send(w,{type:'ACK_SERVICE_WARNING'});
+  if(scenario==='service-damaged'){acknowledge(w);w.positions.life=832;return w;}
+  send(w,{type:'INSPECT_SERVICE_CIRCUIT'});send(w,{type:'CollectGate',pickupId:'garden.demorgan-kit'});
+  if(serviceScenario){w.dialogueSeen.push(puzzleIntroKey('scrubber',w));w.positions.life=832;acknowledge(w);if(scenario==='service-ready')return w;requireResult(editCircuit(w,'scrubber',createCircuit(REPAIRS.scrubber)));if(scenario==='service-cleared')return w;}else send(w,{type:'START_SERVICE_REPLACEMENT'});
+  const service=createCircuit(REPAIRS.scrubber);service.nodes.push({id:'left',type:'NOT',x:350,y:100},{id:'right',type:'NOT',x:350,y:350},{id:'both',type:'AND',x:700,y:220});service.wires=[['A','left',0],['B','right',0],['left','both',0],['right','both',1],['both','Y',0]].map(([from,to,pin],i)=>({id:'service-'+i,from,to,in:pin,out:0}));if(serviceScenario){if(scenario==='service-partial'){service.nodes=service.nodes.filter(n=>n.fixed||n.id==='left');service.wires=[];}requireResult(editCircuit(w,'scrubber',service));if(scenario==='service-verified'){const checked=testRepair(w,'scrubber');if(!checked.pass)throw Error(checked.error);}return w;}const repaired=certify(w,'scrubber',service);if(!repaired.applied)throw Error(repaired.error);send(w,{type:'ACK_DEMORGAN'});if(id==='after-maintenance'||id==='before-workshop'){acknowledge(w);return w;}
+  enterRoom(w,'relay');for(let i=0;i<6;i++)updateWorld(w,.5);w.nandEvent.explained=true;send(w,{type:'CollectGate',pickupId:'workshop.nand-cache'});
+  for(const key of ['nandnot','nandand','nandor']){if(id===key){if(after&&key==='nandor'){apply(w,key);acknowledge(w);return w;}return ready(key);}apply(w,key);}
+  if(id==='after-workshop'){if(scenario==='supply-active')w.dialogueSeen.push('story-fabricator-online');acknowledge(w);return w;}
+  enterRoom(w,'sensors');acknowledge(w);if(!(skipSupply&&id==='sensordiff'))send(w,{type:'CollectGate',pickupId:'gallery.xor'});if(scenario==='p09-pickup'){requireResult(investigatePuzzle(w,'sensordiff'));w.positions.sensors=187;return w;}if(id==='sensordiff')return ready(id);apply(w,'sensordiff');
+  if(id==='xorfab'){if(['p10-correct','p10-incorrect'].includes(scenario)){requireResult(investigatePuzzle(w,id));requireResult(editCircuit(w,id,fixtureCircuit(id,{incorrect:scenario==='p10-incorrect'})));}return ready(id);}apply(w,'xorfab');
+  if(!enterRoom(w,'testbay'))throw Error('Fixture Test Bay route is locked.');
+  if(id.startsWith('signed-')){
+   const stage=id.slice(7);w.foundation.dataInspector.signedBinary=freshSignedBinary();
+   if(stage!=='explore')for(const c of [...SIGNED_COMPARISON_CONTROLS,{action:'next'}])send(w,{type:'SIGNED_BINARY_CONTROL',...c});
+   if(['build','complete'].includes(stage))send(w,{type:'SIGNED_BINARY_CONTROL',action:'read',answer:-3});
+   if(stage==='complete')for(const c of [{action:'bits',value:10},{action:'build'},{action:'read',answer:-2},{action:'bits',value:11},{action:'build'}])send(w,{type:'SIGNED_BINARY_CONTROL',...c});
+   w.positions.testbay=151;acknowledge(w);return w;
+  }
+  for(const c of [...SIGNED_COMPARISON_CONTROLS,{action:'next'},{action:'read',answer:-3},{action:'bits',value:10},{action:'build'},{action:'read',answer:-2},{action:'bits',value:11},{action:'build'}])send(w,{type:'SIGNED_BINARY_CONTROL',...c});
+  if(id==='cryo_signed'){if(decoderStage==='speed'&&!after){requireResult(investigatePuzzle(w,id));const graph=dataCircuit(id);graph.configuration.temperature='signed';requireResult(editCircuit(w,id,graph));send(w,{type:'VERIFY_DECODER_STAGE',puzzleId:id,stage:'temperature'});}return ready(id);}apply(w,'cryo_signed');
+  if(id==='hull')return ready(id);apply(w,'hull');if(id==='pressure_width')return ready(id);apply(w,'pressure_width');if(!enterRoom(w,'blackbox'))throw Error('Fixture Vault route is locked.');for(const key of ['adc_precision','log_overflow']){if(id===key){w.positions.blackbox={firewall:166,adc_precision:609,log_overflow:741}[key];return ready(key);}apply(w,key);}if(!enterRoom(w,'computation'))throw Error('Fixture Computation Lab route is locked.');for(const key of ['navbits','trajectory','ripple_adder','twos_complement','addsub']){if(id===key){w.positions.computation=COMPUTATION_AREAS.find(a=>a.id===key).station.walk;return ready(key);}apply(w,key);}if(id==='float_nav'){if(!enterRoom(w,'navigation'))throw Error('Fixture Navigation route is locked.');w.positions.navigation=252;return ready(id);}throw Error('This revised puzzle is not implemented.');
+ }finally{session.release();}}

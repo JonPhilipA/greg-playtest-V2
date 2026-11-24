@@ -63,7 +63,7 @@ export function evaluate(circuit, inputs={}, state={}, {partial=false}={}) {
     else if(n.type==='DFF') result=[state[id]?.q ?? 0];
     else {
       const args=ports(n).inputs.map((_,i)=> {const w=incoming.get(`${id}:${i}`);return w ? read(w.from)[w.out] : null;});
-      result=n.type==='OUTPUT' ? args : args.some(v=>v===null) ? ports(n).outputs.map(()=>null) : TYPES[n.type].compute(args);
+      result=n.type==='OUTPUT' ? args : args.some(v=>v===null)&&!TYPES[n.type].partialInputs ? ports(n).outputs.map(()=>null) : TYPES[n.type].compute(args);
     }
     visiting.delete(id); values.set(id,result); return result;
   }

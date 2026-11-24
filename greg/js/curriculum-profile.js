@@ -9,7 +9,7 @@ export const serviceState=w=>w?.foundation?.services?.[SERVICE_ID];
 export const servicePending=w=>!!serviceState(w)?.triggered&&!serviceState(w).applied;
 export const taskId=(w,id)=>isEarly(w)&&id==='scrubber'&&serviceState(w)?.triggered?SERVICE_ID:id;
 export const editableGraph=(w,id)=>id==='scrubber'&&servicePending(w)?serviceState(w).draft:w.circuits[id];
-export const roomRepairIds=(w,room,legacy)=>isEarly(w)?room==='life'?[...legacy,'safetycutoff']:splitGallery(w)&&GALLERY_ROOM_REPAIRS[room]?GALLERY_ROOM_REPAIRS[room]:room==='sensors'&&galleryEnabled(w)?['sensordiff','xorfab','cryo_signed','hull','pressure_width','adc_precision','log_overflow']:legacy:legacy;
+export const roomRepairIds=(w,room,legacy)=>isEarly(w)?room==='life'?[...legacy,'safetycutoff']:room==='navigation'&&splitGallery(w)?['float_nav']:splitGallery(w)&&GALLERY_ROOM_REPAIRS[room]?GALLERY_ROOM_REPAIRS[room]:room==='sensors'&&galleryEnabled(w)?['sensordiff','xorfab','cryo_signed','hull','pressure_width','adc_precision','log_overflow']:legacy:legacy;
 
 // One route adapter for the revised voyage; legacy campaigns retain their original room order.
 export const LEGACY_ROUTE=Object.freeze(['engine','corridor','life','relay','sensors','navigation','reactor','bridge']);

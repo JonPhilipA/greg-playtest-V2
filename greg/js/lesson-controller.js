@@ -1,3 +1,4 @@
+import {subtractorCircuit} from './subtractor.js';
 import {rippleCircuit} from './ripple-adder.js';
 import {isDataConsole,DATA_SPECS} from './data-consoles.js';
 import {galleryCircuit} from './gallery-puzzles.js';
@@ -23,7 +24,7 @@ export function advanceLesson(w,id,stage,path='guided'){
 /** Disposable real simulator session. It has no world, persistence, inventory or reward API. */
 export function createPractice(id){
  const spec=REPAIRS[id];if(!lessonDefinition(id))throw Error('This practice is not implemented.');
- return {id,scope:'practice',circuit:id==='ripple_adder'?rippleCircuit(4):id==='sensordiff'?galleryCircuit(id):createCircuit(spec),inputs:Object.fromEntries(spec.inputs.map(n=>[n.id,0])),state:{},
+ return {id,scope:'practice',circuit:id==='ripple_adder'?rippleCircuit():id==='addsub'?subtractorCircuit():id==='sensordiff'?galleryCircuit(id):createCircuit(spec),inputs:Object.fromEntries(spec.inputs.map(n=>[n.id,0])),state:{},
   edit(graph){if(graph.nodes.some(n=>n.instanceId))throw Error('Physical instances cannot enter practice.');this.circuit=structuredClone(graph);},
   toggle(inputId){const n=spec.inputs.find(n=>n.id===inputId);if(!n)throw Error('Unknown practice input.');this.inputs[inputId]=((this.inputs[inputId]||0)+1)%2**n.width;if(spec.sequential)try{this.state=step(this.circuit,this.inputs,this.state).state;}catch{}return this.inputs;},
   evaluate(){return evaluate(this.circuit,this.inputs,this.state,{partial:true});},

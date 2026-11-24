@@ -1,38 +1,47 @@
+import {ARITHMETIC_PLACEMENTS,INITIAL_CARRY_POSITION} from './arithmetic-component-art.js';
 import './arithmetic-modules.js';
-import {evaluate} from './simulator.js';
+import {evaluate,validate} from './simulator.js';
+import {testLegacyRipple} from './ripple-legacy.js';
 export const RIPPLE_ID='ripple_adder';
-const terminal=(id,type,label,x,y,width=4)=>({id,type,label,x,y,width,fixed:true});
-export function rippleCircuit(stages=2){
- if(![2,4].includes(stages))throw Error('Invalid carry bench stage.');
- const c={configuration:{rippleStage:stages},nodes:[terminal('A','INPUT','A [3:0]',28,45),terminal('B','INPUT','B [3:0]',28,180),terminal('Y','OUTPUT','SUM [3:0]',760,444),terminal('C','OUTPUT','FINAL CARRY',974,45,1)],wires:[],layout:{ripple:true,width:1200,height:600}};
- const equipment=(id,type,label,x,y)=>c.nodes.push({id,type,label,x,y,equipment:true,rippleRole:true});
- equipment('bitsA','BITS4','A BIT LANES',244,40);equipment('bitsB','BITS4','B BIT LANES',244,168);equipment('zero','ZERO','C0 = 0',180,355);equipment('sum','SUM'+stages,'SUM BIT LANES',574,444);
- for(let i=0;i<stages;i++)equipment('fa'+i,'FA1','FA'+i+' · BIT '+i,stages===2?450+i*300:362+i*206,290);
- if(stages===2)for(const n of c.nodes.filter(n=>['A','B','Y'].includes(n.id))){n.displayBits=2;n.label=n.id==='Y'?'SUM [1:0]':n.id+' [1:0]';}
- const wire=(from,out,to,pin)=>c.wires.push({id:'bench-'+c.wires.length,from,out,to,in:pin,bench:true});
- wire('A',0,'bitsA',0);wire('B',0,'bitsB',0);wire('zero',0,'fa0',2);
- for(let i=0;i<stages;i++){wire('bitsA',i,'fa'+i,0);wire('bitsB',i,'fa'+i,1);wire('fa'+i,0,'sum',i);}
- wire('sum',0,'Y',0);wire('fa'+(stages-1),1,'C',0);return c;
+export const legacyRipple=c=>Number.isInteger(c?.configuration?.rippleStage);
+export const RIPPLE_POSITIONS=ARITHMETIC_PLACEMENTS;
+const terminal=(id,type,x,y,register,bit)=>({id,type,label:id,x,y,width:1,fixed:true,rippleBit:true,register,bit});
+export function rippleCircuit(){
+ const nodes=[];
+ for(const [register,type,x,top]of [['A','INPUT',36,78],['B','INPUT',36,350],['C','OUTPUT',1000,200]])for(let bit=0;bit<4;bit++)nodes.push(terminal(register+bit,type,x,top+44*bit,register,bit));
+ nodes.push({id:'zero',type:'ZERO',label:'CIN = 0',...INITIAL_CARRY_POSITION,width:1,fixed:true,rippleZero:true});
+ return {configuration:{rippleVersion:2},nodes,wires:[],layout:{ripple:true,width:1200,height:600}};
 }
-const key=w=>[w.from,w.out,w.to,w.in].join(':');
-/** Protect installed bench hardware, while carry routing remains actual editable wiring. */
-export function validateRippleShape(c,previous=null){
- const stages=c?.configuration?.rippleStage;if(![2,4].includes(stages)||Object.keys(c.configuration).join()!=='rippleStage')throw Error('Invalid ripple bench checkpoint.');
- if(previous&&previous.configuration.rippleStage!==stages)throw Error('Verify the two-adder stage before expanding the bench.');
- const base=rippleCircuit(stages);if(c.nodes.length!==base.nodes.length)throw Error('The installed Full Adder bench is protected.');
- for(const n of base.nodes){const p=c.nodes.find(v=>v.id===n.id);if(!p||['type','width','fixed','equipment','rippleRole'].some(k=>p[k]!==n[k])||p.faulty||p.instanceId||p.fabricatedId||p.value!==undefined)throw Error('Keep the installed bench modules and terminals.');}
- for(const w of base.wires)if(!c.wires.some(v=>key(v)===key(w)))throw Error('A/B, sum, and C0 leads are prewired. Only edit the carry links.');
- for(const w of c.wires)if(!base.wires.some(v=>key(v)===key(w))&&!(w.in===2&&Array.from({length:stages-1},(_,i)=>'fa'+(i+1)).includes(w.to)))throw Error('Connect the carry-out to the next stage carry-in.');
- return stages;
+export function rippleSolution(){
+ const c=rippleCircuit();for(let i=0;i<4;i++)c.nodes.push({id:'fa'+i,type:'FA1',...RIPPLE_POSITIONS[i]});
+ const wire=(from,out,to,pin)=>c.wires.push({id:'ripple-'+c.wires.length,from,out,to,in:pin});
+ for(let i=0;i<4;i++){wire('A'+i,0,'fa'+i,0);wire('B'+i,0,'fa'+i,1);wire(i?'fa'+(i-1):'zero',i?1:0,'fa'+i,2);wire('fa'+i,0,'C'+i,0);}return c;
+}
+export const rippleInputs=(A,B)=>Object.fromEntries(['A','B'].flatMap(r=>Array.from({length:4},(_,i)=>[r+i,((r==='A'?A:B)>>i)&1])));
+export function rippleWord(values,register){const bits=Array.from({length:4},(_,i)=>values[register+i]);return bits.some(v=>v!==0&&v!==1)?null:bits.reduce((n,v,i)=>n|(v<<i),0);}
+export function validateRippleShape(c){
+ if(c?.configuration?.rippleVersion!==2||Object.keys(c.configuration).length!==1)throw Error('Invalid four-bit construction workspace.');
+ const base=rippleCircuit(),fixed=c.nodes.filter(n=>n.fixed),gates=c.nodes.filter(n=>!n.fixed);
+ if(fixed.length!==base.nodes.length||new Set(c.nodes.map(n=>n.id)).size!==c.nodes.length||gates.length>4)throw Error('Keep the fixed registers and use at most four Full Adders.');
+ for(const n of base.nodes){const actual=c.nodes.find(q=>q.id===n.id);if(!actual||['type','width','fixed','rippleBit','rippleZero','register','bit'].some(k=>actual[k]!==n[k])||actual.value!==undefined||actual.faulty||actual.fabricatedId||actual.instanceId)throw Error('Keep the four independent bits in each register and the fixed zero source.');}
+ if(gates.some(n=>n.type!=='FA1'||n.equipment||n.rippleRole||n.faulty||n.value!==undefined||n.heritageProp))throw Error('Place individual movable Full Adders from the toolbox.');
+ validate(c,{partial:true});return 4;
 }
 export function testRipple(c){
- const rows=[];try{const bits=validateRippleShape(c),mask=(1<<bits)-1;
-  // Include the illustrative vectors first; exhaust the remaining input pairs as well.
-  const vectors=[...new Map([[1,2],[3,1],[3,5],[15,1]].map(([A,B])=>[[(A&mask),(B&mask)].join(','),[A&mask,B&mask]])).values()];for(let A=0;A<=mask;A++)for(let B=0;B<=mask;B++)if(!vectors.some(v=>v[0]===A&&v[1]===B))vectors.push([A,B]);
-  for(const [A,B]of vectors){const expected={Y:(A+B)&mask,C:(A+B)>>bits};let actual={},error=null;try{actual=evaluate(c,{A,B}).outputs;}catch(e){error=e.message;}rows.push({inputs:{A,B},expected,actual,pass:!error&&actual.Y===expected.Y&&actual.C===expected.C,label:'Unsigned '+A+' + '+B,...(error?{error}:{})});}
-  const pass=rows.every(r=>r.pass);return {pass,rows,error:pass?null:rows.find(r=>!r.pass)?.error||'The carry chain does not produce the required sum and final carry.'};
+ if(legacyRipple(c))return testLegacyRipple(c);
+ const rows=[];try{
+  validateRippleShape(c);let structure=c.nodes.filter(n=>!n.fixed).length===4?null:'Place all four Full Adders and connect their terminals.';
+  try{validate(c);}catch(e){structure=e.message;}
+  const vectors=[[1,2],[3,1],[5,3],[15,1],[10,5]];for(let A=0;A<16;A++)for(let B=0;B<16;B++)if(!vectors.some(v=>v[0]===A&&v[1]===B))vectors.push([A,B]);
+  for(const [A,B]of vectors){const inputs=rippleInputs(A,B),sum=(A+B)&15,expected=Object.fromEntries(Array.from({length:4},(_,i)=>['C'+i,(sum>>i)&1]));let actual={},error=structure;
+   try{actual=evaluate(c,inputs,{}, {partial:true}).outputs;}catch(e){error=e.message;}
+   rows.push({inputs,expected,actual,pass:!error&&Object.keys(expected).every(id=>actual[id]===expected[id]),label:'Unsigned '+A+' + '+B,...(error?{error}:{})});
+  }
+  const pass=rows.every(r=>r.pass);return {pass,rows,error:pass?null:rows.find(r=>!r.pass)?.error||'Check each input bit, SUM lead and carry connection.'};
  }catch(e){return {pass:false,rows,error:e.message};}
 }
-export const RIPPLE_SPEC={id:RIPPLE_ID,room:'computation',title:'Four-Bit Ripple-Carry Adder',short:'ripple-carry adder',plate:'COMPUTATION LAB / P17',inputs:[{id:'A',type:'INPUT',label:'A [3:0]',width:4},{id:'B',type:'INPUT',label:'B [3:0]',width:4}],outputs:[{id:'Y',type:'OUTPUT',label:'SUM [3:0]',width:4},{id:'C',type:'OUTPUT',label:'FINAL CARRY',width:1}],gates:[],source:{A:1,B:1},expected:({A,B})=>({Y:(A+B)&15,C:(A+B)>>4}),spec:'Cout → next Cin · C0 = 0 · four sum bits + separate carry',problem:"Connect the first adder's carry-out to the second adder's carry-in.",hints:['A Full Adder handles one bit position. The next position needs any carry generated by its neighbor.','Use the Cout terminal of a lower bit as the next bit’s Cin. The A/B and sum leads are already connected.','Connect FA0 Cout → FA1 Cin, then FA1 Cout → FA2 Cin and FA2 Cout → FA3 Cin. C0 stays zero.'],explanation:'Four Full Adders process the least significant bit first, passing carry to the next stage. Their four sum bits form SUM; C4 is separate. ADD4C packages these stages with an external carry-in. Final carry is not signed overflow.',restored:'Carry chain restored. Four Full Adders can now be packaged as ADD4C.'};
-export const RIPPLE_INTRO=["Nice work with those Full Adders. But there's a problem.","One Full Adder can only handle one bit at a time. What if we need to add two entire numbers?","We can connect several Full Adders together. The trick is passing the carry from one stage to the next."];
-export const ADD4C_INTRO=["Perfect! You've built a four-bit ripple-carry adder.","That's four Full Adders working together. Each one passes its carry to the next.","Instead of wiring all four every time, we can package the whole circuit into one reusable component.","We call that component ADD4C. It adds two four-bit numbers and includes a carry-in."];
+const inputs=['A','B'].flatMap(r=>Array.from({length:4},(_,i)=>({id:r+i,type:'INPUT',label:r+i,width:1})));
+export const RIPPLE_SPEC={id:RIPPLE_ID,room:'computation',title:'Four-Bit Ripple-Carry Adder',short:'ripple-carry adder',plate:'COMPUTATION LAB / P17',inputs,outputs:Array.from({length:4},(_,i)=>({id:'C'+i,type:'OUTPUT',label:'C'+i,width:1})),gates:['FA1'],source:rippleInputs(0,0),expected:bits=>{const sum=(rippleWord(bits,'A')+rippleWord(bits,'B'))&15;return Object.fromEntries(Array.from({length:4},(_,i)=>['C'+i,(sum>>i)&1]));},spec:'C = A + B (mod 16) · CIN = 0',problem:'Place four Full Adders. Connect the individual A/B bits, each SUM and the carry chain.',hints:['Each Full Adder handles one bit position. Start with the least significant bit.','Place four Full Adders in the central workspace.','Connect A0/B0 to bit 0, A1/B1 to bit 1, and so on.','Connect fixed zero to the first CIN, each COUT to the next CIN, and each SUM to its C bit.'],explanation:'Four individual Full Adders propagate carry from bit 0 toward bit 3. C0–C3 are the four-bit result. Any fifth bit does not fit: unsigned overflow wraps the result modulo 16. ADD4C packages the same chain with an external carry-in.',restored:'Four-bit addition restored. The four Full Adders can now be packaged as ADD4C.'};
+export const RIPPLE_INTRO=["You've built a Full Adder! But that only handles one bit at a time.","What if we want to add two entire binary numbers? We can connect several Full Adders together.","Each Full Adder has two inputs, a carry-in, a sum output, and a carry-out.","The trick is connecting each carry-out to the next Full Adder's carry-in.","Start with bit 0, then work toward bit 3. Connect all four adders and see if you can make the numbers add up!"];
+export const RIPPLE_OVERFLOW=["Wait a second! Fifteen plus one is sixteen, but our four-bit output shows zero.","That's because sixteen needs five binary bits. Our output only has room for four!","The extra bit doesn't fit, so the four-bit result wraps around. That's unsigned overflow."];
+export const ADD4C_INTRO=["Perfect! You just built a four-bit ripple-carry adder.","Those four Full Adders work together to add two entire binary numbers.","Instead of rebuilding that circuit every time, we can package the whole thing into one component.","That's what ADD4C is: a four-bit adder with a carry-in."];

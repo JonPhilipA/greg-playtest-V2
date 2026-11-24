@@ -123,7 +123,7 @@ function restoreLegacy(raw){
     w.discovered=w.discovered.filter(id=>ALL_ROOM_IDS.includes(id));if(!w.discovered.includes('engine'))w.discovered.unshift('engine');
     w.doors={engine:p.doors?.engine===true,security:false};w.sensors={...w.sensors,...p.sensors};
     w.pressure=Number.isFinite(p.pressure)?Math.max(0,Math.min(100,p.pressure)):94;
-    for(const room of ALL_ROOM_IDS)if(Number.isFinite(p.positions?.[room]))w.positions[room]=Math.max(20,Math.min(p.foundation?.opening?.version===1&&room==='engine'?620:p.foundation?.opening?.version===1&&room==='corridor'?844:room==='life'&&p.foundation?.exploration?.layoutVersion===1?1420:room==='relay'&&p.foundation?.exploration?.workshopLayoutVersion===1?1132:galleryEnabled(p)&&room==='sensors'?1420:room==='testbay'||room==='computation'?940:room==='blackbox'?844:457,p.positions[room]));
+    for(const room of ALL_ROOM_IDS)if(Number.isFinite(p.positions?.[room]))w.positions[room]=Math.max(20,Math.min(p.foundation?.opening?.version===1&&room==='engine'?620:room==='corridor'?844:room==='life'&&p.foundation?.exploration?.layoutVersion===1?1420:room==='relay'&&p.foundation?.exploration?.workshopLayoutVersion===1?1132:galleryEnabled(p)&&room==='sensors'?1420:room==='testbay'||room==='computation'?940:room==='blackbox'?844:457,p.positions[room]));
     w.muted=p.muted===true;
     if(p.nandEvent?.triggered)w.nandEvent={triggered:true,failed:p.nandEvent.failed===true,elapsed:Number.isFinite(p.nandEvent.elapsed)?Math.max(0,Math.min(3,p.nandEvent.elapsed)):0,explained:p.nandEvent.explained===true};
     for(const id of Object.keys(REPAIRS)){
